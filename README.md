@@ -1,5 +1,5 @@
 <h1 align="center">Hi 👋, I'm Wiebe Vandendriessche</h1>
-<h3 align="center">An information technology student from UGent, currently working on my bachelors degree and starting my masters next year.</h3>
+<h3 align="center">An information technology student at UGent, currently working on my bachelors degree and starting my masters next year.</h3>
 
 - 🔭 Frontend javascript chess website with chessbot **Chess**
 
