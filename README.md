@@ -15,8 +15,6 @@
 
 - 📫 How to reach me **wiebe.vandendriessche@gmail.com**
 
-- 📄 Know about my experiences [https://www.linkedin.com/in/wiebe-vandendriessche-b87860223/](https://www.linkedin.com/in/wiebe-vandendriessche-b87860223/)
-
 - ⚡ Fun fact **I'm a lifeguard and youth animator**
 
 <h3 align="left">Connect with me:</h3>
