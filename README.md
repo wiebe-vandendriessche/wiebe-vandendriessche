@@ -3,11 +3,11 @@
 
 - 🔭 Frontend javascript chess website with chessbot **Chess**
 
-- 🌱 I’m currently learning about **Machine learning, algorithms, computernetworking, big data, multimedia**
-
 - 🔭 Basic TypeORM webservice **TypeORM demo**
 
 - 🔭 React three fiber webapp for furniture business, 3D experience **Furnify**
+
+- 🌱 I’m currently learning about **machine learning, algorithms, computernetworking, big data, multimedia**
 
 - 👨‍💻 All of my projects are available at [https://github.com/wiebe-vandendriessche](https://github.com/wiebe-vandendriessche)
 
