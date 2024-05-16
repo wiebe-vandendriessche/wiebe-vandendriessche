@@ -1,21 +1,23 @@
 <h1 align="center">Hi 👋, I'm Wiebe Vandendriessche</h1>
 <h3 align="center">An information technology engineering student at UGent, currently working on my bachelors degree and starting my masters next year.</h3>
 
-- 🔭 Frontend javascript chess website with chessbot **Chess**
+- 🔭 Frontend javascript chess website with difficult chessbot algorithm **Chess**
 
 - 🔭 Basic TypeORM webservice **TypeORM demo**
 
 - 🔭 React three fiber webapp for furniture business, 3D experience **Furnify**
 
+- 🔭 Many more small projects I developed during my studies
+
 - 🌱 I’m currently learning about **machine learning, algorithms, computernetworking, big data, multimedia**
 
 - 👨‍💻 All of my projects are available at [https://github.com/wiebe-vandendriessche](https://github.com/wiebe-vandendriessche)
 
-- 🧠 Things I'm familiar with **Backend frameworks, React, Angular, Node, three.js, databases, software patterns, .NET, computerhardware, operating systems, Python, C, C++, C#, java, javascript, Pandas, Spark, DevOps, CI/CD,**
+- 🧠 Things I'm familiar with **Backend frameworks, React, Angular, Node, three.js, databases, SQL, NOSQL, software patterns, .NET, computerhardware, operating systems, Python, C, C++, C#, java, javascript, Pandas, Spark, Kafka, Flink, DevOps, CI/CD,**
 
 - 📫 How to reach me **wiebe.vandendriessche@gmail.com**
 
-- ⚡ Fun fact **I'm a lifeguard and youth animator**
+- ⚡ Fun fact **I'm a lifeguard and youth animator in my free time**
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">
