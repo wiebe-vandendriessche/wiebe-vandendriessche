@@ -9,6 +9,8 @@
 
 - 🔭 Many more small projects I developed during my studies
 
+- 🚀 Planning on doing my master's thesis about AI Transparency - developing a tool that keeps track of AI model training data and tags it with the needed certificate
+
 - 🌱 I’m currently learning about **machine learning, algorithms, computernetworking, big data, multimedia**
 
 - 👨‍💻 All of my projects are available at [https://github.com/wiebe-vandendriessche](https://github.com/wiebe-vandendriessche)
