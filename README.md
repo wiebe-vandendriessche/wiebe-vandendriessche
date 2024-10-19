@@ -1,9 +1,7 @@
 <h1 align="center">Hi 👋, I'm Wiebe Vandendriessche</h1>
 <h3 align="center">An information technology engineering student at UGent, currently working on my bachelors degree and starting my masters next year.</h3>
 
-- 🔭 Frontend javascript chess website with difficult chessbot algorithm **Chess**
-
-- 🔭 Basic TypeORM webservice **TypeORM demo**
+- 🔭 Frontend javascript chess website with chessbot algorithm **Chess**
 
 - 🔭 React three fiber webapp for furniture business, 3D experience **Furnify**
 
