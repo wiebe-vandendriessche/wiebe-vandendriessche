@@ -1,41 +1,26 @@
+/* General Styles */
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f4f7f6;
   color: #333;
   margin: 0;
   padding: 20px;
+  line-height: 1.6;
+  box-sizing: border-box;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  box-sizing: border-box;
 }
 
+/* Header */
 h1 {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 20px;
+  padding: 0 10px;
 }
 
-.card {
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  padding: 20px;
-  margin: 20px 0;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-
-.card h3 {
-  font-size: 1.5rem;
-  color: #34495e;
-}
-
-.card p {
-  font-size: 1rem;
-  color: #7f8c8d;
-}
-
+/* Section Titles */
 h3 {
   font-size: 1.8rem;
   color: #2c3e50;
@@ -43,24 +28,16 @@ h3 {
   padding-bottom: 8px;
   margin-top: 30px;
   margin-bottom: 15px;
+  padding: 0 10px;
 }
 
-code {
-  background-color: #ecf0f1;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.9rem;
+p {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  padding: 0 10px;
 }
 
-a {
-  color: #3498db;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
+/* Horizontal Rule */
 hr {
   border: none;
   height: 1px;
@@ -68,56 +45,110 @@ hr {
   margin: 30px 0;
 }
 
-p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 15px;
+/* Reusable Card Styling */
+.card {
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  transition: 0.3s ease;
 }
 
-/* Expandable cards */
-.project-card {
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 
-.project-card.open {
-  background-color: #f9fbfc;
-  border-left: 4px solid #3498db;
+/* Project Expandable Card */
+.project-card {
+  cursor: pointer;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  max-height: 60px;
+  padding: 20px;
 }
 
-/* Tags section */
-.tags {
+.project-card.expanded {
+  max-height: 500px;
+}
+
+.project-card h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #34495e;
+}
+
+.project-card p {
+  display: none;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #7f8c8d;
+}
+
+.project-card.expanded p {
+  display: block;
+}
+
+/* Click note */
+.click-note {
+  font-size: 0.95rem;
+  text-align: center;
+  color: #555;
+  margin: 10px 0 20px;
+  font-style: italic;
+}
+
+/* Tags Section */
+.tags-section {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 10px 0;
+  margin: 15px 10px;
 }
 
-.tags span {
-  background-color: #ecf0f1;
-  border-radius: 4px;
-  padding: 6px 10px;
-  font-size: 0.9rem;
+.tag-group {
+  margin-bottom: 15px;
+}
+
+.tag-label {
+  font-weight: bold;
   color: #2c3e50;
+  margin-bottom: 5px;
+  display: block;
 }
 
-/* LinkedIn button */
-.linkedin-btn {
+.tag {
+  background-color: #ecf0f1;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
   display: inline-block;
-  margin-top: 10px;
-  padding: 10px 18px;
+}
+
+/* Card-specific list styling */
+ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+/* LinkedIn Button */
+.connect-card a.button {
+  display: inline-block;
   background-color: #0077b5;
   color: white;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 5px;
+  text-decoration: none;
   font-weight: bold;
-  text-align: center;
-  transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
-.linkedin-btn:hover {
-  background-color: #005b8a;
+.connect-card a.button:hover {
+  background-color: #005c91;
 }
 
-/* Responsive */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   body {
     padding: 10px;
@@ -127,41 +158,39 @@ p {
     font-size: 1.5rem;
   }
 
+  .card {
+    padding: 15px;
+    margin: 10px 0;
+  }
+
   h3 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
 
-  .card h3 {
-    font-size: 1.3rem;
-  }
-
-  .card p {
+  p, .project-card p {
     font-size: 0.95rem;
   }
 
-  p {
-    font-size: 0.95rem;
+  .tag {
+    font-size: 0.8rem;
+    padding: 5px 10px;
   }
 }
 
 @media (max-width: 480px) {
   h1 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
 
-  h3 {
-    font-size: 1.4rem;
+  .card {
+    padding: 12px;
   }
 
-  .card h3 {
-    font-size: 1.1rem;
+  .tag {
+    font-size: 0.75rem;
   }
 
-  .card p {
-    font-size: 0.9rem;
-  }
-
-  p {
-    font-size: 0.9rem;
+  .project-card h4 {
+    font-size: 1rem;
   }
 }
