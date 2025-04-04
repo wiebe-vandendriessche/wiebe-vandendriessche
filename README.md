@@ -67,6 +67,7 @@ Dutch – Native
 English – Fluent
 
 French – Intermediate
+
 ---
 
 ### 📫 Let's connect!
