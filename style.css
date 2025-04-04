@@ -3,15 +3,17 @@ body {
   font-family: 'Arial', sans-serif;
   background-color: #f4f7f6;
   color: #333;
-  margin: 0;
+  margin: 20px; /* Added margin around the body */
   padding: 0;
   line-height: 1.6;
+  box-sizing: border-box; /* Ensures padding doesn't affect overall width */
 }
 
 /* Header */
 h1 {
   text-align: center;
   color: #2c3e50;
+  margin-bottom: 20px; /* Space below header */
 }
 
 /* Card Container */
@@ -40,6 +42,7 @@ h3 {
   border-bottom: 2px solid #ddd;
   padding-bottom: 8px;
   margin-top: 30px;
+  margin-bottom: 15px;
 }
 
 /* Tech Stack List */
@@ -73,4 +76,69 @@ p {
   font-size: 1rem;
   line-height: 1.6;
   margin-bottom: 15px;
+}
+
+/* Mobile and Tablet Responsiveness */
+@media (max-width: 768px) {
+  /* Adjust body margin on smaller screens */
+  body {
+    margin: 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .card {
+    padding: 15px;
+    margin: 10px 0;
+  }
+
+  .card h3 {
+    font-size: 1.3rem;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+  }
+
+  h3 {
+    font-size: 1.6rem;
+    margin-top: 25px;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small Mobile Responsiveness */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .card {
+    padding: 10px;
+    margin: 8px 0;
+  }
+
+  .card h3 {
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    font-size: 0.85rem;
+  }
+
+  h3 {
+    font-size: 1.4rem;
+    margin-top: 20px;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
 }
