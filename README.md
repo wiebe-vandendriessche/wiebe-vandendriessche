@@ -8,6 +8,11 @@
 📚 **Next up:**  
 I plan to start a second Master's in **Computer Science** at UGent to dive deeper into **machine learning**, **AI systems**, and **software architecture**.
 
+👔 **Internship Experience:**  
+Skyline Communications – DevOps Engineer Intern (Automation & Orchestration)
+> Aug 2024 – Sep 2024
+During my internship at Skyline Communications, I developed an Integration Test Boundary Manager in .NET. This tool was designed to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.
+
 ---
 
 ### 🛠️ Projects & Experience
