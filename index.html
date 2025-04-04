@@ -4,188 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wiebe Vandendriessche</title>
-  <style>
-    /* Global Styles */
-    body {
-      font-family: 'Arial', sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f7f6;
-      color: #333;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 20px;
-    }
-
-    h1, h2, h3 {
-      font-family: 'Arial', sans-serif;
-      color: #333;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.5em;
-    }
-
-    h2 {
-      font-size: 2em;
-      margin-top: 1em;
-      margin-bottom: 0.5em;
-    }
-
-    h3 {
-      font-size: 1.75em;
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
-    }
-
-    p, li {
-      font-size: 1.1em;
-      margin-bottom: 1.2em;
-    }
-
-    code {
-      font-family: 'Courier New', monospace;
-      background-color: #f5f5f5;
-      padding: 0.2em 0.4em;
-      border-radius: 4px;
-    }
-
-    blockquote {
-      background-color: #f9f9f9;
-      border-left: 4px solid #007bff;
-      padding: 10px;
-      margin: 1.2em 0;
-      font-style: italic;
-    }
-
-    ul {
-      padding-left: 20px;
-      list-style-type: disc;
-    }
-
-    hr {
-      border: 0;
-      border-top: 1px solid #ccc;
-      margin-top: 2em;
-      margin-bottom: 2em;
-    }
-
-    a {
-      text-decoration: none;
-      color: #007bff;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .highlight {
-      background-color: #ffff99;
-    }
-
-    /* Specific Styling for Sections */
-    .internship-section {
-      background-color: #e9f7fd;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    .project-item {
-      padding: 10px;
-      background-color: #fff;
-      margin-bottom: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-
-    .tech-item {
-      display: inline-block;
-      background-color: #f0f0f0;
-      padding: 5px 10px;
-      margin: 5px;
-      border-radius: 20px;
-      font-size: 0.9em;
-      color: #555;
-    }
-
-    .connect-btn {
-      background-color: #007bff;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-
-    .connect-btn:hover {
-      background-color: #0056b3;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>👋 Hi, I'm Wiebe Vandendriessche</h1>
+<h1 id="hi-i-m-wiebe-vandendriessche">👋 Hi, I'm Wiebe Vandendriessche</h1>
 <p>🎓 I'm a Master's student in <strong>Industrial Sciences: Informatics</strong> at UGent. I'm passionate about <strong>AI transparency</strong>, <strong>system design</strong>, and building tools that bring structure and insight to complex software processes.</p>
 <p>🚀 <strong>Currently working on:</strong><br>💡 <code>AIBoMGen</code> — my master's thesis project:</p>
-<blockquote>
+
+<!-- Master's Thesis Card -->
+<div class="card">
+  <h3>📚 Master's Thesis: AIBoMGen</h3>
   <p>A tool to generate <strong>AI Bills of Materials</strong> (AIBoMs) that track training data, model dependencies, and compliance with regulations like the EU AI Act.</p>
-</blockquote>
-<p>📚 <strong>Next up:</strong><br>I plan to start a second Master's in <strong>Computer Science</strong> at UGent to dive deeper into <strong>machine learning</strong>, <strong>AI systems</strong>, and <strong>software architecture</strong>.</p>
+  <p><strong>Next up:</strong><br>I plan to start a second Master's in <strong>Computer Science</strong> at UGent to dive deeper into <strong>machine learning</strong>, <strong>AI systems</strong>, and <strong>software architecture</strong>.</p>
+</div>
 
-<div class="internship-section">
-  <h3>👔 Internship Experience:</h3>
-  <p>Skyline Communications – DevOps Engineer Intern (Automation & Orchestration)</p>
-  <blockquote>
-    <p>Aug 2024 – Sep 2024. During my internship at Skyline Communications, I developed an Integration Test Boundary Manager in .NET. This tool was designed to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.</p>
-  </blockquote>
+<!-- Internship Card -->
+<div class="card">
+  <h3>👔 Internship Experience: DevOps Engineer Intern</h3>
+  <p><strong>Skyline Communications</strong> – Aug 2024 – Sep 2024</p>
+  <p>During my internship at Skyline Communications, I developed an Integration Test Boundary Manager in .NET. This tool was designed to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.</p>
 </div>
 
 <hr>
 
-<h3>🛠️ Projects</h3>
-<div class="project-item">
-  <p>🧠 <strong>Machine Learning for Motion Recognition</strong><br>Trained multiple <strong>CNN architectures</strong> to classify motion types, analyzing and comparing their performance.</p>
-</div>
-<div class="project-item">
-  <p>🫀 <strong>Cardiovascular Visualization in VTK.js</strong><br>Created an interactive 3D visualization platform featuring vessel mesh rendering, centerlines, virtual endoscopy, and cross-sections.</p>
-</div>
-<div class="project-item">
-  <p>☁️ <strong>Tinder for jobseekers Microservices application</strong><br>Designed and built a matchmaking platform for job seekers and recruiters, inspired by Tinder’s swipe model. Technologies used: MongoDB, RabbitMQ, Docker, ElasticSearch, Nginx, FastAPI, MySQL, Redis, ...</p>
-</div>
-<div class="project-item">
-  <p>♟️ <strong>JavaScript Chess Platform</strong><br>Developed a playable chess website with a basic chess bot using vanilla JavaScript.</p>
-</div>
-<div class="project-item">
-  <p>🪑 <strong>Furnify 3D Webapp</strong><br>Designed an interactive furniture visualizer using <strong>React Three Fiber</strong> and 3D models for a more immersive online shopping experience.</p>
-</div>
+<h3 id="projects">🛠️ Projects</h3>
+<ul>
+  <li>🧠 <strong>Machine Learning for Motion Recognition</strong><br>Trained multiple <strong>CNN architectures</strong> to classify motion types, analyzing and comparing their performance.</li>
+  <li>🫀 <strong>Cardiovascular Visualization in VTK.js</strong><br>Created an interactive 3D visualization platform featuring vessel mesh rendering, centerlines, virtual endoscopy, and cross-sections.</li>
+  <li>☁️ <strong>Tinder for jobseekers Microservices application</strong><br>Designed and built a matchmaking platform for job seekers and recruiters, inspired by Tinder’s swipe model. Technologies used: MongoDB, RabbitMQ, Docker, ElasticSearch, Nginx, FastAPI, MySQL, Redis, ...</li>
+  <li>♟️ <strong>JavaScript Chess Platform</strong><br>Developed a playable chess website with a basic chess bot using vanilla JavaScript.</li>
+  <li>🪑 <strong>Furnify 3D Webapp</strong><br>Designed an interactive furniture visualizer using <strong>React Three Fiber</strong> and 3D models for a more immersive online shopping experience.</li>
+</ul>
 
 <hr>
 
-<h3>🔧 Tech I work with</h3>
-<p><strong>Languages:</strong><br><span class="tech-item">Python</span> <span class="tech-item">JavaScript / TypeScript</span> <span class="tech-item">C / C++</span> <span class="tech-item">C#</span> <span class="tech-item">Java</span> <span class="tech-item">Bash</span> <span class="tech-item">Powershell</span> <span class="tech-item">Kotlin</span> <span class="tech-item">SQL / NoSQL</span></p>
-<p><strong>Frameworks / Libraries:</strong><br><span class="tech-item">React</span> <span class="tech-item">R3F</span> <span class="tech-item">VTK.js</span> <span class="tech-item">html/css</span> <span class="tech-item">FastAPI</span> <span class="tech-item">Three.js</span> <span class="tech-item">Node.js</span> <span class="tech-item">Anuglar</span> <span class="tech-item">.NET</span> <span class="tech-item">java spring</span></p>
-<p><strong>ML:</strong><br><span class="tech-item">Transformers (Hugging Face)</span> <span class="tech-item">PyTorch</span> <span class="tech-item">MLFlow</span> <span class="tech-item">Weights & Biases</span> <span class="tech-item">TensorFlow / Keras</span></p>
-<p><strong>Cloud, DevOps & Distributed Data:</strong><br><span class="tech-item">Docker</span> <span class="tech-item">basic Kubernetes</span> <span class="tech-item">Helm</span> <span class="tech-item">Google Cloud</span> <span class="tech-item">CI/CD</span> <span class="tech-item">Flink</span> <span class="tech-item">Kafka</span> <span class="tech-item">Pandas</span> <span class="tech-item">Terraform</span></p>
-<p><strong>Databases:</strong><br><span class="tech-item">MongoDB</span> <span class="tech-item">MySQL</span> <span class="tech-item">PostgreSQL</span> <span class="tech-item">Redis</span> <span class="tech-item">ElasticSearch</span></p>
-<p><strong>Tooling & Environments:</strong><br><span class="tech-item">Git / GitHub / GitLab</span> <span class="tech-item">IntelliJ / PyCharm / VSCode</span> <span class="tech-item">Linux / WSL</span></p>
+<h3 id="tech-i-work-with">🔧 Tech I work with</h3>
+<p><strong>Languages:</strong><br><code>Python</code> | <code>JavaScript / TypeScript</code> | <code>C / C++</code> | <code>C#</code> | <code>Java</code> | <code>Bash</code> | <code>Powershell</code> | <code>Kotlin</code> | <code>SQL / NoSQL</code></p>
+<p><strong>Frameworks / Libraries:</strong><br><code>React</code> | <code>R3F</code> | <code>VTK.js</code> | <code>html/css</code> | <code>FastAPI</code> | <code>Three.js</code> | <code>Node.js</code> | <code>Anuglar</code> | <code>.NET</code> | <code>java spring</code></p>
+<p><strong>ML:</strong><br><code>Transformers (Hugging Face)</code> | <code>PyTorch</code> | <code>MLFlow</code> | <code>Weights & Biases</code> | <code>TensorFlow / Keras</code></p>
+<p><strong>Cloud, DevOps & Distributed Data:</strong><br><code>Docker</code> | <code>basic Kubernetes</code> | <code>Helm</code> | <code>Google Cloud</code> | <code>CI/CD</code> | <code>Flink</code> | <code>Kafka</code> | <code>Pandas</code> | <code>Terraform</code></p>
+<p><strong>Databases:</strong><br><code>MongoDB</code> | <code>MySQL</code> | <code>PostgreSQL</code> | <code>Redis</code> | <code>ElasticSearch</code></p>
+<p><strong>Tooling & Environments:</strong><br><code>Git / GitHub / GitLab</code> | <code>IntelliJ / PyCharm / VSCode</code> | <code>Linux / WSL</code></p>
 
-<h3>🌊 Outside of Tech</h3>
+<h3 id="outside-of-tech">🌊 Outside of Tech</h3>
 <p>I'm a certified <strong>lifeguard</strong> and active <strong>youth animator</strong>. I also dj and produce some music when I have time.</p>
 
 <hr>
 
-<h3>💬 Languages</h3>
+<h3 id="languages">💬 Languages</h3>
 <p>Dutch – Native</p>
 <p>English – Fluent</p>
 <p>French – Intermediate</p>
 
 <hr>
 
-<h3>📫 Let's connect!</h3>
+<h3 id="let-s-connect">📫 Let's connect!</h3>
 <ul>
-  <li>💼 <a href="https://www.linkedin.com/in/wiebe-vandendriessche/?locale=en_US" class="connect-btn">LinkedIn</a></li>
+  <li>💼 <a href="https://www.linkedin.com/in/wiebe-vandendriessche/?locale=en_US">LinkedIn</a></li>
 </ul>
 
 </body>
