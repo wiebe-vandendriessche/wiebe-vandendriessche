@@ -3,10 +3,13 @@ body {
   font-family: 'Arial', sans-serif;
   background-color: #f4f7f6;
   color: #333;
-  margin: 20px; /* Added margin around the body */
+  margin: 20px; /* Ensure margin around the body */
   padding: 0;
   line-height: 1.6;
   box-sizing: border-box; /* Ensures padding doesn't affect overall width */
+  max-width: 1200px; /* Prevent wide content on large screens */
+  margin-left: auto; /* Center the content horizontally */
+  margin-right: auto; /* Center the content horizontally */
 }
 
 /* Header */
