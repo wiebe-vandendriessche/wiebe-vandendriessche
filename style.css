@@ -1,0 +1,76 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Header */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* Card Container */
+.card {
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  color: #34495e;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #7f8c8d;
+}
+
+/* Section Titles */
+h3 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+  margin-top: 30px;
+}
+
+/* Tech Stack List */
+code {
+  background-color: #ecf0f1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* LinkedIn Link Styling */
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Ensure spacing is clean and uniform */
+hr {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+  margin: 30px 0;
+}
+
+/* General Paragraph */
+p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
