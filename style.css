@@ -3,8 +3,8 @@ body {
   font-family: 'Arial', sans-serif;
   background-color: #f4f7f6;
   color: #333;
-  margin: 20px; /* Ensure margin around the body */
-  padding: 0;
+  margin: 0;
+  padding: 20px; /* Add padding to the body */
   line-height: 1.6;
   box-sizing: border-box; /* Ensures padding doesn't affect overall width */
   max-width: 1200px; /* Prevent wide content on large screens */
@@ -17,6 +17,7 @@ h1 {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 20px; /* Space below header */
+  padding: 0 10px; /* Padding for header */
 }
 
 /* Card Container */
@@ -46,6 +47,7 @@ h3 {
   padding-bottom: 8px;
   margin-top: 30px;
   margin-bottom: 15px;
+  padding: 0 10px; /* Padding for section titles */
 }
 
 /* Tech Stack List */
@@ -72,6 +74,7 @@ hr {
   height: 1px;
   background-color: #ccc;
   margin: 30px 0;
+  padding: 0 10px; /* Padding for hr to match overall layout */
 }
 
 /* General Paragraph */
@@ -79,13 +82,14 @@ p {
   font-size: 1rem;
   line-height: 1.6;
   margin-bottom: 15px;
+  padding: 0 10px; /* Padding for paragraphs */
 }
 
 /* Mobile and Tablet Responsiveness */
 @media (max-width: 768px) {
-  /* Adjust body margin on smaller screens */
+  /* Adjust body padding on smaller screens */
   body {
-    margin: 10px;
+    padding: 10px;
   }
 
   h1 {
@@ -109,6 +113,7 @@ p {
   h3 {
     font-size: 1.6rem;
     margin-top: 25px;
+    padding: 0 10px;
   }
 
   p {
@@ -139,6 +144,7 @@ p {
   h3 {
     font-size: 1.4rem;
     margin-top: 20px;
+    padding: 0 10px;
   }
 
   p {
