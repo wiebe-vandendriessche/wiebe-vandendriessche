@@ -15,7 +15,7 @@ During my internship at Skyline Communications, I developed an Integration Test 
 
 ---
 
-### 🛠️ Projects & Experience
+### 🛠️ Projects
 
 - 🧠 **Machine Learning for Motion Recognition**  
   Trained multiple **CNN architectures** to classify motion types, analyzing and comparing their performance.
