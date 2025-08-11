@@ -1,7 +1,6 @@
-"use client";
+"use client"
 
 import React, { useRef, useEffect, CSSProperties } from "react";
-import "./Waves.css";
 
 class Grad {
   x: number;
@@ -189,6 +188,7 @@ const Waves: React.FC<WavesProps> = ({
     a: 0,
     set: false,
   });
+
   const configRef = useRef<Config>({
     lineColor,
     waveSpeedX,
@@ -201,6 +201,7 @@ const Waves: React.FC<WavesProps> = ({
     xGap,
     yGap,
   });
+
   const frameIdRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -421,21 +422,21 @@ const Waves: React.FC<WavesProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`waves ${className}`}
       style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        margin: 0,
-        padding: 0,
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
         backgroundColor,
         ...style,
       }}
+      className={`absolute top-0 left-0 w-full h-full overflow-hidden ${className}`}
     >
-      <canvas ref={canvasRef} className="waves-canvas" />
+      <div
+        className="absolute top-0 left-0 bg-[#160000] rounded-full w-[0.5rem] h-[0.5rem]"
+        style={{
+          transform:
+            "translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0)",
+          willChange: "transform",
+        }}
+      />
+      <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
   );
 };
