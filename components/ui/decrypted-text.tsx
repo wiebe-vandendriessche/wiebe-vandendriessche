@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState, useRef } from 'react'
 import { motion, HTMLMotionProps } from 'motion/react'
 
@@ -198,13 +200,20 @@ export default function DecryptedText({
     return (
         <motion.span
             ref={containerRef}
-            className={`inline-block whitespace-pre-wrap ${parentClassName}`}
+            className={`inline-block whitespace-pre-wrap relative ${parentClassName}`}
             {...hoverProps}
             {...props}
         >
-            <span className="sr-only">{displayText}</span>
-
-            <span aria-hidden="true">
+            {/* Reserve space with a hidden static span */}
+            <span
+                aria-hidden="true"
+                className={`${className} invisible pointer-events-none select-none absolute left-0 top-0 w-full h-full`}
+                style={{ whiteSpace: 'pre-wrap' }}
+            >
+                {text}
+            </span>
+            {/* Animated decrypted text */}
+            <span aria-hidden="true" className="relative">
                 {displayText.split('').map((char, index) => {
                     const isRevealedOrDone =
                         revealedIndices.has(index) || !isScrambling || !isHovering
@@ -219,6 +228,7 @@ export default function DecryptedText({
                     )
                 })}
             </span>
+            <span className="sr-only">{displayText}</span>
         </motion.span>
     )
 }

@@ -10,6 +10,7 @@ import {
     NavigationMenuViewport
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -18,9 +19,11 @@ export default function Navbar() {
             <div className="container mx-auto flex items-center justify-between py-2">
                 <div className="text-xl font-bold tracking-tight">Wiebe Vandendriessche</div>
                 {/* Hamburger for mobile */}
-                <button
+                <Button
                     className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-ring"
                     aria-label="Toggle menu"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setMenuOpen((open) => !open)}
                 >
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +34,7 @@ export default function Navbar() {
                             d="M4 6h16M4 12h16M4 18h16"
                         />
                     </svg>
-                </button>
+                </Button>
                 {/* Desktop menu */}
                 <div className="hidden md:flex">
                     <NavigationMenu>
