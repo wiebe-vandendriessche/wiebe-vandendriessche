@@ -1,8 +1,7 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { NextIntlClientProvider, hasLocale, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Navbar from "@/components/Navbar";
@@ -37,6 +36,7 @@ export default function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+  const t = useTranslations('Footer');
   return (
     <html lang={locale}>
       <body className="min-h-screen">
@@ -58,23 +58,25 @@ export default function LocaleLayout({
               className="w-full h-full min-h-full"
             />
           </div>
-          <header className="z-20 backdrop-blur-md">
-            <Navbar />
-          </header>
-          <main className="flex-1 flex flex-col justify-center items-center relative z-10">
-            <NextIntlClientProvider>{children}</NextIntlClientProvider>
-          </main>
-          <div className="z-20 backdrop-blur-md">
-            <FooterSection
-              bottomOnly
-              copyright="© 2025 Wiebe Vandendriessche. All rights reserved"
-              policies={[
-                { text: "Privacy Policy", href: "" },
-                { text: "Terms of Service", href: "" },
-              ]}
-              showModeToggle={false}
-            />
-          </div>
+          <NextIntlClientProvider>
+            <header className="z-20 backdrop-blur-md">
+              <Navbar />
+            </header>
+            <main className="flex-1 flex flex-col justify-center items-center relative z-10">
+              {children}
+            </main>
+            <div className="z-20 backdrop-blur-md">
+              <FooterSection
+                bottomOnly
+                copyright={t('copyright')}
+                policies={[
+                  { text: t('privacy'), href: "" },
+                  { text: t('terms'), href: "" },
+                ]}
+                showModeToggle={false}
+              />
+            </div>
+          </NextIntlClientProvider>
         </div>
       </body>
     </html>

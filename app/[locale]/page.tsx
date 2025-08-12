@@ -1,8 +1,10 @@
 
 import Image from "next/image";
 import DecryptedText from "@/components/ui/decrypted-text";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
+  const t = useTranslations('HomePage');
   return (
     <div className="flex min-h-[80vh] items-center px-4">
       <div className="flex flex-col md:flex-row items-center gap-20 w-full max-w-6xl">
@@ -12,7 +14,7 @@ export default function Home() {
             <div className="relative z-10">
               <h1 className="text-5xl font-extrabold mb-4 text-right font-mono">
                 <DecryptedText
-                  text="Wiebe Vandendriessche"
+                  text={t('name')}
                   className="text-5xl font-extrabold tracking-widest uppercase font-mono text-right"
                   animateOn="view"
                   sequential
@@ -21,7 +23,7 @@ export default function Home() {
               </h1>
               <p className="text-right text-lg text-muted-foreground mt-2 font-mono tracking-wider">
                 <DecryptedText
-                  text={"I am a creative developer passionate about building beautiful, performant web experiences. I love working with modern web technologies and design systems."}
+                  text={t('description')}
                   className="text-lg font-mono tracking-wider text-right"
                   animateOn="view"
                   sequential
@@ -58,7 +60,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-  {/* DecryptedText handles its own animation */}
     </div>
   );
 }

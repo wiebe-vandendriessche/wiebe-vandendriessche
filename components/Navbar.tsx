@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslations } from 'next-intl';
 import {
     NavigationMenu,
     NavigationMenuList,
@@ -13,11 +14,12 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 
 export default function Navbar() {
+    const t = useTranslations('Navbar');
     const [menuOpen, setMenuOpen] = useState(false);
     return (
         <nav className="w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
             <div className="container mx-auto flex items-center justify-between py-2">
-                <div className="text-xl font-bold tracking-tight">Wiebe Vandendriessche</div>
+                <div className="text-xl font-bold tracking-tight">{t('brand')}</div>
                 {/* Hamburger for mobile */}
                 <Button
                     className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-ring"
@@ -41,27 +43,27 @@ export default function Navbar() {
                         <NavigationMenuList>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/">Me</Link>
+                                    <Link href="/">{t('me')}</Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/timeline">Timeline</Link>
+                                    <Link href="/timeline">{t('timeline')}</Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/projects">Projects</Link>
+                                    <Link href="/projects">{t('projects')}</Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/blog">Blog</Link>
+                                    <Link href="/blog">{t('blog')}</Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/contact">Contact</Link>
+                                    <Link href="/contact">{t('contact')}</Link>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                         </NavigationMenuList>
@@ -75,22 +77,22 @@ export default function Navbar() {
                         <ul className="flex flex-col py-2">
                             <li>
                                 <Link href="/" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    Home
+                                    {t('home')}
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/about" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    About
+                                    {t('about')}
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/projects" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    Projects
+                                    {t('projects')}
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/contact" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    Contact
+                                    {t('contact')}
                                 </Link>
                             </li>
                         </ul>
