@@ -10,6 +10,7 @@ import Waves from "@/components/ui/waves";
 import { Footer } from "@/components/ui/footer";
 import FooterSection from "@/components/sections/footer/default";
 import Image from "next/image";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,48 +44,56 @@ export default async function LocaleLayout({
   // If you need translations, fetch them server-side or pass them as props to client components
   // For now, we'll use static text for Footer
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body className="h-full">
-        <div className="relative w-full" style={{ minHeight: '100vh' }}>
-          {/* Absolutely positioned waves background that covers the full content height */}
-          <div className="absolute inset-0 w-full" style={{ height: '100%', minHeight: '100%' }}>
-            <Waves
-              lineColor="black"
-              backgroundColor="rgba(255, 255, 255, 0.2)"
-              waveSpeedX={0.02}
-              waveSpeedY={0.01}
-              waveAmpX={40}
-              waveAmpY={20}
-              friction={0.9}
-              tension={0.01}
-              maxCursorMove={120}
-              xGap={12}
-              yGap={36}
-              className="w-full h-full"
-            />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="relative w-full" style={{ minHeight: '100vh' }}>
+            {/* Absolutely positioned waves background that covers the full content height */}
+            <div className="absolute inset-0 w-full" style={{ height: '100%', minHeight: '100%' }}>
+              <Waves
+                lineColor="--color-waves-lines"
+                backgroundColor="--color-waves-background"
+                waveSpeedX={0.02}
+                waveSpeedY={0.01}
+                waveAmpX={40}
+                waveAmpY={20}
+                friction={0.9}
+                tension={0.01}
+                maxCursorMove={120}
+                xGap={12}
+                yGap={36}
+                className="w-full h-full"
+              />
+            </div>
+            <div className="relative flex flex-col w-full" style={{ minHeight: '100vh' }}>
+              <NextIntlClientProvider locale={locale}>
+                <header className="z-50 backdrop-blur-md fixed top-0 left-0 w-full">
+                  <Navbar />
+                </header>
+                <main className="flex-1 flex flex-col justify-center items-center relative z-10 pt-[64px]">
+                  {children}
+                </main>
+                <div className="z-20 backdrop-blur-md">
+                  <FooterSection
+                    bottomOnly
+                    copyright={"© 2024 Your Company"}
+                    policies={[
+                      { text: "Privacy", href: "" },
+                      { text: "Terms", href: "" },
+                    ]}
+                    showModeToggle={false}
+                  />
+                </div>
+              </NextIntlClientProvider>
+            </div>
           </div>
-          <div className="relative flex flex-col w-full" style={{ minHeight: '100vh' }}>
-            <NextIntlClientProvider locale={locale}>
-              <header className="z-50 backdrop-blur-md fixed top-0 left-0 w-full">
-                <Navbar />
-              </header>
-              <main className="flex-1 flex flex-col justify-center items-center relative z-10 pt-[64px]">
-                {children}
-              </main>
-              <div className="z-20 backdrop-blur-md">
-                <FooterSection
-                  bottomOnly
-                  copyright={"© 2024 Your Company"}
-                  policies={[
-                    { text: "Privacy", href: "" },
-                    { text: "Terms", href: "" },
-                  ]}
-                  showModeToggle={false}
-                />
-              </div>
-            </NextIntlClientProvider>
-          </div>
-        </div>
+        </ThemeProvider>
+
       </body>
     </html>
   );

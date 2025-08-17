@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { ModeToggle } from "./ui/mode-toggle";
 
 export default function Navbar() {
     const t = useTranslations('Navbar');
@@ -43,28 +44,41 @@ export default function Navbar() {
                         <NavigationMenuList>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/">{t('me')}</Link>
+                                    <Button asChild variant="outline" className="px-3 py-1">
+                                        <Link href="/">{t('me')}</Link>
+                                    </Button>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/timeline">{t('timeline')}</Link>
+                                    <Button asChild variant="outline" className="px-3 py-1">
+                                        <Link href="/timeline">{t('timeline')}</Link>
+                                    </Button>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/projects">{t('projects')}</Link>
+                                    <Button asChild variant="outline" className="px-3 py-1">
+                                        <Link href="/projects">{t('projects')}</Link>
+                                    </Button>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/blog">{t('blog')}</Link>
+                                    <Button asChild variant="outline" className="px-3 py-1">
+                                        <Link href="/blog">{t('blog')}</Link>
+                                    </Button>
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
-                                    <Link href="/contact">{t('contact')}</Link>
+                                    <Button asChild variant="outline" className="px-3 py-1">
+                                        <Link href="/contact">{t('contact')}</Link>
+                                    </Button>
                                 </NavigationMenuLink>
+                            </NavigationMenuItem>
+                            <NavigationMenuItem>
+                                <ModeToggle/>
                             </NavigationMenuItem>
                         </NavigationMenuList>
                         <NavigationMenuIndicator />

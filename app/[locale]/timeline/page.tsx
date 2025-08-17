@@ -22,110 +22,114 @@ type TimelineType = 'workExperience' | 'education';
 import {
   VerticalTimeline,
   VerticalTimelineElement,
-} from 'react-vertical-timeline-component';
-import 'react-vertical-timeline-component/style.min.css';
+} from '@/components/ui/vertical-timeline';
 import {
-  BriefcaseIcon,
-  AcademicCapIcon,
-  RocketLaunchIcon,
-  ClockIcon,
-  DocumentIcon,
-  PencilIcon,
-  TrashIcon,
-  ShareIcon,
 } from '@heroicons/react/24/solid';
+import { Briefcase, GraduationCap, Pencil, Trash2, Share2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
-const colorPalette = [
-  '#172554', // dark navy blue
-  '#0c4a6e', // dark cyan-blue
-  '#064e3b', // deep teal green
-  '#78350f', // dark amber-brown
-  '#3c096c', // dark indigo-purple
-  '#1f2937', // slate black
-  '#7f1d1d', // deep crimson red
-];
-
-
-// Deterministic color selection for hydration consistency
-const getColorByIndex = (index: number) => colorPalette[index % colorPalette.length];
-
-const getContrastTextColor = () => '#ffffff';
+// Use CSS variables for colors
+const getCardBackground = () => 'var(--card)';
+const getCardForeground = () => 'var(--card-foreground)';
+const getPrimary = () => 'var(--primary)';
+const getPrimaryForeground = () => 'var(--primary-foreground)';
+const getSecondary = () => 'var(--secondary)';
+const getSecondaryForeground = () => 'var(--secondary-foreground)';
 
 // Data
 const workExperienceData: WorkExperience[] = [
-// Removed duplicate declaration
   {
-    date: 'Jan 2023 - Present',
-    title: 'Senior Software Engineer',
-    subtitle: 'TechCorp, Silicon Valley',
-    description: 'Leading development of AI-driven analytics platform.',
-    skills: ['React', 'Node.js', 'TypeScript'],
+    date: 'Summer 2020',
+    title: 'Assistant',
+    subtitle: 'Bekafun BVBA',
+    description: 'Assisted with logistics, customer service, and technical support at Bekafun BVBA during the summer.',
+    skills: ['Logistics', 'Customer Service', 'Technical Support'],
   },
   {
-    date: 'Jun 2020 - Dec 2022',
-    title: 'Software Engineer',
-    subtitle: 'Innovate Inc., Seattle',
-    description: 'Developed scalable microservices architecture.',
-    skills: ['Java', 'Spring Boot', 'AWS'],
+    date: 'Summer 2021 – Summer 2024',
+    title: 'Lifeguard',
+    subtitle: 'Krekel Swimming Pool Izegem',
+    description: 'Worked as a certified lifeguard at Krekel Swimming Pool Izegem for four consecutive summers, ensuring safety and providing first aid.',
+    skills: ['Lifeguard', 'First Aid', 'Safety'],
   },
   {
-    date: 'May 2018 - May 2020',
-    title: 'Junior Developer',
-    subtitle: 'StartUpX, San Francisco',
-    description: 'Built responsive web applications.',
-    skills: ['HTML', 'CSS', 'JavaScript'],
+    date: 'Summer 2024',
+    title: 'DevOps Engineer Intern',
+    subtitle: 'Skyline Communications',
+    description: 'Developed an Integration Test Boundary Manager in .NET to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.',
+    skills: ['.NET', 'DevOps', 'Automation', 'C#'],
   },
 ];
 
 const educationData: Education[] = [
-// Removed duplicate declaration
   {
-    date: '2014 - 2018',
-    title: 'B.S. Computer Science',
-    subtitle: 'Stanford University',
-    description: 'Graduated with honors, focused on AI and algorithms.',
-    topics: ['Data Structures', 'Machine Learning'],
+    date: '2014 – 2020',
+    title: 'General Secondary Education: Mathematics-Science',
+    subtitle: 'Prizma Campus College Izegem',
+    description: 'Secondary education with a focus on mathematics and science.',
+    topics: ['Mathematics', 'Science'],
   },
   {
-    date: '2020',
-    title: 'Online Certification',
-    subtitle: 'Coursera',
-    description: 'Completed Deep Learning Specialization.',
-    topics: ['Neural Networks', 'TensorFlow'],
+    date: '2020 – 2024',
+    title: 'Bachelor in Information Engineering Technology',
+    subtitle: 'Ghent University (UGent)',
+    description: 'Bachelor program with emphasis on computer science, software development, and mathematics.',
+    topics: ['Computer Science', 'Software Development', 'Mathematics'],
+  },
+  {
+    date: '2024 – 2025',
+    title: 'Master in Information Engineering Technology',
+    subtitle: 'Ghent University (UGent)',
+    description: 'Master program focused on AI, system design, and software engineering.',
+    topics: ['AI Transparency', 'System Design', 'Machine Learning', 'Software Architecture'],
+  },
+  {
+    date: '2025',
+    title: 'Master’s Thesis: AIBoMGen',
+    subtitle: 'Ghent University (UGent)',
+    description: 'Development of a tool to generate AI Bills of Materials (AIBoMs), tracking training data, model dependencies, and compliance with the EU AI Act.',
+    topics: ['AI Transparency', 'Compliance', 'Software Development'],
+  },
+  {
+    date: 'Planned: 2025+',
+    title: 'PhD in Information Engineering Technology',
+    subtitle: 'Ghent University (UGent)',
+    description: 'Planned doctoral trajectory in Information Engineering Technology.',
+    topics: ['Information Engineering Technology', 'Research'],
   },
 ];
-
 
 // Timeline styles
 const timelineStyles: Record<TimelineType, {
   lineColor: string;
-  cardStyle: (index: number) => React.CSSProperties;
+  cardStyle: () => React.CSSProperties;
   iconStyle: React.CSSProperties;
   position: string;
 }> = {
   workExperience: {
-    lineColor: '#6b7280',
-    cardStyle: (index: number) => ({
-      background: getColorByIndex(index),
-      color: '#ffffff',
-      borderRadius: '8px',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.5)',
+    lineColor: 'var(--border)',
+    cardStyle: () => ({
+      background: getCardBackground(),
+      color: getCardForeground(),
+      borderRadius: 'var(--radius-lg)',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
       padding: '16px',
       marginLeft: '20px',
     }),
-    iconStyle: { background: '#0f766e', color: '#fff' },
+    iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
     position: 'right',
   },
   education: {
-    lineColor: '#6b7280',
-    cardStyle: (index: number) => ({
-      background: getColorByIndex(index),
-      color: '#ffffff',
-      borderRadius: '10px',
-      boxShadow: '0 5px 10px rgba(0,0,0,0.5)',
+    lineColor: 'var(--border)',
+    cardStyle: () => ({
+      background: getCardBackground(),
+      color: getCardForeground(),
+      borderRadius: 'var(--radius-lg)',
+      boxShadow: '0 5px 10px rgba(0,0,0,0.05)',
       padding: '20px',
     }),
-    iconStyle: { background: '#6b7280', color: '#fff' },
+    iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
     position: 'left',
   },
 };
@@ -150,29 +154,21 @@ const renderCardContent = (
   type: TimelineType,
   bgColor: string
 ) => {
-  const textColor = getContrastTextColor();
-  const skillStyle = {
-    backgroundColor: textColor === '#ffffff' ? '#1f2937' : '#d1d5db',
-    color: textColor,
-    padding: '4px 8px',
-    borderRadius: '4px',
-  };
-
+  const textColor = getCardForeground();
   return (
     <div style={{ color: textColor }} className="relative">
-      {/* Action Buttons */}
+      {/* Action Buttons using shadcn Button and Lucide icons */}
       <div className="absolute top-2 right-2 flex gap-2">
-        <button onClick={() => handleEdit(item)} title="Edit">
-          <PencilIcon className="w-4 h-4 hover:text-yellow-300" />
-        </button>
-        <button onClick={() => handleDelete(item)} title="Delete">
-          <TrashIcon className="w-4 h-4 hover:text-red-300" />
-        </button>
-        <button onClick={() => handleShare(item)} title="Share">
-          <ShareIcon className="w-4 h-4 hover:text-blue-300" />
-        </button>
+        <Button size="icon" variant="outline" onClick={() => handleEdit(item)} title="Edit">
+          <Pencil className="w-4 h-4" />
+        </Button>
+        <Button size="icon" variant="outline" onClick={() => handleDelete(item)} title="Delete">
+          <Trash2 className="w-4 h-4" />
+        </Button>
+        <Button size="icon" variant="outline" onClick={() => handleShare(item)} title="Share">
+          <Share2 className="w-4 h-4" />
+        </Button>
       </div>
-
       {/* Card Content */}
       <div>
         <h3 className="text-xl font-bold">{item.title}</h3>
@@ -181,9 +177,7 @@ const renderCardContent = (
         {type === 'workExperience' && 'skills' in item && item.skills && (
           <div className="mt-3 flex flex-wrap gap-2">
             {item.skills.map((skill: string, i: number) => (
-              <span key={i} style={skillStyle} className="text-sm">
-                {skill}
-              </span>
+              <Badge key={i} variant="secondary" className="text-sm">{skill}</Badge>
             ))}
           </div>
         )}
@@ -192,7 +186,7 @@ const renderCardContent = (
             <h5 className="text-sm font-semibold">Topics Covered:</h5>
             <ul className="list-disc list-inside text-sm">
               {item.topics.map((topic: string, i: number) => (
-                <li key={i}>{topic}</li>
+                <li key={i}><Badge variant="secondary" className="mr-1">{topic}</Badge></li>
               ))}
             </ul>
           </div>
@@ -221,7 +215,7 @@ const renderTimeline = (
         lineColor={style.lineColor}
       >
         {data.map((item, index) => {
-          const cardStyle = style.cardStyle(index);
+          const cardStyle = style.cardStyle();
           return (
             <VerticalTimelineElement
               key={index}
@@ -230,6 +224,7 @@ const renderTimeline = (
               iconStyle={style.iconStyle}
               date={item.date}
               icon={icon}
+              position={style.position === 'right' ? 'right' : 'left'}
             >
               {renderCardContent(item, type, String(cardStyle.background))}
             </VerticalTimelineElement>
@@ -250,49 +245,56 @@ const TimelinePage = () => {
   const sectionMap = {
     workExperience: {
       data: workExperienceData,
-      icon: <BriefcaseIcon className="w-5 h-5" />,
+      icon: <Briefcase className="w-5 h-5" />,
     },
     education: {
       data: educationData,
-      icon: <AcademicCapIcon className="w-5 h-5" />,
+      icon: <GraduationCap className="w-5 h-5" />,
     },
   };
 
   return (
-    <section className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center text-black">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
-        Timeline
-      </h1>
-      {/* Filter Buttons */}
-      <div className="flex justify-center gap-2 flex-wrap mb-8">
-        {[...Object.keys(sectionMap), 'all'].map((section) => (
-          <button
-            key={section}
-            onClick={() => setActiveSection(section as TimelineType | 'all')}
-            className={`px-3 py-1.5 rounded-md font-medium transition-colors border shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-              activeSection === section
-                ? 'bg-primary text-white dark:bg-white dark:text-black'
-                : 'bg-gray-100 dark:bg-gray-800 text-black hover:bg-gray-200 dark:hover:bg-gray-700'
-            }`}
+    <section className="relative w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center text-black">
+      {/* Blurry gradient background as very first child, absolutely positioned and behind all content */}
+      <div className="blurry-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
+      {/* ...existing code... */}
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+          Timeline
+        </h1>
+        {/* Filter Buttons */}
+        <div className="flex justify-center gap-2 flex-wrap mb-8">
+          {[...Object.keys(sectionMap), 'all'].map((section) => (
+            <Button
+              key={section}
+              onClick={() => setActiveSection(section as TimelineType | 'all')}
+              variant={activeSection === section ? 'default' : 'outline'}
+            >
+              {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
+            </Button>
+          ))}
+        </div>
+        {/* Timeline Sections */}
+        <div className="w-full">
+          {/* Fly-in animation on section switch */}
+          <div
+            key={activeSection}
+            className="animate-flyin"
           >
-            {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
-          </button>
-        ))}
-      </div>
-      {/* Timeline Sections */}
-      <div className="w-full">
-        {activeSection === 'all' ? (
-          <>
-            {renderTimeline('workExperience', workExperienceData, sectionMap.workExperience.icon)}
-            {renderTimeline('education', educationData, sectionMap.education.icon)}
-          </>
-        ) : (
-          renderTimeline(
-            activeSection as 'workExperience' | 'education',
-            sectionMap[activeSection as 'workExperience' | 'education']?.data,
-            sectionMap[activeSection as 'workExperience' | 'education']?.icon
-          )
-        )}
+            {activeSection === 'all' ? (
+              <>
+                {renderTimeline('workExperience', workExperienceData, sectionMap.workExperience.icon)}
+                {renderTimeline('education', educationData, sectionMap.education.icon)}
+              </>
+            ) : (
+              renderTimeline(
+                activeSection as 'workExperience' | 'education',
+                sectionMap[activeSection as 'workExperience' | 'education']?.data,
+                sectionMap[activeSection as 'workExperience' | 'education']?.icon
+              )
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
