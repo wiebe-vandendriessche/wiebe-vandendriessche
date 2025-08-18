@@ -236,35 +236,37 @@ const Waves: React.FC<WavesProps> = ({
     if (!canvas || !container) return;
     ctxRef.current = canvas.getContext("2d");
 
+    let animatingLines = false;
+    let prevTotalLines = 0;
+    let prevTotalPoints = 0;
+
     function setSize() {
       if (!container || !canvas) return;
       const rect = container.getBoundingClientRect();
+      const fixedHeight = 1200; // px, adjust as needed
       boundingRef.current = {
         width: rect.width,
-        height: rect.height,
+        height: fixedHeight,
         left: rect.left,
         top: rect.top,
       };
       canvas.width = rect.width;
-      canvas.height = rect.height;
+      canvas.height = fixedHeight;
     }
 
-    function setLines() {
-      const { width, height } = boundingRef.current;
-      linesRef.current = [];
-      const oWidth = width + 200,
-        oHeight = height + 30;
+    function setLinesFixedSpacing() {
+  const { width, height } = boundingRef.current;
       const { xGap, yGap } = configRef.current;
-      const totalLines = Math.ceil(oWidth / xGap);
-      const totalPoints = Math.ceil(oHeight / yGap);
+      const totalLines = Math.ceil((width + 200) / xGap);
+      const totalPoints = Math.floor(height / yGap); // fixed spacing
       const xStart = (width - xGap * totalLines) / 2;
-      const yStart = (height - yGap * totalPoints) / 2;
+      linesRef.current = [];
       for (let i = 0; i <= totalLines; i++) {
         const pts: Point[] = [];
         for (let j = 0; j <= totalPoints; j++) {
           pts.push({
             x: xStart + xGap * i,
-            y: yStart + yGap * j,
+            y: yGap * j, // always anchored to top
             wave: { x: 0, y: 0 },
             cursor: { x: 0, y: 0, vx: 0, vy: 0 },
           });
@@ -379,7 +381,7 @@ const Waves: React.FC<WavesProps> = ({
 
     function onResize() {
       setSize();
-      setLines();
+      setLinesFixedSpacing();
     }
     function onMouseMove(e: MouseEvent) {
       updateMouse(e.clientX, e.clientY);
@@ -402,8 +404,8 @@ const Waves: React.FC<WavesProps> = ({
       }
     }
 
-    setSize();
-    setLines();
+  setSize();
+  setLinesFixedSpacing();
     frameIdRef.current = requestAnimationFrame(tick);
     window.addEventListener("resize", onResize);
     window.addEventListener("mousemove", onMouseMove);
@@ -423,10 +425,16 @@ const Waves: React.FC<WavesProps> = ({
     <div
       ref={containerRef}
       style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: 1200,
         backgroundColor,
+        zIndex: -1,
         ...style,
       }}
-      className={`absolute top-0 left-0 w-full h-full overflow-hidden ${className}`}
+      className={`overflow-hidden ${className}`}
     >
       <div
         className="absolute top-0 left-0 bg-[#160000] rounded-full w-[0.5rem] h-[0.5rem]"
