@@ -139,18 +139,14 @@
   -webkit-mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 100%);
 }
 
-/* Frosted glass background for text readability */
-/* Blurry gradient background for text readability */
-.blurry-gradient-bg {
+/* Foggy gradient background for text readability */
+.foggy-gradient-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   border-radius: 1.5rem;
-  background: radial-gradient(ellipse at 60% 40%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 60%, transparent 100%), white;
+  background: radial-gradient(ellipse at 60% 40%, var(--color-secondary) 0%, var(--color-secondary) 60%, transparent 100%), var(--color-secondary);
   filter: blur(64px);
 }
 
-.dark .blurry-gradient-bg {
-  background: radial-gradient(ellipse at 60% 40%, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%), black;
-}

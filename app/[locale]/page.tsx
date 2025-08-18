@@ -10,7 +10,7 @@ export default function Home() {
       <div className="flex flex-col md:flex-row items-center gap-20 w-full max-w-6xl">
         <div className="relative flex flex-col justify-center items-end w-[500px] h-[500px]">
           <div className="relative flex flex-col justify-center p-12">
-            <div className="blurry-gradient-bg"></div>
+            <div className="foggy-gradient-bg"></div>
             <div className="relative z-10">
               <h1 className="text-5xl font-extrabold mb-4 text-right font-mono">
                 <DecryptedText

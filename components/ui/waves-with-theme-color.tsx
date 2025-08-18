@@ -14,8 +14,8 @@ const WavesWithThemeColor: React.FC<React.ComponentProps<typeof Waves>> = (props
       const root = document.documentElement;
       const computedStyle = getComputedStyle(root);
       return {
-        lineColor: computedStyle.getPropertyValue("--color-waves-lines").trim() || "#fff",
-        backgroundColor: computedStyle.getPropertyValue("--color-waves-background").trim() || "#fff",
+        lineColor: computedStyle.getPropertyValue("--color-primary").trim() || "#fff",
+        backgroundColor: computedStyle.getPropertyValue("--color-secondary").trim() || "#fff",
       };
     };
 

@@ -326,7 +326,7 @@ const TimelinePage = () => {
   return (
     <section className="relative w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
       {/* Blurry gradient background as very first child, absolutely positioned and behind all content */}
-      <div className="blurry-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
+      <div className="foggy-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
       {/* ...existing code... */}
       <div className="relative z-10 w-full flex flex-col items-center">
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
