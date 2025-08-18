@@ -6,7 +6,7 @@ import { NextIntlClientProvider, hasLocale, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Navbar from "@/components/Navbar";
-import WavesWithThemeColor from "@/components/ui/waves-with-theme-color";
+import WavesBackground from "@/components/ui/waves-background";
 import { Footer } from "@/components/ui/footer";
 import FooterSection from "@/components/sections/footer/default";
 import Image from "next/image";
@@ -55,20 +55,7 @@ export default async function LocaleLayout({
         >
           <div className="relative w-full" style={{ minHeight: '100vh' }}>
             {/* Absolutely positioned waves background that covers the full content height */}
-            <div className="absolute inset-0 w-full" style={{ height: '100%', minHeight: '100%' }}>
-              <WavesWithThemeColor
-                waveSpeedX={0.02}
-                waveSpeedY={0.01}
-                waveAmpX={40}
-                waveAmpY={20}
-                friction={0.9}
-                tension={0.01}
-                maxCursorMove={120}
-                xGap={12}
-                yGap={36}
-                className="w-full h-full"
-              />
-            </div>
+            <WavesBackground />
             <div className="relative flex flex-col w-full" style={{ minHeight: '100vh' }}>
               <NextIntlClientProvider locale={locale}>
                 <header className="z-50 backdrop-blur-md fixed top-0 left-0 w-full">

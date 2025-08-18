@@ -207,7 +207,7 @@ const renderTimeline = (
 
   return (
     <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-4 text-black">
+      <h2 className="text-2xl font-bold mb-4">
         {type.charAt(0).toUpperCase() + type.slice(1).replace(/([A-Z])/g, ' $1')}
       </h2>
       <VerticalTimeline
@@ -254,7 +254,7 @@ const TimelinePage = () => {
   };
 
   return (
-    <section className="relative w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center text-black">
+    <section className="relative w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
       {/* Blurry gradient background as very first child, absolutely positioned and behind all content */}
       <div className="blurry-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
       {/* ...existing code... */}
