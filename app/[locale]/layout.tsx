@@ -6,7 +6,7 @@ import { NextIntlClientProvider, hasLocale, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Navbar from "@/components/Navbar";
-import Waves from "@/components/ui/waves";
+import WavesWithThemeColor from "@/components/ui/waves-with-theme-color";
 import { Footer } from "@/components/ui/footer";
 import FooterSection from "@/components/sections/footer/default";
 import Image from "next/image";
@@ -44,8 +44,9 @@ export default async function LocaleLayout({
   // If you need translations, fetch them server-side or pass them as props to client components
   // For now, we'll use static text for Footer
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={geistSans.variable + ' ' + geistMono.variable}>
       <body className="h-full">
+        {/* ThemeProvider will apply .dark class to <html> when dark mode is active */}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -55,9 +56,7 @@ export default async function LocaleLayout({
           <div className="relative w-full" style={{ minHeight: '100vh' }}>
             {/* Absolutely positioned waves background that covers the full content height */}
             <div className="absolute inset-0 w-full" style={{ height: '100%', minHeight: '100%' }}>
-              <Waves
-                lineColor="--color-waves-lines"
-                backgroundColor="--color-waves-background"
+              <WavesWithThemeColor
                 waveSpeedX={0.02}
                 waveSpeedY={0.01}
                 waveAmpX={40}
@@ -93,7 +92,6 @@ export default async function LocaleLayout({
             </div>
           </div>
         </ThemeProvider>
-
       </body>
     </html>
   );

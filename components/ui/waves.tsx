@@ -146,8 +146,8 @@ interface WavesProps {
 }
 
 const Waves: React.FC<WavesProps> = ({
-  lineColor = "black",
-  backgroundColor = "transparent",
+  lineColor = "--color-waves-lines",
+  backgroundColor = "--color-waves-background",
   waveSpeedX = 0.0125,
   waveSpeedY = 0.005,
   waveAmpX = 32,
@@ -437,10 +437,10 @@ const Waves: React.FC<WavesProps> = ({
       className={`overflow-hidden ${className}`}
     >
       <div
-        className="absolute top-0 left-0 bg-[#160000] rounded-full w-[0.5rem] h-[0.5rem]"
+        className="absolute top-0 left-0 rounded-full w-[0.5rem] h-[0.5rem]"
         style={{
-          transform:
-            "translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0)",
+          backgroundColor: lineColor,
+          transform: "translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), 0)",
           willChange: "transform",
         }}
       />

@@ -14,9 +14,7 @@ export const VerticalTimeline: React.FC<VerticalTimelineProps> = ({
   lineColor = '#FFF',
   children,
 }) => {
-  if (typeof window === 'object') {
-    document.documentElement.style.setProperty('--line-color', lineColor);
-  }
+  // Use CSS variable for line color in styles, do not set it on document.documentElement
   return (
     <div
       className={[
