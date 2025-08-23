@@ -2,10 +2,13 @@
 import Image from "next/image";
 import DecryptedText from "@/components/ui/decrypted-text";
 import { useTranslations } from "next-intl";
+import HeroSection from "@/components/hero-section";
 
 export default function Home() {
   const t = useTranslations('HomePage');
   return (
+    <HeroSection />
+    /*
     <div className="flex min-h-[80vh] items-center px-4">
       <div className="flex flex-col md:flex-row items-center gap-20 w-full max-w-6xl">
         <div className="relative flex flex-col justify-center items-end w-[500px] h-[500px]">
@@ -34,10 +37,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Large, circular monochrome photo */}
         <div className="flex items-center justify-center">
           <div className="relative w-[500] h-[500]">
-            {/* Blurred edge layer */}
             <Image
               src="/IMG_7827_cropped.jpg"
               alt="Wiebe Vandendriessche blurred edge"
@@ -48,7 +49,6 @@ export default function Home() {
               draggable={false}
               priority
             />
-            {/* Sharp center layer */}
             <Image
               src="/IMG_7827_cropped.jpg"
               alt="Wiebe Vandendriessche"
@@ -61,5 +61,6 @@ export default function Home() {
         </div>
       </div>
     </div>
-  );
+  */ 
+ );
 }

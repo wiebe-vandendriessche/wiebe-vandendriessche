@@ -64,7 +64,7 @@ export default async function LocaleLayout({
                 <header className="z-50 backdrop-blur-md fixed top-0 left-0 w-full">
                   <Navbar />
                 </header>
-                <main className="flex-1 flex flex-col justify-center items-center relative z-10 pt-[64px]">
+                <main className="flex-1 flex flex-col justify-center items-stretch relative z-10 pt-[64px]">
                   {children}
                 </main>
                 <div className="z-20 backdrop-blur-md">
