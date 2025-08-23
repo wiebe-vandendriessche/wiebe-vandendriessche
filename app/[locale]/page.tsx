@@ -43,7 +43,7 @@ export default function Home() {
               alt="Wiebe Vandendriessche blurred edge"
               width={500}
               height={500}
-              className="absolute inset-0 w-full h-full object-cover rounded-full grayscale blur-xl mask-edge"
+              className="absolute inset-0 w-full h-full object-cover rounded-full blur-xl mask-edge"
               aria-hidden="true"
               draggable={false}
               priority
@@ -54,7 +54,7 @@ export default function Home() {
               alt="Wiebe Vandendriessche"
               width={500}
               height={500}
-              className="relative w-full h-full object-cover rounded-full grayscale mask-center"
+              className="relative w-full h-full object-cover rounded-full mask-center"
               priority
             />
           </div>

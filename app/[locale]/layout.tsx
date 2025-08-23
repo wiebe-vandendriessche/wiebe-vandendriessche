@@ -53,7 +53,10 @@ export default async function LocaleLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative w-full" style={{ minHeight: '100vh' }}>
+          <div
+            className="relative w-full bg-secondary z-1"
+            style={{ minHeight: '100vh' }}
+          >
             {/* Absolutely positioned waves background that covers the full content height */}
             <WavesBackground />
             <div className="relative flex flex-col w-full" style={{ minHeight: '100vh' }}>

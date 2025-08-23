@@ -5,8 +5,8 @@ import Waves from "@/components/ui/waves";
 
 const WavesWithThemeColor: React.FC<React.ComponentProps<typeof Waves>> = (props) => {
   const [colors, setColors] = useState({
-    lineColor: "#fff",
-    backgroundColor: "#fff",
+    lineColor: "transparent",
+    backgroundColor: "transparent",
   });
 
   useEffect(() => {
