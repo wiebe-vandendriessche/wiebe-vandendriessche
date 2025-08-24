@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./ui/mode-toggle";
+import LocaleSwitcher from "./LocaleSwitcher";
 
 export default function Navbar() {
     const t = useTranslations('Navbar');
@@ -78,12 +79,16 @@ export default function Navbar() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
-                                <ModeToggle/>
+                                <ModeToggle />
+                            </NavigationMenuItem>
+                            <NavigationMenuItem>
+                                <LocaleSwitcher />
                             </NavigationMenuItem>
                         </NavigationMenuList>
                         <NavigationMenuIndicator />
                         <NavigationMenuViewport />
                     </NavigationMenu>
+
                 </div>
                 {/* Mobile menu dropdown */}
                 {menuOpen && (

@@ -12,64 +12,73 @@ export default function HeroSection() {
 
     return (
         <>
-            <div className="overflow-x-hidden">
-                <section className="pb-4 md:pb-8">
-                    <div className="pb-4 pt-4 md:pb-8 lg:pb-12 lg:pt-8">
-                        <div className="relative mx-auto flex max-w-6xl flex-col-reverse md:flex-row items-center gap-8 px-6">
-                            <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left">
-                                <h1>
-                                    <DecryptedText
-                                        text={t('name')}
-                                        className="mt-8 max-w-md text-balance text-4xl font-extrabold tracking-widest uppercase font-mono text-left md:text-5xl lg:mt-16 xl:text-6xl"
-                                        encryptedClassName="mt-8 max-w-md text-balance text-4xl font-extrabold tracking-widest uppercase font-mono text-left md:text-5xl lg:mt-16 xl:text-6xl"
-                                        animateOn="view"
-                                        sequential
-                                        revealDirection="start"
-                                    />
-                                </h1>
-                                <p className="mt-8 max-w-2xl text-pretty text-lg">
-                                    <DecryptedText
-                                        text={t('description')}
-                                        className="text-lg font-mono tracking-wider text-left"
-                                        encryptedClassName="text-lg font-mono tracking-wider text-left"
-                                        animateOn="view"
-                                        sequential
-                                        revealDirection="start"
-                                        speed={18}
-                                    />
-                                </p>
-                                <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
-                                    <Button
-                                        size="lg"
-                                        className="px-5 text-base">
-                                        <Link href="#features">
-                                            <span className="text-nowrap">Explore Features</span>
-                                        </Link>
-                                    </Button>
-                                    <Button
-                                        size="lg"
-                                        variant="ghost"
-                                        className="px-5 text-base">
-                                        <Link href="/jobs/new">
-                                            <span className="text-nowrap">Request Training Job</span>
-                                        </Link>
-                                    </Button>
+            <section className="pb-4 md:pb-8">
+                <div className="pb-4 pt-4 md:pb-8 lg:pb-12 lg:pt-8">
+                    <div className="relative mx-auto flex max-w-6xl flex-col-reverse md:flex-row items-center gap-8 px-6">
+                        <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left">
+                            <div className="relative w-full">
+                                <div className="absolute inset-0 w-full h-full foggy-gradient-bg rounded-xl z-0" />
+                                <div className="relative z-10">
+                                    <h1>
+                                        <DecryptedText
+                                            text={t('name')}
+                                            className="mt-8 max-w-md text-balance text-4xl font-extrabold tracking-widest uppercase font-mono text-left md:text-5xl lg:mt-16 xl:text-6xl"
+                                            encryptedClassName="mt-8 max-w-md text-balance text-4xl font-extrabold tracking-widest uppercase font-mono text-left md:text-5xl lg:mt-16 xl:text-6xl"
+                                            animateOn="view"
+                                            sequential
+                                            revealDirection="start"
+                                            speed={15}
+                                            useOriginalCharsOnly
+                                        />
+                                    </h1>
+                                    <p className="mt-8 max-w-2xl text-pretty text-lg">
+                                        <DecryptedText
+                                            text={t('description')}
+                                            className="text-lg font-mono tracking-wider text-left"
+                                            encryptedClassName="text-lg font-mono tracking-wider text-left"
+                                            animateOn="view"
+                                            sequential
+                                            revealDirection="start"
+                                            speed={10}
+                                            useOriginalCharsOnly
+                                        />
+                                    </p>
+                                    <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
+                                        <Button
+                                            size="lg"
+                                            className="px-5 text-base">
+                                            <Link href="#features">
+                                                <span className="text-nowrap">Explore Features</span>
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            size="lg"
+                                            variant="ghost"
+                                            className="px-5 text-base">
+                                            <Link href="/jobs/new">
+                                                <span className="text-nowrap">Request Training Job</span>
+                                            </Link>
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="w-full md:w-1/2 flex justify-center items-center">
-                                <Image
-                                    className="object-cover rounded-full aspect-square max-w-full max-h-[800px]"
-                                    src="/IMG_7827_cropped.jpg"
-                                    alt="Hero"
-                                    height={800}
-                                    width={800}
-                                    priority
-                                />
-                            </div>
+                        </div>
+                        <div className="w-full md:w-1/2 flex justify-center items-center">
+
+                            <Image
+                                className="object-cover rounded-full aspect-square max-w-full max-h-[800px] mask-center"
+                                src="/IMG_7827_cropped.jpg"
+                                alt="Wiebe Vandendriessche"
+                                height={800}
+                                width={800}
+                                priority
+                            />
+
                         </div>
                     </div>
-                </section>
-                {/* 
+                </div>
+            </section>
+            {/* 
                 <section className="pb-4 md:pb-6 pt-4 md:pt-6">
                     <div className="w-full bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                         <div className="container mx-auto flex items-center justify-between py-2">
@@ -175,7 +184,6 @@ export default function HeroSection() {
                     </div>
                 </section>
                 */}
-            </div>
         </>
     )
 }
