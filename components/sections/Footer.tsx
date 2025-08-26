@@ -2,14 +2,13 @@ import { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-import LaunchUI from "../../logos/launch-ui";
 import {
   Footer,
   FooterBottom,
   FooterColumn,
   FooterContent,
-} from "../../ui/footer";
-import { ModeToggle } from "../../ui/mode-toggle";
+} from "../ui/footer";
+import { ModeToggle } from "../ui/mode-toggle";
 
 interface FooterLink {
   text: string;
@@ -33,7 +32,7 @@ interface FooterProps {
 }
 
 export default function FooterSection({
-  logo = <LaunchUI />,
+  logo = null,
   name = "Launch UI",
   columns = [
     {

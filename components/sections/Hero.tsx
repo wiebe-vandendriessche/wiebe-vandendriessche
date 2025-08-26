@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 import { useTranslations } from "next-intl";
-import DecryptedText from './ui/decrypted-text'
+import DecryptedText from '../ui/decrypted-text'
 
 export default function HeroSection() {
     const t = useTranslations('HomePage');
@@ -13,7 +13,7 @@ export default function HeroSection() {
     return (
         <>
             <section className="pb-4 md:pb-8">
-                <div className="pb-4 pt-4 md:pb-8 lg:pb-12 lg:pt-8">
+                <div className="pb-2 pt-2 sm:pb-4 sm:pt-4 md:pb-8 lg:pb-12 lg:pt-8">
                     <div className="relative mx-auto flex max-w-6xl flex-col-reverse md:flex-row items-center gap-8 px-6">
                         <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left">
                             <div className="relative w-full">
@@ -22,8 +22,8 @@ export default function HeroSection() {
                                     <h1>
                                         <DecryptedText
                                             text={t('name')}
-                                            className="mt-8 max-w-md text-balance text-4xl font-extrabold tracking-widest uppercase font-mono text-left md:text-5xl lg:mt-16 xl:text-6xl"
-                                            encryptedClassName="mt-8 max-w-md text-balance text-4xl font-extrabold tracking-widest uppercase font-mono text-left md:text-5xl lg:mt-16 xl:text-6xl"
+                                            className="mt-8 max-w-md text-balance text-2xl font-extrabold tracking-widest uppercase font-mono text-left sm:text-3xl md:text-5xl lg:mt-16 xl:text-6xl"
+                                            encryptedClassName="mt-8 max-w-md text-balance text-2xl font-extrabold tracking-widest uppercase font-mono text-left sm:text-3xl md:text-5xl lg:mt-16 xl:text-6xl"
                                             animateOn="view"
                                             sequential
                                             revealDirection="start"
@@ -34,8 +34,8 @@ export default function HeroSection() {
                                     <p className="mt-8 max-w-2xl text-pretty text-lg">
                                         <DecryptedText
                                             text={t('description')}
-                                            className="text-lg font-mono tracking-wider text-left"
-                                            encryptedClassName="text-lg font-mono tracking-wider text-left"
+                                            className="text-base font-mono tracking-wider text-left sm:text-lg"
+                                            encryptedClassName="text-base font-mono tracking-wider text-left sm:text-lg"
                                             animateOn="view"
                                             sequential
                                             revealDirection="start"
@@ -64,16 +64,14 @@ export default function HeroSection() {
                             </div>
                         </div>
                         <div className="w-full md:w-1/2 flex justify-center items-center">
-
                             <Image
-                                className="object-cover rounded-full aspect-square max-w-full max-h-[800px] mask-center"
+                                className="object-cover rounded-full aspect-square max-w-[200px] max-h-[200px] sm:max-w-[300px] sm:max-h-[300px] md:max-w-full md:max-h-[800px] mask-center mt-0 sm:mt-2"
                                 src="/IMG_7827_cropped.jpg"
                                 alt="Wiebe Vandendriessche"
                                 height={800}
                                 width={800}
                                 priority
                             />
-
                         </div>
                     </div>
                 </div>

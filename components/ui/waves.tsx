@@ -429,7 +429,7 @@ const Waves: React.FC<WavesProps> = ({
         top: 0,
         left: 0,
         width: '100vw',
-        height: 1200,
+        height: '110vh',
         backgroundColor,
         zIndex: -1,
         ...style,
