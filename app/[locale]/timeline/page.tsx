@@ -21,7 +21,7 @@ type Education = {
 };
 // OtherItem type already defined above, remove duplicate
 
-type TimelineType = 'workExperience' | 'education' | 'other';
+type TimelineType = 'workExperience' | 'education' | 'hobbies';
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -41,7 +41,7 @@ const getSecondary = () => 'var(--secondary)';
 const getSecondaryForeground = () => 'var(--secondary-foreground)';
 
 // Data
-type OtherItem = {
+type HobbiesItem = {
   date: string;
   title: string;
   subtitle: string;
@@ -49,13 +49,20 @@ type OtherItem = {
   tags: string[];
 };
 
-const otherData: OtherItem[] = [
+const hobbiesData: HobbiesItem[] = [
   {
     date: '2020',
     title: 'Saxophone Specialisation Classical Music',
     subtitle: 'Art\'iz Music Academy',
     description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
     tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
+  },
+  {
+    date: '2016 – 2020',
+    title: 'Youth Animator',
+    subtitle: 'Youth Movement KSA Izegem',
+    description: 'Volunteered as a youth animator, organizing activities, leading groups, and fostering community spirit in KSA Izegem.',
+    tags: ['Youth Animator', 'Leadership', 'Community', 'Volunteering', 'KSA'],
   },
   {
     date: '2020',
@@ -88,6 +95,13 @@ const otherData: OtherItem[] = [
 ];
 const workExperienceData: WorkExperience[] = [
   {
+    date: 'Planned: 2025+',
+    title: 'PhD Researcher & Teaching Assistant',
+    subtitle: 'Ghent University (UGent)',
+    description: 'PhD trajectory in Information Engineering Technology, assisting with university courses, conducting research, writing academic papers, and attending international conferences.',
+    skills: ['Teaching', 'Research', 'Academic Writing', 'Conferences', 'Information Engineering Technology'],
+  },
+  {
     date: 'Summer 2024',
     title: 'DevOps Engineer Intern',
     subtitle: 'Skyline Communications',
@@ -116,7 +130,7 @@ const educationData: Education[] = [
     title: 'PhD in Information Engineering Technology',
     subtitle: 'Ghent University (UGent)',
     description: 'Planned doctoral trajectory in Information Engineering Technology.',
-    topics: ['Information Engineering Technology', 'Research'],
+    topics: ['Academic Writing', 'Conferences', 'Research'],
   },
   {
     date: '2025',
@@ -129,22 +143,29 @@ const educationData: Education[] = [
     date: '2024 – 2025',
     title: 'Master in Information Engineering Technology',
     subtitle: 'Ghent University (UGent)',
-    description: 'Master program focused on AI, system design, and software engineering.',
-    topics: ['AI Transparency', 'System Design', 'Machine Learning', 'Software Architecture'],
+    description: 'Master program focused on AI, system design, and cyber security.',
+    topics: ['Cyber Security', 'System Design', 'Machine Learning', 'Blockchain', 'Computer Graphics'],
   },
   {
-    date: '2020 – 2024',
+    date: '2021 – 2024',
     title: 'Bachelor in Information Engineering Technology',
     subtitle: 'Ghent University (UGent)',
     description: 'Bachelor program with emphasis on computer science, software development, and mathematics.',
-    topics: ['Computer Science', 'Software Development', 'Mathematics'],
+    topics: ['Computer Science', 'General Sciences', 'Mathematics', 'Programming'],
   },
   {
-    date: '2014 – 2020',
+    date: '2017 – 2021',
     title: 'General Secondary Education: Mathematics-Science',
     subtitle: 'Prizma Campus College Izegem',
-    description: 'Secondary education with a focus on mathematics and science.',
+    description: 'ASO Secondary education with a focus on mathematics and science.',
     topics: ['Mathematics', 'Science'],
+  },
+  {
+    date: '2015 – 2017',
+    title: 'Start General Secondary Education: Latin',
+    subtitle: 'Prizma Middenschool Izegem',
+    description: 'Start of ASO secondary education with a focus on Latin.',
+    topics: ['Latin', 'Mathematics'],
   },
 ];
 
@@ -180,7 +201,7 @@ const timelineStyles: Record<TimelineType, {
     iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
     position: 'left',
   },
-  other: {
+  hobbies: {
     lineColor: 'var(--border)',
     cardStyle: () => ({
       background: getCardBackground(),
@@ -196,40 +217,18 @@ const timelineStyles: Record<TimelineType, {
 };
 
 // Action Handlers (Dummy implementations)
-const handleEdit = (item: WorkExperience | Education | OtherItem) => {
-  alert(`Editing: ${item.title}`);
-};
 
-const handleDelete = (item: WorkExperience | Education | OtherItem) => {
-  alert(`Deleting: ${item.title}`);
-};
-
-const handleShare = (item: WorkExperience | Education | OtherItem) => {
-  alert(`Sharing: ${item.title}`);
-};
 
 // Content Renderer
 
 const renderCardContent = (
-  item: WorkExperience | Education | OtherItem,
+  item: WorkExperience | Education | HobbiesItem,
   type: TimelineType,
   bgColor: string
 ) => {
   const textColor = getCardForeground();
   return (
     <div style={{ color: textColor }} className="relative">
-      {/* Action Buttons using shadcn Button and Lucide icons */}
-      <div className="absolute top-2 right-2 flex gap-2">
-        <Button size="icon" variant="outline" onClick={() => handleEdit(item)} title="Edit">
-          <Pencil className="w-4 h-4" />
-        </Button>
-        <Button size="icon" variant="outline" onClick={() => handleDelete(item)} title="Delete">
-          <Trash2 className="w-4 h-4" />
-        </Button>
-        <Button size="icon" variant="outline" onClick={() => handleShare(item)} title="Share">
-          <Share2 className="w-4 h-4" />
-        </Button>
-      </div>
       {/* Card Content */}
       <div>
         <h3 className="text-xl font-bold">{item.title}</h3>
@@ -243,16 +242,13 @@ const renderCardContent = (
           </div>
         )}
         {type === 'education' && 'topics' in item && item.topics && (
-          <div className="mt-3">
-            <h5 className="text-sm font-semibold">Topics Covered:</h5>
-            <ul className="list-disc list-inside text-sm">
-              {item.topics.map((topic: string, i: number) => (
-                <li key={i}><Badge variant="secondary" className="mr-1">{topic}</Badge></li>
-              ))}
-            </ul>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {item.topics.map((topic: string, i: number) => (
+              <Badge key={i} variant="secondary" className="text-sm">{topic}</Badge>
+            ))}
           </div>
         )}
-        {type === 'other' && 'tags' in item && item.tags && (
+        {type === 'hobbies' && 'tags' in item && item.tags && (
           <div className="mt-3 flex flex-wrap gap-2">
             {item.tags.map((tag: string, i: number) => (
               <Badge key={i} variant="secondary" className="text-sm">{tag}</Badge>
@@ -267,7 +263,7 @@ const renderCardContent = (
 // Timeline Renderer
 const renderTimeline = (
   type: TimelineType,
-  data: (WorkExperience | Education | OtherItem)[],
+  data: (WorkExperience | Education | HobbiesItem)[],
   icon: React.ReactElement
 ) => {
   if (!data?.length) return null;
@@ -319,8 +315,8 @@ const TimelinePage = () => {
       data: educationData,
       icon: <GraduationCap className="w-5 h-5" />,
     },
-    other: {
-      data: otherData,
+    hobbies: {
+      data: hobbiesData,
       icon: <Ellipsis className="w-5 h-5" />,
     },
   };
@@ -357,7 +353,7 @@ const TimelinePage = () => {
               <>
                 {renderTimeline('workExperience', workExperienceData, sectionMap.workExperience.icon)}
                 {renderTimeline('education', educationData, sectionMap.education.icon)}
-                {renderTimeline('other', otherData, sectionMap.other.icon)}
+                {renderTimeline('hobbies', hobbiesData, sectionMap.hobbies.icon)}
               </>
             ) : (
               renderTimeline(

@@ -18,11 +18,11 @@ import {
     NavigationMenuIndicator,
     NavigationMenuViewport
 } from "@/components/ui/navigation-menu";
-import Link from "next/link";
 import { Button } from "../ui/button";
 import { ModeToggle } from "../ui/mode-toggle";
 import LocaleSwitcher from "../LocaleSwitcher";
 import { Menu } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 export default function Navbar() {
     const t = useTranslations('Navbar');
@@ -32,46 +32,63 @@ export default function Navbar() {
             <div className="container mx-auto flex items-center justify-between py-2 flex-shrink-0">
                 <div className="text-xl font-bold tracking-tight ml-2 flex-shrink-0">{t('brand')}</div>
                 {/* Hamburger for mobile using Sheet */}
-                <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+                <Sheet
+                    open={menuOpen}
+                    onOpenChange={setMenuOpen}
+                >
                     <SheetTrigger asChild>
                         <Button
-                            className="md:hidden p-2 mr-2 rounded focus:outline-none focus:ring-2 focus:ring-ring"
+                            className="md:hidden p-2 mr-2"
                             aria-label="Toggle menu"
-                            variant="ghost"
+                            variant="outline"
                             size="icon"
                         >
                             <Menu />
                         </Button>
                     </SheetTrigger>
-                    <SheetContent side="left" className="p-0">
+                    <SheetContent side="left" className="p-0 max-w-[16rem] w-full">
                         <SheetHeader className="p-4 border-b">
                             <SheetTitle>{t('menu')}</SheetTitle>
                         </SheetHeader>
-                        <ul className="flex flex-col py-2">
+                        <ul className="flex flex-col">
                             <li>
-                                <Link href="/" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    {t('me')}
-                                </Link>
+                                <Button asChild variant="outline" className="flex justify-start m-3">
+                                    <Link href="/" onClick={() => setMenuOpen(false)}>
+                                        {t('me')}
+                                    </Link>
+                                </Button>
                             </li>
                             <li>
-                                <Link href="/timeline" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    {t('timeline')}
-                                </Link>
+                                <Button asChild variant="outline" className="flex justify-start m-3">
+                                    <Link href="/timeline" onClick={() => setMenuOpen(false)}>
+                                        {t('timeline')}
+                                    </Link>
+                                </Button>
                             </li>
                             <li>
-                                <Link href="/projects" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    {t('projects')}
-                                </Link>
+                                <Button asChild variant="outline" className="flex justify-start m-3">
+                                    <Link href="/projects" onClick={() => setMenuOpen(false)}>
+                                        {t('projects')}
+                                    </Link>
+                                </Button>
                             </li>
                             <li>
-                                <Link href="/blog" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    {t('blog')}
-                                </Link>
+                                <Button asChild variant="outline" className="flex justify-start m-3">
+                                    <Link href="/blog" onClick={() => setMenuOpen(false)}>
+                                        {t('blog')}
+                                    </Link>
+                                </Button>
                             </li>
                             <li>
-                                <Link href="/contact" className="block px-4 py-2 hover:bg-accent" onClick={() => setMenuOpen(false)}>
-                                    {t('contact')}
-                                </Link>
+                                <Button asChild variant="outline" className="flex justify-start m-3">
+                                    <Link href="/contact" onClick={() => setMenuOpen(false)}>
+                                        {t('contact')}
+                                    </Link>
+                                </Button>
+                            </li>
+                            <li className="flex justify-start m-3 gap-2">
+                                <ModeToggle />
+                                <LocaleSwitcher />
                             </li>
                         </ul>
                     </SheetContent>
