@@ -51,19 +51,20 @@ type HobbiesItem = {
 
 const hobbiesData: HobbiesItem[] = [
   {
-    date: '2020',
-    title: 'Saxophone Specialisation Classical Music',
-    subtitle: 'Art\'iz Music Academy',
-    description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
-    tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
-  },
-  {
-    date: '2016 – 2020',
+    date: '2019 – 2024',
     title: 'Youth Animator',
     subtitle: 'Youth Movement KSA Izegem',
     description: 'Volunteered as a youth animator, organizing activities, leading groups, and fostering community spirit in KSA Izegem.',
     tags: ['Youth Animator', 'Leadership', 'Community', 'Volunteering', 'KSA'],
   },
+  {
+    date: '2022',
+    title: 'Saxophone Specialisation Classical Music',
+    subtitle: 'Art\'iz Music Academy',
+    description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
+    tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
+  },
+
   {
     date: '2020',
     title: 'Lifeguard Certification',
@@ -72,25 +73,25 @@ const hobbiesData: HobbiesItem[] = [
     tags: ['Certification', 'Lifeguard', 'Safety'],
   },
   {
-    date: '2019 – Present',
+    date: '2018 – 2020',
     title: 'Architectural School (Hobby)',
     subtitle: '',
     description: 'Pursued architectural studies as a hobby, learning about building design and construction.',
     tags: ['Architecture', 'Design', 'Hobby'],
   },
   {
-    date: '2018 – Present',
-    title: 'Graphics School (Hobby)',
-    subtitle: '',
-    description: 'Attended graphics school as a hobby, exploring design and visual arts.',
-    tags: ['Graphics', 'Design', 'Art'],
-  },
-  {
-    date: '2018',
+    date: '2019',
     title: 'Built My First Computer',
     subtitle: '',
     description: 'Built my first custom PC from scratch, learning about hardware and assembly.',
     tags: ['DIY', 'PC Building', 'Hardware'],
+  },
+  {
+    date: '2015 – 2019',
+    title: 'Graphics School (Hobby)',
+    subtitle: '',
+    description: 'Attended graphics school as a hobby, exploring design and visual arts.',
+    tags: ['Graphics', 'Design', 'Art'],
   },
 ];
 const workExperienceData: WorkExperience[] = [
@@ -99,7 +100,7 @@ const workExperienceData: WorkExperience[] = [
     title: 'PhD Researcher & Teaching Assistant',
     subtitle: 'Ghent University (UGent)',
     description: 'PhD trajectory in Information Engineering Technology, assisting with university courses, conducting research, writing academic papers, and attending international conferences.',
-    skills: ['Teaching', 'Research', 'Academic Writing', 'Conferences', 'Information Engineering Technology'],
+    skills: ['Teaching', 'Research', 'Academic Writing', 'Conferences'],
   },
   {
     date: 'Summer 2024',

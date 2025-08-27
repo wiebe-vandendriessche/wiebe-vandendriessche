@@ -1,14 +1,39 @@
-import React from 'react'
+"use client"
+
+import React, { useRef } from 'react'
 import Link from 'next/link'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
 import { useTranslations } from "next-intl";
 import DecryptedText from '../ui/decrypted-text'
+// Removed import of AxesHelper from three.js
 
 export default function HeroSection() {
+
+    function RotatingModel(props: any) {
+        const ref = useRef<any>(null)
+        useFrame(() => {
+            if (ref.current) {
+                ref.current.rotation.y += 0.005;
+            }
+        })
+        const { scene } = useGLTF('/avatar2export.glb')
+        return <primitive ref={ref} object={scene} {...props} />
+    }
+
     const t = useTranslations('HomePage');
+
+    function CameraLookForward() {
+        const { camera } = useThree()
+        useFrame(() => {
+            camera.lookAt(0, camera.position.y, 0)
+        })
+        return null
+    }
 
     return (
         <>
@@ -48,7 +73,7 @@ export default function HeroSection() {
                                             size="lg"
                                             className="px-5 text-base">
                                             <Link href="#features">
-                                                <span className="text-nowrap">Explore Features</span>
+                                                <span className="text-nowrap">Contact Me</span>
                                             </Link>
                                         </Button>
                                         <Button
@@ -56,7 +81,7 @@ export default function HeroSection() {
                                             variant="ghost"
                                             className="px-5 text-base">
                                             <Link href="/jobs/new">
-                                                <span className="text-nowrap">Request Training Job</span>
+                                                <span className="text-nowrap">My Projects</span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -64,14 +89,18 @@ export default function HeroSection() {
                             </div>
                         </div>
                         <div className="w-full md:w-1/2 flex justify-center items-center">
-                            <Image
-                                className="object-cover rounded-full aspect-square max-w-[200px] max-h-[200px] sm:max-w-[300px] sm:max-h-[300px] md:max-w-full md:max-h-[800px] mask-center mt-0 sm:mt-2"
-                                src="/IMG_7827_cropped.jpg"
-                                alt="Wiebe Vandendriessche"
-                                height={800}
-                                width={800}
-                                priority
-                            />
+                            <div style={{ width: '100%', height: '400px' }}>
+                                <Canvas  camera={{ position: [0, -0.3, 6], fov: 45 }}>
+                                    <CameraLookForward />
+                                    {/* Soft ambient light for base illumination */}
+                                    <ambientLight intensity={0.5} />
+                                    {/* Key light from above/front */}
+                                    <directionalLight position={[0, 5, 5]} intensity={1} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
+                                    {/* Fill light from the side */}
+                                    <directionalLight position={[-5, 2, 2]} intensity={0.7} />
+                                    <RotatingModel scale={1.5} />
+                                </Canvas>
+                            </div>
                         </div>
                     </div>
                 </div>

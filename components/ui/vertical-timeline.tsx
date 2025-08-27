@@ -144,7 +144,6 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
           className={[
             textClassName,
             'vertical-timeline-element-content',
-            'bg-card text-card-foreground border-2 rounded-xl shadow-sm',
           ].filter(Boolean).join(' ')}
         >
           <CardHeader>
