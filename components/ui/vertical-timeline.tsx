@@ -135,7 +135,7 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
       >
         <Card
-          style={{ ...contentStyle, borderWidth: 2, borderColor: 'var(--color-primary)' }}
+          style={{ ...contentStyle }}
           onClick={onTimelineElementClick}
           className={[
             textClassName,

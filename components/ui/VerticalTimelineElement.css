@@ -38,7 +38,7 @@
   border-radius: 50%;
 }
 .vertical-timeline-element-icon.shadow-size-small {
-  box-shadow: 0 0 0 2px var(--primary), inset 0 1px 0 rgba(0, 0, 0, 0.08), 0 2px 0 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 3px var(--primary), inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 2px 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .vertical-timeline-element-icon.shadow-size-medium {
@@ -48,6 +48,7 @@
 .vertical-timeline-element-icon.shadow-size-large {
   box-shadow: 0 0 0 4px var(--card), inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 4px 0 6px rgba(0, 0, 0, 0.05);
 }
+
 .vertical-timeline--one-column-right .vertical-timeline-element-icon {
   right: 0;
   left: unset;

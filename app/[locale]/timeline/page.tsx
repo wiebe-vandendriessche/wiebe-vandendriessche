@@ -238,9 +238,8 @@ const timelineStyles: Record<TimelineType, {
       borderRadius: 'var(--radius-lg)',
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
       padding: '20px',
-      // marginLeft removed to prevent horizontal scroll
     }),
-    iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
+    iconStyle: { background: getSecondary(), color: getSecondaryForeground()},
     position: 'right',
   },
   education: {
@@ -263,14 +262,11 @@ const timelineStyles: Record<TimelineType, {
       borderRadius: 'var(--radius-lg)',
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
       padding: '16px',
-      // marginLeft removed to prevent horizontal scroll
     }),
     iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
     position: 'right',
   },
 };
-
-// Action Handlers (Dummy implementations)
 
 
 // Content Renderer
