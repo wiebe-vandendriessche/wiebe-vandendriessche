@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useEffect } from 'react';
+import Image from 'next/image';
 
 
 // Type definitions
@@ -11,6 +12,7 @@ type WorkExperience = {
   subtitle: string;
   description: string;
   skills: string[];
+  logos?: { src: string; className?: string }[];
 };
 type Education = {
   date: string;
@@ -18,6 +20,7 @@ type Education = {
   subtitle: string;
   description: string;
   topics: string[];
+  logos?: { src: string; className?: string }[];
 };
 // OtherItem type already defined above, remove duplicate
 
@@ -31,6 +34,7 @@ import {
 import { Briefcase, GraduationCap, Pencil, Trash2, Share2, Ellipsis } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Use CSS variables for colors
 const getCardBackground = () => 'var(--card)';
@@ -47,6 +51,7 @@ type HobbiesItem = {
   subtitle: string;
   description: string;
   tags: string[];
+  logos?: { src: string; className?: string }[];
 };
 
 const hobbiesData: HobbiesItem[] = [
@@ -56,6 +61,9 @@ const hobbiesData: HobbiesItem[] = [
     subtitle: 'Youth Movement KSA Izegem',
     description: 'Volunteered as a youth animator, organizing activities, leading groups, and fostering community spirit in KSA Izegem.',
     tags: ['Youth Animator', 'Leadership', 'Community', 'Volunteering', 'KSA'],
+    logos: [
+      { src: '/logos/ksaizegem_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-15 mr-2' },
+    ],
   },
   {
     date: '2022',
@@ -63,20 +71,29 @@ const hobbiesData: HobbiesItem[] = [
     subtitle: 'Art\'iz Music Academy',
     description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
     tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
+    logos: [
+      { src: '/logos/artiz_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    ],
   },
 
   {
     date: '2020',
     title: 'Lifeguard Certification',
-    subtitle: '',
+    subtitle: 'Vlaamse Trainers School, RedFed',
     description: 'Achieved official Lifeguard certification, enabling work in public pools.',
+    logos: [
+      { src: '/logos/redfed_tp.png', className: 'object-contain w-16 h-10 sm:w-60 sm:h-14 mr-0' },
+    ],
     tags: ['Certification', 'Lifeguard', 'Safety'],
   },
   {
     date: '2018 – 2020',
     title: 'Architectural School (Hobby)',
-    subtitle: '',
+    subtitle: 'Sask Roeselare',
     description: 'Pursued architectural studies as a hobby, learning about building design and construction.',
+    logos: [
+      { src: '/logos/sask_tp.png', className: 'object-contain w-16 h-10 sm:w-32 sm:h-12 mr-2' },
+    ],
     tags: ['Architecture', 'Design', 'Hobby'],
   },
   {
@@ -91,6 +108,9 @@ const hobbiesData: HobbiesItem[] = [
     title: 'Graphics School (Hobby)',
     subtitle: '',
     description: 'Attended graphics school as a hobby, exploring design and visual arts.',
+    logos: [
+      { src: '/logos/artiz_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    ],
     tags: ['Graphics', 'Design', 'Art'],
   },
 ];
@@ -101,6 +121,10 @@ const workExperienceData: WorkExperience[] = [
     subtitle: 'Ghent University (UGent)',
     description: 'PhD trajectory in Information Engineering Technology, assisting with university courses, conducting research, writing academic papers, and attending international conferences.',
     skills: ['Teaching', 'Research', 'Academic Writing', 'Conferences'],
+    logos: [
+      { src: '/logos/Imec_tp.png', className: 'object-contain w-20 h-10 sm:w-40 sm:h-15 mr-4' },
+      { src: '/logos/IDLab_tp.png', className: 'object-contain w-20 h-15 sm:w-40 sm:h-20 mr-2 mt-1' },
+    ],
   },
   {
     date: 'Summer 2024',
@@ -108,6 +132,9 @@ const workExperienceData: WorkExperience[] = [
     subtitle: 'Skyline Communications',
     description: 'Developed an Integration Test Boundary Manager in .NET to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.',
     skills: ['.NET', 'DevOps', 'Automation', 'C#'],
+    logos: [
+      { src: '/logos/skylinecommunications.png', className: 'object-contain w-20 h-10 sm:w-40 sm:h-15 mr-2' },
+    ],
   },
   {
     date: 'Summer 2021 – Summer 2024',
@@ -115,6 +142,10 @@ const workExperienceData: WorkExperience[] = [
     subtitle: 'Krekel Swimming Pool Izegem',
     description: 'Worked as a certified lifeguard at Krekel Swimming Pool Izegem for four consecutive summers, ensuring safety and providing first aid.',
     skills: ['Lifeguard', 'First Aid', 'Safety'],
+    logos: [
+      { src: '/logos/stad_izegem_transparent.svg', className: 'object-contain w-16 h-10 sm:w-32 sm:h-12 mr-2' },
+      { src: '/logos/redfed_tp.png', className: 'object-contain w-16 h-10 sm:w-32 sm:h-12 mr-2' },
+    ],
   },
   {
     date: 'Summer 2020',
@@ -122,6 +153,9 @@ const workExperienceData: WorkExperience[] = [
     subtitle: 'Bekafun BVBA',
     description: 'Assisted with logistics, customer service, and technical support at Bekafun BVBA during the summer.',
     skills: ['Logistics', 'Customer Service', 'Technical Support'],
+    logos: [
+      { src: '/logos/bekafun_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-12 mr-2' },
+    ],
   },
 ];
 
@@ -132,6 +166,10 @@ const educationData: Education[] = [
     subtitle: 'Ghent University (UGent)',
     description: 'Planned doctoral trajectory in Information Engineering Technology.',
     topics: ['Academic Writing', 'Conferences', 'Research'],
+    logos: [
+      { src: '/logos/Imec_tp.png', className: 'object-contain w-20 h-10 sm:w-40 sm:h-15 mr-4' },
+      { src: '/logos/IDLab_tp.png', className: 'object-contain w-20 h-15 sm:w-40 sm:h-20 mr-2 mt-1' },
+    ],
   },
   {
     date: '2025',
@@ -139,6 +177,9 @@ const educationData: Education[] = [
     subtitle: 'Ghent University (UGent)',
     description: 'Development of a tool to generate AI Bills of Materials (AIBoMs), tracking training data, model dependencies, and compliance with the EU AI Act.',
     topics: ['AI Transparency', 'Compliance', 'Software Development'],
+    logos: [
+      { src: '/logos/logo_UGent_EN_RGB_2400_color.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20' },
+    ],
   },
   {
     date: '2024 – 2025',
@@ -146,6 +187,9 @@ const educationData: Education[] = [
     subtitle: 'Ghent University (UGent)',
     description: 'Master program focused on AI, system design, and cyber security.',
     topics: ['Cyber Security', 'System Design', 'Machine Learning', 'Blockchain', 'Computer Graphics'],
+    logos: [
+      { src: '/logos/logo_UGent_EN_RGB_2400_color.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    ],
   },
   {
     date: '2021 – 2024',
@@ -153,6 +197,9 @@ const educationData: Education[] = [
     subtitle: 'Ghent University (UGent)',
     description: 'Bachelor program with emphasis on computer science, software development, and mathematics.',
     topics: ['Computer Science', 'General Sciences', 'Mathematics', 'Programming'],
+    logos: [
+      { src: '/logos/logo_UGent_EN_RGB_2400_color.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20' },
+    ],
   },
   {
     date: '2017 – 2021',
@@ -160,6 +207,9 @@ const educationData: Education[] = [
     subtitle: 'Prizma Campus College Izegem',
     description: 'ASO Secondary education with a focus on mathematics and science.',
     topics: ['Mathematics', 'Science'],
+    logos: [
+      { src: '/logos/prizma_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    ],
   },
   {
     date: '2015 – 2017',
@@ -167,6 +217,9 @@ const educationData: Education[] = [
     subtitle: 'Prizma Middenschool Izegem',
     description: 'Start of ASO secondary education with a focus on Latin.',
     topics: ['Latin', 'Mathematics'],
+    logos: [
+      { src: '/logos/prizma_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    ],
   },
 ];
 
@@ -184,8 +237,8 @@ const timelineStyles: Record<TimelineType, {
       color: getCardForeground(),
       borderRadius: 'var(--radius-lg)',
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-      padding: '16px',
-      marginLeft: '20px',
+      padding: '20px',
+      // marginLeft removed to prevent horizontal scroll
     }),
     iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
     position: 'right',
@@ -210,7 +263,7 @@ const timelineStyles: Record<TimelineType, {
       borderRadius: 'var(--radius-lg)',
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
       padding: '16px',
-      marginLeft: '20px',
+      // marginLeft removed to prevent horizontal scroll
     }),
     iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
     position: 'right',
@@ -232,8 +285,27 @@ const renderCardContent = (
     <div style={{ color: textColor }} className="relative">
       {/* Card Content */}
       <div>
-        <h3 className="text-xl font-bold">{item.title}</h3>
-        <h4 className="text-sm opacity-80">{item.subtitle}</h4>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold">{item.title}</h3>
+            <h4 className="text-sm opacity-80">{item.subtitle}</h4>
+          </div>
+          {/* Logos for any timeline entry type */}
+          {Array.isArray(item.logos) && item.logos.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center gap-2 mr-5">
+              {item.logos.map((logo, idx) => (
+                <Image
+                  key={logo.src}
+                  src={logo.src}
+                  alt={`logo-${idx}`}
+                  width={160}
+                  height={80}
+                  className={logo.className || 'object-contain'}
+                />
+              ))}
+            </div>
+          )}
+        </div>
         <p className="mt-2">{item.description}</p>
         {type === 'workExperience' && 'skills' in item && item.skills && (
           <div className="mt-3 flex flex-wrap gap-2">
@@ -323,50 +395,52 @@ const TimelinePage = () => {
   };
 
   return (
-    <section className="relative w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center scroll-smooth">
+    <section className="relative w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
       {/* Blurry gradient background as very first child, absolutely positioned and behind all content */}
       <div className="foggy-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
       {/* ...existing code... */}
-      <div className="relative z-10 w-full flex flex-col items-center">
+      <div className="relative z-10 w-full flex flex-col items-center overflow-x-hidden">
+        
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
           Timeline
         </h1>
-        {/* Filter Buttons */}
-        <div className="flex justify-center gap-2 flex-wrap mb-8">
-          {[...Object.keys(sectionMap), 'all'].map((section) => (
-            <Button
-              key={section}
-              onClick={() => setActiveSection(section as TimelineType | 'all')}
-              variant={activeSection === section ? 'default' : 'outline'}
-            >
-              {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
-            </Button>
-          ))}
-        </div>
-        {/* Timeline Sections */}
-        <div className="w-full">
-          {/* Fly-in animation on section switch */}
-          <div
-            key={activeSection}
-            className="animate-flyin"
-          >
-            {activeSection === 'all' ? (
-              <>
-                {renderTimeline('workExperience', workExperienceData, sectionMap.workExperience.icon)}
-                {renderTimeline('education', educationData, sectionMap.education.icon)}
-                {renderTimeline('hobbies', hobbiesData, sectionMap.hobbies.icon)}
-              </>
-            ) : (
-              renderTimeline(
-                activeSection as 'workExperience' | 'education',
-                sectionMap[activeSection as 'workExperience' | 'education']?.data,
-                sectionMap[activeSection as 'workExperience' | 'education']?.icon
-              )
-            )}
+
+
+        <Tabs
+          defaultValue="all"
+          value={activeSection}
+          onValueChange={(value) => setActiveSection(value as 'all' | TimelineType)}
+          className="w-full"
+        >
+          <div className="flex justify-center mb-6">
+            <TabsList className="gap-1 sm:gap-3">
+              {[...Object.keys(sectionMap), 'all'].map((section) => (
+                <TabsTrigger key={section} value={section}>
+                  {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
+                </TabsTrigger>
+              ))}
+            </TabsList>
           </div>
-        </div>
+          <TabsContent value="all">
+            {renderTimeline('workExperience', workExperienceData, sectionMap.workExperience.icon)}
+            {renderTimeline('education', educationData, sectionMap.education.icon)}
+            {renderTimeline('hobbies', hobbiesData, sectionMap.hobbies.icon)}
+          </TabsContent>
+          {(Object.keys(sectionMap) as Array<keyof typeof sectionMap>).map((section) => (
+            <TabsContent key={section} value={section} className="animate-flyin">
+              {renderTimeline(
+                section,
+                sectionMap[section].data,
+                sectionMap[section].icon
+              )}
+            </TabsContent>
+          ))}
+        </Tabs>
+
+
+
       </div>
-    </section>
+    </section >
   );
 };
 

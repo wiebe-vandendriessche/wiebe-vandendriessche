@@ -127,11 +127,7 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
       >
         {icon || <Calendar size={24} />}
       </motion.span>
-      {/* Content Arrow */}
-      <span
-        style={contentArrowStyle}
-        className="vertical-timeline-element-content-arrow"
-      />
+
       {/* Content as Card with Framer Motion */}
       <motion.div
         initial={cardInitial}
@@ -144,6 +140,7 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
           className={[
             textClassName,
             'vertical-timeline-element-content',
+            'gap-1',
           ].filter(Boolean).join(' ')}
         >
           <CardHeader>
