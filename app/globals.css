@@ -160,6 +160,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -171,6 +172,7 @@ body {
   mask-image: radial-gradient(circle at 50% 50%, black 55%, transparent 100%);
   -webkit-mask-image: radial-gradient(circle at 50% 50%, black 55%, transparent 100%);
 }
+
 .mask-center {
   mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 100%);
   -webkit-mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 100%);
@@ -189,3 +191,7 @@ body {
   filter: blur(48px);
 }
 
+/* Brighten logo in dark mode */
+.dark .logo-darkmode {
+  filter: contrast(1.2) drop-shadow(0 0 6px white) drop-shadow(0 0 2px #fff);
+}

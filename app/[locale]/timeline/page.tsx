@@ -22,9 +22,18 @@ type Education = {
   topics: string[];
   logos?: { src: string; className?: string }[];
 };
-// OtherItem type already defined above, remove duplicate
+
+type HobbiesItem = {
+  date: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  tags: string[];
+  logos?: { src: string; className?: string }[];
+};
 
 type TimelineType = 'workExperience' | 'education' | 'hobbies';
+
 import {
   VerticalTimeline,
   VerticalTimelineElement,
@@ -44,76 +53,6 @@ const getPrimaryForeground = () => 'var(--primary-foreground)';
 const getSecondary = () => 'var(--secondary)';
 const getSecondaryForeground = () => 'var(--secondary-foreground)';
 
-// Data
-type HobbiesItem = {
-  date: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tags: string[];
-  logos?: { src: string; className?: string }[];
-};
-
-const hobbiesData: HobbiesItem[] = [
-  {
-    date: '2019 – 2024',
-    title: 'Youth Animator',
-    subtitle: 'Youth Movement KSA Izegem',
-    description: 'Volunteered as a youth animator, organizing activities, leading groups, and fostering community spirit in KSA Izegem.',
-    tags: ['Youth Animator', 'Leadership', 'Community', 'Volunteering', 'KSA'],
-    logos: [
-      { src: '/logos/ksaizegem_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-15 mr-2' },
-    ],
-  },
-  {
-    date: '2022',
-    title: 'Saxophone Specialisation Classical Music',
-    subtitle: 'Art\'iz Music Academy',
-    description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
-    tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
-    logos: [
-      { src: '/logos/artiz_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
-    ],
-  },
-
-  {
-    date: '2020',
-    title: 'Lifeguard Certification',
-    subtitle: 'Vlaamse Trainers School, RedFed',
-    description: 'Achieved official Lifeguard certification, enabling work in public pools.',
-    logos: [
-      { src: '/logos/redfed_tp.png', className: 'object-contain w-16 h-10 sm:w-60 sm:h-14 mr-0' },
-    ],
-    tags: ['Certification', 'Lifeguard', 'Safety'],
-  },
-  {
-    date: '2018 – 2020',
-    title: 'Architectural School (Hobby)',
-    subtitle: 'Sask Roeselare',
-    description: 'Pursued architectural studies as a hobby, learning about building design and construction.',
-    logos: [
-      { src: '/logos/sask_tp.png', className: 'object-contain w-16 h-10 sm:w-32 sm:h-12 mr-2' },
-    ],
-    tags: ['Architecture', 'Design', 'Hobby'],
-  },
-  {
-    date: '2019',
-    title: 'Built My First Computer',
-    subtitle: '',
-    description: 'Built my first custom PC from scratch, learning about hardware and assembly.',
-    tags: ['DIY', 'PC Building', 'Hardware'],
-  },
-  {
-    date: '2015 – 2019',
-    title: 'Graphics School (Hobby)',
-    subtitle: '',
-    description: 'Attended graphics school as a hobby, exploring design and visual arts.',
-    logos: [
-      { src: '/logos/artiz_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
-    ],
-    tags: ['Graphics', 'Design', 'Art'],
-  },
-];
 const workExperienceData: WorkExperience[] = [
   {
     date: 'Planned: 2025+',
@@ -122,8 +61,8 @@ const workExperienceData: WorkExperience[] = [
     description: 'PhD trajectory in Information Engineering Technology, assisting with university courses, conducting research, writing academic papers, and attending international conferences.',
     skills: ['Teaching', 'Research', 'Academic Writing', 'Conferences'],
     logos: [
-      { src: '/logos/Imec_tp.png', className: 'object-contain w-20 h-10 sm:w-40 sm:h-15 mr-4' },
-      { src: '/logos/IDLab_tp.png', className: 'object-contain w-20 h-15 sm:w-40 sm:h-20 mr-2 mt-1' },
+    { src: '/logos/Imec_tp.png' },
+    { src: '/logos/IDLab_tp.png' },
     ],
   },
   {
@@ -133,7 +72,7 @@ const workExperienceData: WorkExperience[] = [
     description: 'Developed an Integration Test Boundary Manager in .NET to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.',
     skills: ['.NET', 'DevOps', 'Automation', 'C#'],
     logos: [
-      { src: '/logos/skylinecommunications.png', className: 'object-contain w-20 h-10 sm:w-40 sm:h-15 mr-2' },
+    { src: '/logos/skylinecommunications.png' },
     ],
   },
   {
@@ -143,8 +82,8 @@ const workExperienceData: WorkExperience[] = [
     description: 'Worked as a certified lifeguard at Krekel Swimming Pool Izegem for four consecutive summers, ensuring safety and providing first aid.',
     skills: ['Lifeguard', 'First Aid', 'Safety'],
     logos: [
-      { src: '/logos/stad_izegem_transparent.svg', className: 'object-contain w-16 h-10 sm:w-32 sm:h-12 mr-2' },
-      { src: '/logos/redfed_tp.png', className: 'object-contain w-16 h-10 sm:w-32 sm:h-12 mr-2' },
+    { src: '/logos/stad_izegem_transparent.svg' },
+    { src: '/logos/redfed_tp.png' },
     ],
   },
   {
@@ -154,7 +93,7 @@ const workExperienceData: WorkExperience[] = [
     description: 'Assisted with logistics, customer service, and technical support at Bekafun BVBA during the summer.',
     skills: ['Logistics', 'Customer Service', 'Technical Support'],
     logos: [
-      { src: '/logos/bekafun_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-12 mr-2' },
+    { src: '/logos/bekafun_tp.png' },
     ],
   },
 ];
@@ -167,8 +106,8 @@ const educationData: Education[] = [
     description: 'Planned doctoral trajectory in Information Engineering Technology.',
     topics: ['Academic Writing', 'Conferences', 'Research'],
     logos: [
-      { src: '/logos/Imec_tp.png', className: 'object-contain w-20 h-10 sm:w-40 sm:h-15 mr-4' },
-      { src: '/logos/IDLab_tp.png', className: 'object-contain w-20 h-15 sm:w-40 sm:h-20 mr-2 mt-1' },
+    { src: '/logos/Imec_tp.png' },
+    { src: '/logos/IDLab_tp.png' },
     ],
   },
   {
@@ -178,7 +117,7 @@ const educationData: Education[] = [
     description: 'Development of a tool to generate AI Bills of Materials (AIBoMs), tracking training data, model dependencies, and compliance with the EU AI Act.',
     topics: ['AI Transparency', 'Compliance', 'Software Development'],
     logos: [
-      { src: '/logos/logo_UGent_EN_RGB_2400_color.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20' },
+    { src: '/logos/UGent_tp.png' },
     ],
   },
   {
@@ -188,7 +127,7 @@ const educationData: Education[] = [
     description: 'Master program focused on AI, system design, and cyber security.',
     topics: ['Cyber Security', 'System Design', 'Machine Learning', 'Blockchain', 'Computer Graphics'],
     logos: [
-      { src: '/logos/logo_UGent_EN_RGB_2400_color.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+   { src: '/logos/UGent_tp.png' },
     ],
   },
   {
@@ -198,7 +137,7 @@ const educationData: Education[] = [
     description: 'Bachelor program with emphasis on computer science, software development, and mathematics.',
     topics: ['Computer Science', 'General Sciences', 'Mathematics', 'Programming'],
     logos: [
-      { src: '/logos/logo_UGent_EN_RGB_2400_color.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20' },
+   { src: '/logos/UGent_tp.png' },
     ],
   },
   {
@@ -208,7 +147,7 @@ const educationData: Education[] = [
     description: 'ASO Secondary education with a focus on mathematics and science.',
     topics: ['Mathematics', 'Science'],
     logos: [
-      { src: '/logos/prizma_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    { src: '/logos/prizma_tp.png' },
     ],
   },
   {
@@ -218,8 +157,71 @@ const educationData: Education[] = [
     description: 'Start of ASO secondary education with a focus on Latin.',
     topics: ['Latin', 'Mathematics'],
     logos: [
-      { src: '/logos/prizma_tp.png', className: 'object-contain w-16 h-10 sm:w-40 sm:h-20 mr-2' },
+    { src: '/logos/prizma_tp.png' },
     ],
+  },
+];
+
+
+
+const hobbiesData: HobbiesItem[] = [
+  {
+    date: '2019 – 2024',
+    title: 'Youth Animator',
+    subtitle: 'Youth Movement KSA Izegem',
+    description: 'Volunteered as a youth animator, organizing activities, leading groups, and fostering community spirit in KSA Izegem.',
+    tags: ['Youth Animator', 'Leadership', 'Community', 'Volunteering', 'KSA'],
+    logos: [
+    { src: '/logos/ksaizegem_tp.png' },
+    ],
+  },
+  {
+    date: '2022',
+    title: 'Saxophone Specialisation Classical Music',
+    subtitle: 'Art\'iz Music Academy',
+    description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
+    tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
+    logos: [
+    { src: '/logos/artiz_tp.png' },
+    ],
+  },
+
+  {
+    date: '2020',
+    title: 'Lifeguard Certification',
+    subtitle: 'Vlaamse Trainers School, RedFed',
+    description: 'Achieved official Lifeguard certification, enabling work in public pools.',
+    logos: [
+    { src: '/logos/redfed_tp.png' },
+    ],
+    tags: ['Certification', 'Lifeguard', 'Safety'],
+  },
+  {
+    date: '2018 – 2020',
+    title: 'Architectural School (Hobby)',
+    subtitle: 'Sask Roeselare',
+    description: 'Pursued architectural studies as a hobby, learning about building design and construction.',
+    logos: [
+    { src: '/logos/sask_tp.png' },
+    ],
+    tags: ['Architecture', 'Design', 'Hobby'],
+  },
+  {
+    date: '2019',
+    title: 'Built My First Computer',
+    subtitle: '',
+    description: 'Built my first custom PC from scratch, learning about hardware and assembly.',
+    tags: ['DIY', 'PC Building', 'Hardware'],
+  },
+  {
+    date: '2015 – 2019',
+    title: 'Art Academy (Hobby)',
+    subtitle: 'Art\'iz Art Academy',
+    description: 'Attended art academy as a hobby, exploring design and visual arts.',
+    logos: [
+    { src: '/logos/artiz_tp.png' },
+    ],
+    tags: ['Graphics', 'Design', 'Art'],
   },
 ];
 
@@ -233,37 +235,28 @@ const timelineStyles: Record<TimelineType, {
   workExperience: {
     lineColor: 'var(--border)',
     cardStyle: () => ({
-      background: getCardBackground(),
-      color: getCardForeground(),
-      borderRadius: 'var(--radius-lg)',
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
       padding: '20px',
     }),
-    iconStyle: { background: getSecondary(), color: getSecondaryForeground()},
+    iconStyle: { background: getSecondary(), color: getPrimary() },
     position: 'right',
   },
   education: {
     lineColor: 'var(--border)',
     cardStyle: () => ({
-      background: getCardBackground(),
-      color: getCardForeground(),
-      borderRadius: 'var(--radius-lg)',
       boxShadow: '0 5px 10px rgba(0,0,0,0.05)',
       padding: '20px',
     }),
-    iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
+    iconStyle: { background: getSecondary(), color: getPrimary()  },
     position: 'left',
   },
   hobbies: {
     lineColor: 'var(--border)',
     cardStyle: () => ({
-      background: getCardBackground(),
-      color: getCardForeground(),
-      borderRadius: 'var(--radius-lg)',
       boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-      padding: '16px',
+      padding: '20px',
     }),
-    iconStyle: { background: getSecondary(), color: getSecondaryForeground() },
+    iconStyle: { background: getSecondary(), color: getPrimary() },
     position: 'right',
   },
 };
@@ -283,7 +276,7 @@ const renderCardContent = (
       <div>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold">{item.title}</h3>
+            <h3 className="text-lg font-bold">{item.title}</h3>
             <h4 className="text-sm opacity-80">{item.subtitle}</h4>
           </div>
           {/* Logos for any timeline entry type */}
@@ -296,7 +289,7 @@ const renderCardContent = (
                   alt={`logo-${idx}`}
                   width={160}
                   height={80}
-                  className={logo.className || 'object-contain'}
+                  className={`object-contain logo-darkmode max-w-[110px] w-full h-auto ${logo.className || ''}`}
                 />
               ))}
             </div>
@@ -396,7 +389,7 @@ const TimelinePage = () => {
       <div className="foggy-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
       {/* ...existing code... */}
       <div className="relative z-10 w-full flex flex-col items-center overflow-x-hidden">
-        
+
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
           Timeline
         </h1>

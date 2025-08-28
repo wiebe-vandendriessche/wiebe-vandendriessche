@@ -26,6 +26,7 @@
   height: 100%;
   width: 4px;
   background: var(--color-primary);
+  box-shadow: 0 0 0 0px var(--primary), inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 2px rgba(0, 0, 0, 0.05);
 }
 
 .vertical-timeline::after {
@@ -40,6 +41,7 @@
   border-right: 8px solid transparent;
   border-bottom: 12px solid var(--color-primary);
   z-index: 2;
+  box-shadow: 0 0 0 0px var(--primary), inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 0px rgba(0, 0, 0, 0.05);
 }
 
 .vertical-timeline.vertical-timeline--one-column-right::before {

@@ -157,8 +157,6 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
             {children}
           </CardDescription>
           <div className="flex gap-2 mt-2">
-            {/* Example tag */}
-            <Badge variant="secondary" className="flex items-center gap-1"><Tag size={12} />Tag</Badge>
             {/* Example action */}
             <Button size="sm" variant="outline" className="flex items-center gap-1">Details <ArrowRight size={14} /></Button>
           </div>
