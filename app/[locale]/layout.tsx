@@ -56,15 +56,14 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <div
-            className="relative bg-secondary z-1"
-            style={{ minHeight: '100vh' }}
+            className="relative bg-secondary z-1 min-h-screen"
           >
             {/* Absolutely positioned waves background that covers the full content height */}
             <WavesBackground />
-            <div className="relative flex flex-col" style={{ minHeight: '100vh' }}>
+            <div className="relative flex flex-col min-h-screen">
               <NextIntlClientProvider locale={locale}>
                 <Navbar />
-                <main className="flex-1 flex flex-col justify-center items-stretch relative z-10 pt-[64px]">
+                <main className="flex-1 flex flex-col relative z-10 pt-[64px]">
                   {children}
                 </main>
                 <div className="z-20 backdrop-blur-md">

@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import HeroSection from "@/components/sections/Hero";
 
 export default function Home() {
-  const t = useTranslations('HomePage');
   return (
-    <HeroSection />
- );
+    <div className="flex-1 flex flex-col justify-center items-stretch">
+      <HeroSection />
+    </div>
+  );
 }
