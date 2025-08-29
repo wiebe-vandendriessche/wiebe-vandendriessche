@@ -32,6 +32,21 @@ const useMedia = (
   return value;
 };
 
+// Simple hook to detect mobile breakpoint (<=768px)
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 768px)');
+  const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    // Initial
+    setIsMobile(mq.matches);
+  mq.addEventListener('change', handler);
+  return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
+};
+
 const useMeasure = <T extends HTMLElement>() => {
   const ref = useRef<T | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -67,6 +82,8 @@ interface Item {
   img: string;
   url: string;
   height: number;
+  /** Optional category for filtering */
+  category?: string;
 }
 
 interface GridItem extends Item {
@@ -92,6 +109,12 @@ interface MasonryProps {
   responsiveScale?: boolean;
   /** Distance (px) items start offset from their final position for entrance animation */
   initialOffset?: number;
+  /** Start images in grayscale and reveal color on hover */
+  grayscaleToColor?: boolean;
+  /** Active category to highlight. If provided and not 'all', non-matching items are blurred & disabled */
+  activeCategory?: string;
+  /** When true (default), on small screens (mobile) filtered-out items are completely removed instead of just dimmed */
+  collapseFilteredOnMobile?: boolean;
 }
 
 const Masonry: React.FC<MasonryProps> = ({
@@ -105,8 +128,11 @@ const Masonry: React.FC<MasonryProps> = ({
   blurToFocus = true,
   colorShiftOnHover = false,
   animateContainerHeight = true,
-  responsiveScale = true,
+  responsiveScale = false,
   initialOffset = 80,
+  grayscaleToColor = true,
+  activeCategory,
+  collapseFilteredOnMobile = true,
 }) => {
   const columns = useMedia(
     [
@@ -121,6 +147,21 @@ const Masonry: React.FC<MasonryProps> = ({
 
   const [containerRef, { width }] = useMeasure<HTMLDivElement>();
   const [imagesReady, setImagesReady] = useState(false);
+  // Detect mobile viewport (up to 768px width)
+  const isMobile = useIsMobile();
+
+  // Decide which items participate in layout (removing non-matching on mobile if requested)
+  const layoutItems = useMemo(() => {
+    if (
+      collapseFilteredOnMobile &&
+      isMobile &&
+      activeCategory &&
+      activeCategory !== 'all'
+    ) {
+      return items.filter(i => i.category === activeCategory);
+    }
+    return items;
+  }, [items, collapseFilteredOnMobile, isMobile, activeCategory]);
 
   const getInitialPosition = (item: GridItem) => {
     const containerRect = containerRef.current?.getBoundingClientRect();
@@ -154,8 +195,8 @@ const Masonry: React.FC<MasonryProps> = ({
   };
 
   useEffect(() => {
-    preloadImages(items.map((i) => i.img)).then(() => setImagesReady(true));
-  }, [items]);
+    preloadImages(layoutItems.map((i) => i.img)).then(() => setImagesReady(true));
+  }, [layoutItems]);
 
   // Build grid layout and compute overall required container height so the parent can grow.
   const { grid, gridHeight } = useMemo(() => {
@@ -164,8 +205,7 @@ const Masonry: React.FC<MasonryProps> = ({
     const gap = 16;
     const totalGaps = (columns - 1) * gap;
     const columnWidth = (width - totalGaps) / columns;
-
-    const built: GridItem[] = items.map((child) => {
+    const built: GridItem[] = layoutItems.map((child) => {
       const col = colHeights.indexOf(Math.min(...colHeights));
       const x = col * (columnWidth + gap);
       let scaleFactor = 0.5; // fallback similar to previous /2
@@ -188,7 +228,7 @@ const Masonry: React.FC<MasonryProps> = ({
       : 0;
 
     return { grid: built, gridHeight: maxHeight };
-  }, [columns, items, width]);
+  }, [columns, layoutItems, width, responsiveScale]);
 
   const hasMounted = useRef(false);
 
@@ -316,24 +356,46 @@ const Masonry: React.FC<MasonryProps> = ({
       style={!animateContainerHeight ? { height: gridHeight ? gridHeight + 16 : undefined, overflowAnchor: 'none' } : { overflowAnchor: 'none' }}
     >
       {grid.map((item) => (
-        <div
-          key={item.id}
-          data-key={item.id}
-          className="absolute box-content"
-          style={{ willChange: "transform, width, height, opacity" }}
-          onClick={() => window.open(item.url, "_blank", "noopener")}
-          onMouseEnter={(e) => handleMouseEnter(item.id, e.currentTarget)}
-          onMouseLeave={(e) => handleMouseLeave(item.id, e.currentTarget)}
-        >
-          <div
-            className="relative w-full h-full bg-cover bg-center rounded-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] uppercase text-[10px] leading-[10px]"
-            style={{ backgroundImage: `url(${item.img})` }}
-          >
-            {colorShiftOnHover && (
-              <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />
-            )}
-          </div>
-        </div>
+        (() => {
+          const dimmed = !!(activeCategory && activeCategory !== 'all' && item.category !== activeCategory);
+          const actuallyDimmed = dimmed && !(collapseFilteredOnMobile && isMobile);
+          return (
+            <div
+              key={item.id}
+              data-key={item.id}
+              data-category={item.category || ''}
+              className={
+                "group absolute box-content " +
+                (actuallyDimmed ? "pointer-events-none" : "")
+              }
+              style={{ willChange: "transform, width, height, opacity" }}
+              onClick={(e) => {
+                if (actuallyDimmed) return;
+                window.open(item.url, "_blank", "noopener");
+              }}
+              onMouseEnter={(e) => { if (!actuallyDimmed) handleMouseEnter(item.id, e.currentTarget); }}
+              onMouseLeave={(e) => { if (!actuallyDimmed) handleMouseLeave(item.id, e.currentTarget); }}
+            >
+              <div
+                className={
+                  "masonry-img relative w-full h-full bg-cover bg-center rounded-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] uppercase text-[10px] leading-[10px] transition-all duration-300 " +
+                  (grayscaleToColor ? 'grayscale ease-out group-hover:grayscale-0 ' : '') +
+                  (actuallyDimmed ? ' blur-[2px] opacity-30 scale-[0.98]' : '')
+                }
+                style={{ backgroundImage: `url(${item.img})` }}
+              >
+                {colorShiftOnHover && (
+                  <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />
+                )}
+                {item.category && (
+                  <span className="absolute top-2 left-2 text-[10px] font-semibold bg-black/50 text-white px-2 py-0.5 rounded-md tracking-wide backdrop-blur-sm">
+                    {item.category}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })()
       ))}
     </div>
   );
