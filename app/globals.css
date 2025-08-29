@@ -187,7 +187,17 @@ body {
   z-index: 0;
   pointer-events: none;
   border-radius: 2rem;
-  background: radial-gradient(ellipse at 50% 50%, var(--color-secondary) 0%, var(--color-secondary) 60%, transparent 100%), var(--color-secondary);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    /* Center: semi-transparent */
+    var(--color-secondary) 40%,
+    /* 40%: more transparent */
+    color-mix(in srgb, var(--color-secondary) 40%, transparent) 90%,
+    /* 70%: almost transparent */
+    color-mix(in srgb, var(--color-secondary) 80%, transparent) 95%,
+    /* 100%: fully transparent */
+    transparent 100%
+  );
   filter: blur(48px);
 }
 

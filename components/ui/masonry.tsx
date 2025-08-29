@@ -8,6 +8,8 @@ import React, {
   useState,
 } from "react";
 import { gsap } from "gsap";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 const useMedia = (
   queries: string[],
@@ -365,8 +367,8 @@ const Masonry: React.FC<MasonryProps> = ({
               data-key={item.id}
               data-category={item.category || ''}
               className={
-                "group absolute box-content " +
-                (actuallyDimmed ? "pointer-events-none" : "")
+                  "group absolute box-content " +
+                  (actuallyDimmed ? "pointer-events-none" : "cursor-pointer")
               }
               style={{ willChange: "transform, width, height, opacity" }}
               onClick={(e) => {
@@ -376,23 +378,26 @@ const Masonry: React.FC<MasonryProps> = ({
               onMouseEnter={(e) => { if (!actuallyDimmed) handleMouseEnter(item.id, e.currentTarget); }}
               onMouseLeave={(e) => { if (!actuallyDimmed) handleMouseLeave(item.id, e.currentTarget); }}
             >
-              <div
+              <Card
                 className={
-                  "masonry-img relative w-full h-full bg-cover bg-center rounded-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] uppercase text-[10px] leading-[10px] transition-all duration-300 " +
+                  "relative w-full h-full overflow-hidden transition-all duration-300 " +
                   (grayscaleToColor ? 'grayscale ease-out group-hover:grayscale-0 ' : '') +
                   (actuallyDimmed ? ' blur-[2px] opacity-30 scale-[0.98]' : '')
                 }
-                style={{ backgroundImage: `url(${item.img})` }}
+                style={{ backgroundImage: `url(${item.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
               >
                 {colorShiftOnHover && (
                   <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />
                 )}
                 {item.category && (
-                  <span className="absolute top-2 left-2 text-[10px] font-semibold bg-black/50 text-white px-2 py-0.5 rounded-md tracking-wide backdrop-blur-sm">
+                  <Badge
+                    variant="secondary"
+                    className="absolute top-2 left-2 backdrop-blur-sm/30 bg-secondary/80 text-xs font-medium px-2 py-0.5"
+                  >
                     {item.category}
-                  </span>
+                  </Badge>
                 )}
-              </div>
+              </Card>
             </div>
           );
         })()

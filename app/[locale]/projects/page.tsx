@@ -31,11 +31,13 @@ export default function ProjectsPage() {
     const masonryItems = useMemo(() => items, [items]);
 
         return (
-            <section className="px-4 md:px-10 py-5 flex flex-col">
-            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6">Projects</h1>
+            <section className="relative px-4 md:px-10 py-5 flex flex-col">
+            <div className="foggy-gradient-bg absolute inset-0 -z-20 pointer-events-none" />
+
+            <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 z-10">Projects</h1>
                 <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v as Category)} className="w-full">
                 <div className="flex justify-center mb-6">
-                    <TabsList className="gap-1 sm:gap-3 flex-wrap h-auto p-1">
+                    <TabsList className="gap-1 sm:gap-3 flex-wrap h-auto p-1 z-10">
                         {categories.map(cat => (
                             <TabsTrigger key={cat} value={cat} className="capitalize px-3 py-1 text-sm">
                                 {cat}
@@ -43,6 +45,7 @@ export default function ProjectsPage() {
                         ))}
                     </TabsList>
                 </div>
+
                 {categories.map(cat => (
                     <TabsContent key={cat} value={cat} className="focus-visible:outline-none">
                         <Masonry
