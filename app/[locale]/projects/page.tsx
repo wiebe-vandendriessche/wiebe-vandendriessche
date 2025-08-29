@@ -4,7 +4,7 @@ import Masonry from "@/components/ui/masonry";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useMemo } from "react";
 
-const categories = ["all", "web", "ai", "tools", "random"] as const;
+const categories = ["all", "web", "ai", "tools", "random", ] as const;
 type Category = typeof categories[number];
 
 export default function ProjectsPage() {

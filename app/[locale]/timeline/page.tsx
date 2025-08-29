@@ -3,32 +3,17 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import Image from 'next/image';
+import { useMessages } from 'next-intl';
 
 
 // Type definitions
-type WorkExperience = {
+// Unified timeline element type coming from Supabase (see i18n/request.ts)
+type TimelineElement = {
   date: string;
   title: string;
   subtitle: string;
   description: string;
-  skills: string[];
-  logos?: { src: string; className?: string }[];
-};
-type Education = {
-  date: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  topics: string[];
-  logos?: { src: string; className?: string }[];
-};
-
-type HobbiesItem = {
-  date: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tags: string[];
+  tags?: string[];
   logos?: { src: string; className?: string }[];
 };
 
@@ -53,177 +38,17 @@ const getPrimaryForeground = () => 'var(--primary-foreground)';
 const getSecondary = () => 'var(--secondary)';
 const getSecondaryForeground = () => 'var(--secondary-foreground)';
 
-const workExperienceData: WorkExperience[] = [
-  {
-    date: 'Planned: 2025+',
-    title: 'PhD Researcher & Teaching Assistant',
-    subtitle: 'Ghent University (UGent)',
-    description: 'PhD trajectory in Information Engineering Technology, assisting with university courses, conducting research, writing academic papers, and attending international conferences.',
-    skills: ['Teaching', 'Research', 'Academic Writing', 'Conferences'],
-    logos: [
-    { src: '/logos/Imec_tp.png' },
-    { src: '/logos/IDLab_tp.png' },
-    ],
-  },
-  {
-    date: 'Summer 2024',
-    title: 'DevOps Engineer Intern',
-    subtitle: 'Skyline Communications',
-    description: 'Developed an Integration Test Boundary Manager in .NET to help DevOps engineers efficiently navigate test environments and configure boundaries for integration tests.',
-    skills: ['.NET', 'DevOps', 'Automation', 'C#'],
-    logos: [
-    { src: '/logos/skylinecommunications.png' },
-    ],
-  },
-  {
-    date: 'Summer 2021 – Summer 2024',
-    title: 'Lifeguard',
-    subtitle: 'Krekel Swimming Pool Izegem',
-    description: 'Worked as a certified lifeguard at Krekel Swimming Pool Izegem for four consecutive summers, ensuring safety and providing first aid.',
-    skills: ['Lifeguard', 'First Aid', 'Safety'],
-    logos: [
-    { src: '/logos/stad_izegem_transparent.svg' },
-    { src: '/logos/redfed_tp.png' },
-    ],
-  },
-  {
-    date: 'Summer 2020',
-    title: 'Assistant',
-    subtitle: 'Bekafun BVBA',
-    description: 'Assisted with logistics, customer service, and technical support at Bekafun BVBA during the summer.',
-    skills: ['Logistics', 'Customer Service', 'Technical Support'],
-    logos: [
-    { src: '/logos/bekafun_tp.png' },
-    ],
-  },
-];
-
-const educationData: Education[] = [
-  {
-    date: 'Planned: 2025+',
-    title: 'PhD in Information Engineering Technology',
-    subtitle: 'Ghent University (UGent)',
-    description: 'Planned doctoral trajectory in Information Engineering Technology.',
-    topics: ['Academic Writing', 'Conferences', 'Research'],
-    logos: [
-    { src: '/logos/Imec_tp.png' },
-    { src: '/logos/IDLab_tp.png' },
-    ],
-  },
-  {
-    date: '2025',
-    title: 'Master’s Thesis: AIBoMGen',
-    subtitle: 'Ghent University (UGent)',
-    description: 'Development of a tool to generate AI Bills of Materials (AIBoMs), tracking training data, model dependencies, and compliance with the EU AI Act.',
-    topics: ['AI Transparency', 'Compliance', 'Software Development'],
-    logos: [
-    { src: '/logos/UGent_tp.png' },
-    ],
-  },
-  {
-    date: '2024 – 2025',
-    title: 'Master in Information Engineering Technology',
-    subtitle: 'Ghent University (UGent)',
-    description: 'Master program focused on AI, system design, and cyber security.',
-    topics: ['Cyber Security', 'System Design', 'Machine Learning', 'Blockchain', 'Computer Graphics'],
-    logos: [
-   { src: '/logos/UGent_tp.png' },
-    ],
-  },
-  {
-    date: '2021 – 2024',
-    title: 'Bachelor in Information Engineering Technology',
-    subtitle: 'Ghent University (UGent)',
-    description: 'Bachelor program with emphasis on computer science, software development, and mathematics.',
-    topics: ['Computer Science', 'General Sciences', 'Mathematics', 'Programming'],
-    logos: [
-   { src: '/logos/UGent_tp.png' },
-    ],
-  },
-  {
-    date: '2017 – 2021',
-    title: 'General Secondary Education: Mathematics-Science',
-    subtitle: 'Prizma Campus College Izegem',
-    description: 'ASO Secondary education with a focus on mathematics and science.',
-    topics: ['Mathematics', 'Science'],
-    logos: [
-    { src: '/logos/prizma_tp.png' },
-    ],
-  },
-  {
-    date: '2015 – 2017',
-    title: 'Start General Secondary Education: Latin',
-    subtitle: 'Prizma Middenschool Izegem',
-    description: 'Start of ASO secondary education with a focus on Latin.',
-    topics: ['Latin', 'Mathematics'],
-    logos: [
-    { src: '/logos/prizma_tp.png' },
-    ],
-  },
-];
-
-
-
-const hobbiesData: HobbiesItem[] = [
-  {
-    date: '2019 – 2024',
-    title: 'Youth Animator',
-    subtitle: 'Youth Movement KSA Izegem',
-    description: 'Volunteered as a youth animator, organizing activities, leading groups, and fostering community spirit in KSA Izegem.',
-    tags: ['Youth Animator', 'Leadership', 'Community', 'Volunteering', 'KSA'],
-    logos: [
-    { src: '/logos/ksaizegem_tp.png' },
-    ],
-  },
-  {
-    date: '2022',
-    title: 'Saxophone Specialisation Classical Music',
-    subtitle: 'Art\'iz Music Academy',
-    description: 'Received specialisation certification in classical saxophone music from Art\'iz Music Academy.',
-    tags: ['Saxophone', 'Music', 'Classical', 'Certification'],
-    logos: [
-    { src: '/logos/artiz_tp.png' },
-    ],
-  },
-
-  {
-    date: '2020',
-    title: 'Lifeguard Certification',
-    subtitle: 'Vlaamse Trainers School, RedFed',
-    description: 'Achieved official Lifeguard certification, enabling work in public pools.',
-    logos: [
-    { src: '/logos/redfed_tp.png' },
-    ],
-    tags: ['Certification', 'Lifeguard', 'Safety'],
-  },
-  {
-    date: '2018 – 2020',
-    title: 'Architectural School (Hobby)',
-    subtitle: 'Sask Roeselare',
-    description: 'Pursued architectural studies as a hobby, learning about building design and construction.',
-    logos: [
-    { src: '/logos/sask_tp.png' },
-    ],
-    tags: ['Architecture', 'Design', 'Hobby'],
-  },
-  {
-    date: '2019',
-    title: 'Built My First Computer',
-    subtitle: '',
-    description: 'Built my first custom PC from scratch, learning about hardware and assembly.',
-    tags: ['DIY', 'PC Building', 'Hardware'],
-  },
-  {
-    date: '2015 – 2019',
-    title: 'Art Academy (Hobby)',
-    subtitle: 'Art\'iz Art Academy',
-    description: 'Attended art academy as a hobby, exploring design and visual arts.',
-    logos: [
-    { src: '/logos/artiz_tp.png' },
-    ],
-    tags: ['Graphics', 'Design', 'Art'],
-  },
-];
+// All data now fetched dynamically from i18n messages (Timeline.*)
+// and injected server-side via i18n/request.ts using Supabase unified table.
+const useTimelineData = () => {
+  const messages: any = useMessages();
+  const tl = messages?.Timeline || {};
+  return {
+    workExperience: (tl.workExperience as TimelineElement[]) || [],
+    education: (tl.education as TimelineElement[]) || [],
+    hobbies: (tl.hobbies as TimelineElement[]) || [],
+  };
+};
 
 // Timeline styles
 const timelineStyles: Record<TimelineType, {
@@ -265,7 +90,7 @@ const timelineStyles: Record<TimelineType, {
 // Content Renderer
 
 const renderCardContent = (
-  item: WorkExperience | Education | HobbiesItem,
+  item: TimelineElement,
   type: TimelineType,
   bgColor: string
 ) => {
@@ -296,21 +121,7 @@ const renderCardContent = (
           )}
         </div>
         <p className="mt-2">{item.description}</p>
-        {type === 'workExperience' && 'skills' in item && item.skills && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {item.skills.map((skill: string, i: number) => (
-              <Badge key={i} variant="secondary" className="text-sm">{skill}</Badge>
-            ))}
-          </div>
-        )}
-        {type === 'education' && 'topics' in item && item.topics && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {item.topics.map((topic: string, i: number) => (
-              <Badge key={i} variant="secondary" className="text-sm">{topic}</Badge>
-            ))}
-          </div>
-        )}
-        {type === 'hobbies' && 'tags' in item && item.tags && (
+        {item.tags && item.tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {item.tags.map((tag: string, i: number) => (
               <Badge key={i} variant="secondary" className="text-sm">{tag}</Badge>
@@ -325,7 +136,7 @@ const renderCardContent = (
 // Timeline Renderer
 const renderTimeline = (
   type: TimelineType,
-  data: (WorkExperience | Education | HobbiesItem)[],
+  data: TimelineElement[],
   icon: React.ReactElement
 ) => {
   if (!data?.length) return null;
@@ -367,18 +178,19 @@ const TimelinePage = () => {
     console.log('TimelinePage rendered');
   });
   const [activeSection, setActiveSection] = useState<'all' | TimelineType>('all');
+  const { workExperience, education, hobbies } = useTimelineData();
 
   const sectionMap = {
     workExperience: {
-      data: workExperienceData,
+      data: workExperience,
       icon: <Briefcase className="w-5 h-5" />,
     },
     education: {
-      data: educationData,
+      data: education,
       icon: <GraduationCap className="w-5 h-5" />,
     },
     hobbies: {
-      data: hobbiesData,
+      data: hobbies,
       icon: <Ellipsis className="w-5 h-5" />,
     },
   };
@@ -403,7 +215,7 @@ const TimelinePage = () => {
         >
           <div className="flex justify-center mb-6">
             <TabsList className="gap-1 sm:gap-3">
-              {[...Object.keys(sectionMap), 'all'].map((section) => (
+              {['all', ...Object.keys(sectionMap)].map((section) => (
                 <TabsTrigger key={section} value={section}>
                   {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
                 </TabsTrigger>
@@ -411,9 +223,9 @@ const TimelinePage = () => {
             </TabsList>
           </div>
           <TabsContent value="all">
-            {renderTimeline('workExperience', workExperienceData, sectionMap.workExperience.icon)}
-            {renderTimeline('education', educationData, sectionMap.education.icon)}
-            {renderTimeline('hobbies', hobbiesData, sectionMap.hobbies.icon)}
+            {renderTimeline('workExperience', workExperience, sectionMap.workExperience.icon)}
+            {renderTimeline('education', education, sectionMap.education.icon)}
+            {renderTimeline('hobbies', hobbies, sectionMap.hobbies.icon)}
           </TabsContent>
           {(Object.keys(sectionMap) as Array<keyof typeof sectionMap>).map((section) => (
             <TabsContent key={section} value={section} className="animate-flyin">
