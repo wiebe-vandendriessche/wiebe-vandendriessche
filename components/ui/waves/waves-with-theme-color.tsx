@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import Waves from "@/components/ui/waves";
+import Waves from "@/components/ui/waves/waves";
 
 const WavesWithThemeColor: React.FC<React.ComponentProps<typeof Waves>> = (props) => {
   const [colors, setColors] = useState({

@@ -1,185 +1,14 @@
 "use client";
 
-
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import Image from 'next/image';
-import { useMessages, useTranslations } from 'next-intl';
-
-
-// Type definitions
-// Unified timeline element type coming from Supabase (see i18n/request.ts)
-type TimelineElement = {
-  date: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tags?: string[];
-  logos?: { src: string; className?: string }[];
-};
-
-type TimelineType = 'workExperience' | 'education' | 'hobbies';
-
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-} from '@/components/ui/vertical-timeline';
-import {
-} from '@heroicons/react/24/solid';
-import { Briefcase, GraduationCap, Pencil, Trash2, Share2, Ellipsis } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
+import TimelineSection from '@/components/ui/timeline/TimelineSection';
+import useTimelineData, { TimelineType } from '@/components/ui/timeline/useTimelineData';
+import '@/components/ui/timeline/VerticalTimeline.css';
+import '@/components/ui/timeline/VerticalTimelineElement.css';
+import { Briefcase, GraduationCap, Ellipsis } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-// Use CSS variables for colors
-const getCardBackground = () => 'var(--card)';
-const getCardForeground = () => 'var(--card-foreground)';
-const getPrimary = () => 'var(--primary)';
-const getPrimaryForeground = () => 'var(--primary-foreground)';
-const getSecondary = () => 'var(--secondary)';
-const getSecondaryForeground = () => 'var(--secondary-foreground)';
-
-// All data now fetched dynamically from i18n messages (Timeline.*)
-// and injected server-side via i18n/request.ts using Supabase unified table.
-const useTimelineData = () => {
-  const messages: any = useMessages();
-  const tl = messages?.Timeline || {};
-  return {
-    workExperience: (tl.workExperience as TimelineElement[]) || [],
-    education: (tl.education as TimelineElement[]) || [],
-    hobbies: (tl.hobbies as TimelineElement[]) || [],
-  };
-};
-
-// Timeline styles
-const timelineStyles: Record<TimelineType, {
-  lineColor: string;
-  cardStyle: () => React.CSSProperties;
-  iconStyle: React.CSSProperties;
-  position: string;
-}> = {
-  workExperience: {
-    lineColor: 'var(--border)',
-    cardStyle: () => ({
-      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-      padding: '20px',
-    }),
-    iconStyle: { background: getSecondary(), color: getPrimary() },
-    position: 'right',
-  },
-  education: {
-    lineColor: 'var(--border)',
-    cardStyle: () => ({
-      boxShadow: '0 5px 10px rgba(0,0,0,0.05)',
-      padding: '20px',
-    }),
-    iconStyle: { background: getSecondary(), color: getPrimary()  },
-    position: 'left',
-  },
-  hobbies: {
-    lineColor: 'var(--border)',
-    cardStyle: () => ({
-      boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-      padding: '20px',
-    }),
-    iconStyle: { background: getSecondary(), color: getPrimary() },
-    position: 'right',
-  },
-};
-
-
-// Content Renderer
-const renderCardContent = (
-  item: TimelineElement,
-  type: TimelineType,
-  bgColor: string,
-  t: any
-) => {
-  const textColor = getCardForeground();
-  return (
-    <div style={{ color: textColor }} className="relative">
-      {/* Card Content */}
-      <div>
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-bold">{item.title}</h3>
-            <h4 className="text-sm opacity-80">{item.subtitle}</h4>
-          </div>
-          {/* Logos for any timeline entry type */}
-          {Array.isArray(item.logos) && item.logos.length > 0 && (
-            <div className="flex flex-col sm:flex-row items-center gap-2 mr-5">
-              {item.logos.map((logo, idx) => (
-                <Image
-                  key={logo.src}
-                  src={logo.src}
-                  alt={`logo-${idx}`}
-                  width={160}
-                  height={80}
-                  className={`object-contain logo-darkmode max-w-[110px] w-full h-auto ${logo.className || ''}`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-        <p className="mt-2">{item.description}</p>
-        {item.tags && item.tags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {item.tags.map((tag: string, i: number) => (
-              <Badge key={i} variant="secondary" className="text-sm">{tag}</Badge>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Timeline Renderer
-const renderTimeline = (
-  type: TimelineType,
-  data: TimelineElement[],
-  icon: React.ReactElement,
-  t: any
-) => {
-  if (!data?.length) return null;
-  const style = timelineStyles[type];
-
-  // Translation keys for section titles
-  const sectionTitleKey: Record<TimelineType, string> = {
-    workExperience: 'Timeline.workExperienceLabel',
-    education: 'Timeline.educationLabel',
-    hobbies: 'Timeline.hobbiesLabel',
-  };
-
-  return (
-    <div className="mb-12">
-      <h2 className="text-2xl font-bold mb-4">
-        {t(sectionTitleKey[type])}
-      </h2>
-      <VerticalTimeline
-        layout={style.position === 'right' ? '1-column-right' : '1-column-left'}
-        lineColor={style.lineColor}
-      >
-        {data.map((item, index) => {
-          const cardStyle = style.cardStyle();
-          return (
-            <VerticalTimelineElement
-              key={index}
-              contentStyle={cardStyle}
-              contentArrowStyle={{ display: "none" }}
-              iconStyle={style.iconStyle}
-              date={item.date}
-              icon={icon}
-              position={style.position === 'right' ? 'right' : 'left'}
-            >
-              {renderCardContent(item, type, String(cardStyle.background), t)}
-            </VerticalTimelineElement>
-          );
-        })}
-      </VerticalTimeline>
-    </div>
-  );
-};
 
 // Component
 const TimelinePage = () => {
@@ -215,15 +44,11 @@ const TimelinePage = () => {
 
   return (
     <section className="relative w-full max-w-4xl mx-auto px-4 py-5 flex flex-col items-center">
-      {/* Blurry gradient background as very first child, absolutely positioned and behind all content */}
       <div className="foggy-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
-      {/* ...existing code... */}
       <div className="relative z-10 w-full flex flex-col items-center overflow-x-hidden">
-
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
           {t('Timeline.title')}
         </h1>
-
         <Tabs
           defaultValue="all"
           value={activeSection}
@@ -240,24 +65,23 @@ const TimelinePage = () => {
             </TabsList>
           </div>
           <TabsContent value="all">
-            {renderTimeline('workExperience', workExperience, sectionMap.workExperience.icon, t)}
-            {renderTimeline('education', education, sectionMap.education.icon, t)}
-            {renderTimeline('hobbies', hobbies, sectionMap.hobbies.icon, t)}
+            <TimelineSection type="workExperience" data={workExperience} icon={sectionMap.workExperience.icon} t={t} />
+            <TimelineSection type="education" data={education} icon={sectionMap.education.icon} t={t} />
+            <TimelineSection type="hobbies" data={hobbies} icon={sectionMap.hobbies.icon} t={t} />
           </TabsContent>
           {(Object.keys(sectionMap) as Array<keyof typeof sectionMap>).map((section) => (
             <TabsContent key={section} value={section} className="animate-flyin">
-              {renderTimeline(
-                section,
-                sectionMap[section].data,
-                sectionMap[section].icon,
-                t
-              )}
+              <TimelineSection
+                type={section as TimelineType}
+                data={sectionMap[section].data}
+                icon={sectionMap[section].icon}
+                t={t}
+              />
             </TabsContent>
           ))}
         </Tabs>
-
       </div>
-    </section >
+    </section>
   );
 };
 

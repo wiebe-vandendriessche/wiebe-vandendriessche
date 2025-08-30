@@ -6,7 +6,7 @@ import { NextIntlClientProvider, hasLocale, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Navbar from "@/components/sections/Navbar";
-import WavesBackground from "@/components/ui/waves-background";
+import WavesBackground from "@/components/ui/waves/waves-background";
 import FooterSection from "@/components/sections/Footer";
 import { ThemeProvider } from "@/components/theme-provider"
 import { getTranslations } from 'next-intl/server';

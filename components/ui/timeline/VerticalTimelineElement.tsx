@@ -1,50 +1,10 @@
-
-export interface VerticalTimelineProps {
-  children: React.ReactNode;
-  className?: string;
-  animate?: boolean;
-  layout?: '2-columns' | '1-column-left' | '1-column' | '1-column-right';
-  lineColor?: string;
-}
-
-export const VerticalTimeline: React.FC<VerticalTimelineProps> = ({
-  animate = true,
-  className = '',
-  layout = '2-columns',
-  lineColor = '#FFF',
-  children,
-}) => {
-  // Use CSS variable for line color in styles, do not set it on document.documentElement
-  return (
-    <div
-      className={[
-        className,
-        'vertical-timeline',
-        'relative',
-        'mx-auto',
-        'w-[95%]',
-        'max-w-[1170px]',
-        'py-8',
-        animate ? 'vertical-timeline--animate' : '',
-        layout === '2-columns' ? 'vertical-timeline--two-columns' : '',
-        layout === '1-column' || layout === '1-column-left' ? 'vertical-timeline--one-column-left' : '',
-        layout === '1-column-right' ? 'vertical-timeline--one-column-right' : '',
-      ].filter(Boolean).join(' ')}
-    >
-      {children}
-    </div>
-  );
-};
-
-import "./VerticalTimeline.css";
 import React, { CSSProperties, MouseEventHandler } from 'react';
 import { useInView } from 'react-intersection-observer';
-import "./VerticalTimelineElement.css";
 import { motion } from "framer-motion";
-import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "./card";
-import { Button } from "./button";
-import { Badge } from "./badge";
-import { Calendar, Tag, ArrowRight } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription } from "../card";
+import { Button } from "../button";
+import { Calendar, ArrowRight } from "lucide-react";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../dialog";
 
 export interface VerticalTimelineElementProps {
   children?: React.ReactNode;
@@ -66,7 +26,7 @@ export interface VerticalTimelineElementProps {
   shadowSize?: 'small' | 'medium' | 'large';
 }
 
-export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
+const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
   children = '',
   className = '',
   contentArrowStyle = {},
@@ -85,18 +45,11 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
   visible = false,
   shadowSize = 'small',
 }) => {
-  // Intersection observer for animation
+  const [open, setOpen] = React.useState(false);
   const { ref, inView } = useInView({ rootMargin: '0px 0px -40px 0px', triggerOnce: true });
   const showAnim = inView || visible;
-  // Determine fly-in direction for card
-  let cardInitial;
-  if (position === 'right') {
-    cardInitial = { opacity: 0, x: 100 };
-  } else {
-    cardInitial = { opacity: 0, x: -100 };
-  }
+  let cardInitial = position === 'right' ? { opacity: 0, x: 100 } : { opacity: 0, x: -100 };
   let cardAnimate = { opacity: 1, x: 0 };
-  // Icon scale up animation
   let iconInitial = { opacity: 0, scale: 0.5 };
   let iconAnimate = showAnim ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 };
   return (
@@ -112,7 +65,6 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
       ].filter(Boolean).join(' ')}
       style={style}
     >
-      {/* Icon (Lucide) with Framer Motion */}
       <motion.span
         style={iconStyle}
         onClick={iconOnClick}
@@ -127,8 +79,6 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
       >
         {icon || <Calendar size={24} />}
       </motion.span>
-
-      {/* Content as Card with Framer Motion */}
       <motion.div
         initial={cardInitial}
         animate={showAnim ? cardAnimate : cardInitial}
@@ -157,11 +107,33 @@ export const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = (
             {children}
           </CardDescription>
           <div className="flex gap-2 mt-2">
-            {/* Example action */}
-            <Button size="sm" variant="outline" className="flex items-center gap-1">Details <ArrowRight size={14} /></Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline" className="flex items-center gap-1" onClick={() => setOpen(true)}>
+                  Details <ArrowRight size={14} />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Calendar size={16} className="mr-1" />
+                    {date && (
+                      <span className={[dateClassName, 'vertical-timeline-element-date', 'opacity-70 text-sm'].filter(Boolean).join(' ')}>
+                        {date}
+                      </span>
+                    )}
+                  </DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  {children}
+                </DialogDescription>
+              </DialogContent>
+            </Dialog>
           </div>
         </Card>
       </motion.div>
     </div>
   );
 };
+
+export default VerticalTimelineElement;
