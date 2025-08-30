@@ -63,7 +63,7 @@ export default async function LocaleLayout({
             <div className="relative flex flex-col min-h-screen">
               <NextIntlClientProvider locale={locale}>
                 <Navbar />
-                <main className="flex-1 flex flex-col relative z-10 pt-[64px]">
+                <main className="flex-1 flex flex-col relative z-10 pt-10">
                   {children}
                 </main>
                 <div className="z-20 backdrop-blur-md">

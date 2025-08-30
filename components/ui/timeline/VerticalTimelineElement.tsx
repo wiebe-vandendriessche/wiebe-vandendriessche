@@ -118,9 +118,9 @@ const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
                                     Details <ArrowRight size={14} />
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent large style={{ ...contentStyle }} aria-describedby={undefined}>
                                 <DialogHeader>
-                                    <DialogTitle className="flex items-center gap-2 font-semibold">
+                                    <DialogTitle className="flex items-center gap-2 font-bold">
                                         <Calendar size={16} className="mr-1" />
                                         {date && (
                                             <span className={[dateClassName, 'vertical-timeline-element-date', 'opacity-70 text-sm'].filter(Boolean).join(' ')}>
@@ -129,7 +129,6 @@ const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
                                         )}
                                     </DialogTitle>
                                 </DialogHeader>
-                                <DialogDescription />
                                 <div>
                                     {typeof item !== 'undefined' ? <TimelinePopupContent item={item} /> : children}
                                 </div>

@@ -8,8 +8,10 @@ export type TimelineElement = {
   title: string;
   subtitle: string;
   description: string;
+  description_ext?: string;
+  image_ext?: string;
   tags?: string[];
-  logos?: { src: string; className?: string }[];
+  logos?: string[];
 };
 
 const TimelineCardContent: React.FC<{
@@ -25,14 +27,14 @@ const TimelineCardContent: React.FC<{
         </div>
         {Array.isArray(item.logos) && item.logos.length > 0 && (
           <div className="flex flex-col sm:flex-row items-center gap-2 mr-5">
-            {item.logos.map((logo, idx) => (
+            {item.logos.map((logoUrl, idx) => (
               <Image
-                key={logo.src}
-                src={logo.src}
+                key={idx}
+                src={logoUrl}
                 alt={`logo-${idx}`}
                 width={160}
                 height={80}
-                className={`object-contain logo-darkmode max-w-[110px] w-full h-auto ${logo.className || ''}`}
+                className="object-contain logo-darkmode max-w-[110px] w-full h-auto"
               />
             ))}
           </div>
