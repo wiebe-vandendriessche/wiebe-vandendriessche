@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useRef } from 'react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Button } from '@/components/ui/button'
@@ -72,16 +72,16 @@ export default function HeroSection() {
                                         <Button
                                             size="lg"
                                             className="px-5 text-base">
-                                            <Link href="#features">
-                                                <span className="text-nowrap">Contact Me</span>
+                                            <Link href="/contact">
+                                                <span className="text-nowrap">{t('contactMe')}</span>
                                             </Link>
                                         </Button>
                                         <Button
                                             size="lg"
                                             variant="ghost"
                                             className="px-5 text-base">
-                                            <Link href="/jobs/new">
-                                                <span className="text-nowrap">My Projects</span>
+                                            <Link href="/projects">
+                                                <span className="text-nowrap">{t('myProjects')}</span>
                                             </Link>
                                         </Button>
                                     </div>

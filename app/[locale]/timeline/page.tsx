@@ -1,9 +1,10 @@
 "use client";
 
+
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { useMessages } from 'next-intl';
+import { useMessages, useTranslations } from 'next-intl';
 
 
 // Type definitions
@@ -88,11 +89,11 @@ const timelineStyles: Record<TimelineType, {
 
 
 // Content Renderer
-
 const renderCardContent = (
   item: TimelineElement,
   type: TimelineType,
-  bgColor: string
+  bgColor: string,
+  t: any
 ) => {
   const textColor = getCardForeground();
   return (
@@ -137,15 +138,23 @@ const renderCardContent = (
 const renderTimeline = (
   type: TimelineType,
   data: TimelineElement[],
-  icon: React.ReactElement
+  icon: React.ReactElement,
+  t: any
 ) => {
   if (!data?.length) return null;
   const style = timelineStyles[type];
 
+  // Translation keys for section titles
+  const sectionTitleKey: Record<TimelineType, string> = {
+    workExperience: 'Timeline.workExperienceLabel',
+    education: 'Timeline.educationLabel',
+    hobbies: 'Timeline.hobbiesLabel',
+  };
+
   return (
     <div className="mb-12">
       <h2 className="text-2xl font-bold mb-4">
-        {type.charAt(0).toUpperCase() + type.slice(1).replace(/([A-Z])/g, ' $1')}
+        {t(sectionTitleKey[type])}
       </h2>
       <VerticalTimeline
         layout={style.position === 'right' ? '1-column-right' : '1-column-left'}
@@ -163,7 +172,7 @@ const renderTimeline = (
               icon={icon}
               position={style.position === 'right' ? 'right' : 'left'}
             >
-              {renderCardContent(item, type, String(cardStyle.background))}
+              {renderCardContent(item, type, String(cardStyle.background), t)}
             </VerticalTimelineElement>
           );
         })}
@@ -179,6 +188,7 @@ const TimelinePage = () => {
   });
   const [activeSection, setActiveSection] = useState<'all' | TimelineType>('all');
   const { workExperience, education, hobbies } = useTimelineData();
+  const t = useTranslations();
 
   const sectionMap = {
     workExperience: {
@@ -195,6 +205,14 @@ const TimelinePage = () => {
     },
   };
 
+  // Tab label translation keys
+  const tabLabels: Record<string, string> = {
+    all: 'Timeline.allLabel',
+    workExperience: 'Timeline.workExperienceLabel',
+    education: 'Timeline.educationLabel',
+    hobbies: 'Timeline.hobbiesLabel',
+  };
+
   return (
     <section className="relative w-full max-w-4xl mx-auto px-4 py-5 flex flex-col items-center">
       {/* Blurry gradient background as very first child, absolutely positioned and behind all content */}
@@ -203,9 +221,8 @@ const TimelinePage = () => {
       <div className="relative z-10 w-full flex flex-col items-center overflow-x-hidden">
 
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
-          Timeline
+          {t('Timeline.title')}
         </h1>
-
 
         <Tabs
           defaultValue="all"
@@ -217,28 +234,27 @@ const TimelinePage = () => {
             <TabsList className="gap-1 sm:gap-3">
               {['all', ...Object.keys(sectionMap)].map((section) => (
                 <TabsTrigger key={section} value={section}>
-                  {section.charAt(0).toUpperCase() + section.slice(1).replace(/([A-Z])/g, ' $1')}
+                  {t(tabLabels[section])}
                 </TabsTrigger>
               ))}
             </TabsList>
           </div>
           <TabsContent value="all">
-            {renderTimeline('workExperience', workExperience, sectionMap.workExperience.icon)}
-            {renderTimeline('education', education, sectionMap.education.icon)}
-            {renderTimeline('hobbies', hobbies, sectionMap.hobbies.icon)}
+            {renderTimeline('workExperience', workExperience, sectionMap.workExperience.icon, t)}
+            {renderTimeline('education', education, sectionMap.education.icon, t)}
+            {renderTimeline('hobbies', hobbies, sectionMap.hobbies.icon, t)}
           </TabsContent>
           {(Object.keys(sectionMap) as Array<keyof typeof sectionMap>).map((section) => (
             <TabsContent key={section} value={section} className="animate-flyin">
               {renderTimeline(
                 section,
                 sectionMap[section].data,
-                sectionMap[section].icon
+                sectionMap[section].icon,
+                t
               )}
             </TabsContent>
           ))}
         </Tabs>
-
-
 
       </div>
     </section >

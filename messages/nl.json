@@ -18,6 +18,16 @@
   },
   "HomePage": {
     "name": "Wiebe Vandendriessche",
-    "description": "Ik ben doctoraatsonderzoeker bij imec IDLab, Universiteit Gent en behaalde een master in Information Engineering Technology. Mijn onderzoek focust op hoe AI en cloudplatformtechnologieën elkaar versterken om veilige AI-training mogelijk te maken. Daarnaast heb ik een passie voor het ontwikkelen van complexe, interactieve front-end ervaringen die ambitieuze ideeën omzetten in gebruiksvriendelijke tools."
+    "description": "Ik ben doctoraatsonderzoeker bij imec IDLab, Universiteit Gent en behaalde een master in Information Engineering Technology. Mijn onderzoek focust op hoe AI en cloudplatformtechnologieën elkaar versterken om veilige AI-training mogelijk te maken. Daarnaast heb ik een passie voor het ontwikkelen van complexe, interactieve front-end ervaringen die ambitieuze ideeën omzetten in gebruiksvriendelijke tools.",
+    "contactMe": "Contact",
+    "myProjects": "Mijn projecten"
+  }
+  ,
+  "Timeline": {
+    "title": "Tijdlijn",
+    "allLabel": "Alles",
+    "workExperienceLabel": "Werkervaring",
+    "educationLabel": "Opleiding",
+    "hobbiesLabel": "Hobby's"
   }
 }

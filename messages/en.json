@@ -18,6 +18,16 @@
   },
   "HomePage": {
     "name": "Wiebe Vandendriessche",
-    "description": "I’m a PhD researcher at imec IDLab, Ghent University, with a Master’s in Information Engineering Technology. I explore how AI and cloud platform technologies come together to enable secure AI training. I’m also passionate about creating complex front-end experiences that turn ambitious ideas into tools people love to use."
+    "description": "I’m a PhD researcher at imec IDLab, Ghent University, with a Master’s in Information Engineering Technology. I explore how AI and cloud platform technologies come together to enable secure AI training. I’m also passionate about creating complex front-end experiences that turn ambitious ideas into tools people love to use.",
+    "contactMe": "Contact Me",
+    "myProjects": "My Projects"
+  }
+  ,
+  "Timeline": {
+    "title": "Timeline",
+    "allLabel": "All",
+    "workExperienceLabel": "Work Experience",
+    "educationLabel": "Education",
+    "hobbiesLabel": "Hobbies"
   }
 }
