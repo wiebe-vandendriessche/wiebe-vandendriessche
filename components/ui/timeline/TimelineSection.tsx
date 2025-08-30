@@ -1,5 +1,5 @@
 import React from "react";
-import TimelineCard from "./TimelineCardContent";
+import TimelineCardContent from "./TimelineCardContent";
 import timelineStyles from "./timelineStyles";
 import { TimelineElement } from "./TimelineCardContent";
 import { TimelineType } from "./useTimelineData";
@@ -36,9 +36,8 @@ const TimelineSection: React.FC<{
             date={item.date}
             icon={icon}
             position={style.position === 'right' ? 'right' : 'left'}
-          >
-            <TimelineCard item={item} />
-          </VerticalTimelineElement>
+            item={item}
+          />
         ))}
       </VerticalTimeline>
     </div>

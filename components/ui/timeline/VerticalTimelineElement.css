@@ -99,10 +99,7 @@
 .vertical-timeline-element-content h2 {
   color: var(--card-foreground);
 }
-.vertical-timeline-element-content p, .vertical-timeline-element-content .vertical-timeline-element-date {
-  font-size: 13px;
-  font-weight: 500;
-}
+
 .vertical-timeline-element-content .vertical-timeline-element-date {
   display: inline-block;
 }

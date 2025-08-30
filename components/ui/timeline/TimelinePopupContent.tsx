@@ -1,26 +1,20 @@
 import React from "react";
+
+
 import Image from "next/image";
 import { Badge } from "../badge";
-import { getCardForeground } from "./timelineStyles";
+import { TimelineElement } from "./TimelineCard";
 
-export type TimelineElement = {
-  date: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  tags?: string[];
-  logos?: { src: string; className?: string }[];
-};
-
-const TimelineCardContent: React.FC<{
+interface TimelinePopupContentProps {
   item: TimelineElement;
-  textColor?: string;
-}> = ({ item, textColor }) => (
-  <div style={{ color: textColor || getCardForeground() }} className="relative">
-    <div>
+}
+
+const TimelinePopupContent: React.FC<TimelinePopupContentProps> = ({ item }) => {
+  return (
+    <div className="timeline-popup-content p-2">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-bold">{item.title}</h3>
+          <h3 className="text-lg font-bold">Popup: {item.title}</h3>
           <h4 className="text-sm opacity-80">{item.subtitle}</h4>
         </div>
         {Array.isArray(item.logos) && item.logos.length > 0 && (
@@ -46,8 +40,9 @@ const TimelineCardContent: React.FC<{
           ))}
         </div>
       )}
+      {/* Add extra information here later */}
     </div>
-  </div>
-);
+  );
+};
 
-export default TimelineCardContent;
+export default TimelinePopupContent;
