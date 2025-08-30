@@ -1,5 +1,3 @@
-
-
 "use client"
 
 import * as React from "react";
@@ -35,6 +33,19 @@ import {
     ColumnFiltersState,
 } from "@tanstack/react-table";
 import { CreateTimelineElementDialog } from "@/components/ui/admin/CreateTimelineElementDialog";
+import { EditTimelineElementDialog } from "@/components/ui/admin/EditTimelineElementDialog";
+import { toast } from "sonner";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogFooter,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogAction,
+    AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 type TimelineElementTableRow = {
     id: number;
@@ -62,6 +73,7 @@ export function TimelineElementsTable() {
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [deletingIds, setDeletingIds] = useState<number[]>([]);
+    const [deleteDialogId, setDeleteDialogId] = useState<number | null>(null);
 
     useEffect(() => {
         async function fetchElements() {
@@ -80,17 +92,16 @@ export function TimelineElementsTable() {
 
     const handleDelete = async (id: number) => {
         if (deletingIds.includes(id)) return;
-        const confirmDelete = window.confirm("Delete this timeline element? This cannot be undone.");
-        if (!confirmDelete) return;
         setDeletingIds(prev => [...prev, id]);
         const { error } = await supabase.from("timeline_elements").delete().eq("id", id);
         if (error) {
-            console.error("Failed to delete timeline element", error);
+            toast.error("Failed to delete timeline element");
         } else {
-            // Optimistic update
             setElements(prev => prev.filter(e => e.id !== id));
+            toast.success("Timeline element deleted");
         }
         setDeletingIds(prev => prev.filter(x => x !== id));
+        setDeleteDialogId(null);
     };
 
     const columns: ColumnDef<TimelineElementTableRow>[] = [
@@ -116,15 +127,32 @@ export function TimelineElementsTable() {
                 const isDeleting = deletingIds.includes(id);
                 return (
                     <div className="flex gap-2 justify-end">
-                        <Button variant="outline" size="sm" disabled>Edit</Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(id)}
-                            disabled={isDeleting}
-                        >
-                            {isDeleting ? "Deleting..." : "Delete"}
-                        </Button>
+                        <EditTimelineElementDialog element={row.original as any} onUpdated={refresh} />
+                        <AlertDialog open={deleteDialogId === id} onOpenChange={(open) => setDeleteDialogId(open ? id : null)}>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    disabled={isDeleting}
+                                >
+                                    {isDeleting ? "Deleting..." : "Delete"}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Timeline Element</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to delete this timeline element? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction disabled={isDeleting} onClick={() => handleDelete(id)}>
+                                        {isDeleting ? "Deleting..." : "Delete"}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 );
             },
@@ -153,7 +181,7 @@ export function TimelineElementsTable() {
 
     return (
         <div className="w-full">
-                    <div className="flex items-center gap-2 py-4">
+                    <div className="flex items-center gap-2 py-2">
                 <Input
                     placeholder="Filter title..."
                     value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}

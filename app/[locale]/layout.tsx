@@ -10,6 +10,7 @@ import WavesBackground from "@/components/ui/waves/waves-background";
 import FooterSection from "@/components/sections/Footer";
 import { ThemeProvider } from "@/components/theme-provider"
 import { getTranslations } from 'next-intl/server';
+import { Toaster } from "@/components/ui/sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,6 +81,7 @@ export default async function LocaleLayout({
               </NextIntlClientProvider>
             </div>
           </div>
+          <Toaster position="bottom-right" className="z-50" />
         </ThemeProvider>
       </body>
     </html>
