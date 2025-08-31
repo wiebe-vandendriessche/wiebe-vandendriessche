@@ -24,8 +24,9 @@ const langSectionSchema = z.object({
 });
 
 const formSchema = z.object({
-    projectid: z.string().min(1, "Required"),
+    timelineid: z.string().min(1, "Required"),
     categorie: z.string().min(1, "Required"),
+    order: z.string().optional(), // numeric (per category) but capture as string then cast
     // Shared fields (copied into both language rows)
     started: z.string().optional(),
     finished: z.string().optional(),
@@ -49,8 +50,9 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            projectid: "",
+            timelineid: "",
             categorie: "",
+            order: "",
             started: "",
             finished: "",
             image_ext: "",
@@ -72,8 +74,9 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
         try {
             const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
             const baseShared = {
-                projectid: values.projectid,
+                timelineid: values.timelineid,
                 categorie: values.categorie,
+                order: values.order && values.order.trim() !== '' ? Number(values.order) : null,
                 started: toNull(values.started),
                 finished: toNull(values.finished),
                 image_ext: toNull(values.image_ext),
@@ -151,10 +154,10 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
                     <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto p-2">
                         <div className="grid gap-4 md:grid-cols-2">
-                            <FormField name="projectid" control={form.control} render={({ field }) => (
+                <FormField name="timelineid" control={form.control} render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Project ID *</FormLabel>
-                                    <FormControl><Input placeholder="phd_researcher" {...field} /></FormControl>
+                    <FormLabel>Timeline ID *</FormLabel>
+                    <FormControl><Input placeholder="phd_researcher" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
@@ -174,6 +177,13 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
                                     <FormMessage />
                                 </FormItem>
                             )} />
+                                <FormField name="order" control={form.control} render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Order (per category)</FormLabel>
+                                        <FormControl><Input placeholder="e.g. 1" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
                             <FormField name="started" control={form.control} render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Started</FormLabel>

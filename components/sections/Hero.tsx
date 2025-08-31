@@ -40,7 +40,7 @@ export default function HeroSection() {
         const notifiedRef = useRef(false)
         useFrame(() => {
             if (ref.current) {
-                ref.current.rotation.y += 0.005;
+                ref.current.rotation.y += 0.002;
             }
         })
         const { scene } = useGLTF('/avatar2export.glb')
@@ -126,15 +126,15 @@ export default function HeroSection() {
                         <div className="w-full md:w-1/2 flex justify-center items-center">
                             <div style={{ width: '100%', height: '400px' }} className="relative">
                                 {/* 3D Canvas with Suspense for model loading */}
-                                <Canvas  camera={{ position: [0, -0.3, 6], fov: 45 }}>
+                                <Canvas  camera={{ position: [-2, -0.3, -6], fov: 45 }}>
                                     <Suspense fallback={null}>
                                         <CameraLookForward />
                                         {/* Soft ambient light for base illumination */}
                                         <ambientLight intensity={0.5} />
                                         {/* Key light from above/front */}
-                                        <directionalLight position={[0, 5, 5]} intensity={1} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
+                                        <directionalLight position={[0, 5, -5]} intensity={1} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
                                         {/* Fill light from the side */}
-                                        <directionalLight position={[-5, 2, 2]} intensity={0.7} />
+                                        <directionalLight position={[-5, 2, -2]} intensity={0.7} />
                                         <RotatingModel scale={1.5} />
                                     </Suspense>
                                 </Canvas>

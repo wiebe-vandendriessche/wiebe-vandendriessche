@@ -47,12 +47,15 @@ import {
     AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 type TimelineElementTableRow = {
     id: number;
-    projectid: string;
+    timelineid: string;
     language: string;
     categorie: string;
+    order?: number | null;
     title: string;
     location: string;
     started: string;
@@ -75,6 +78,7 @@ export function TimelineElementsTable() {
     const [rowSelection, setRowSelection] = React.useState({});
     const [deletingIds, setDeletingIds] = useState<number[]>([]);
     const [deleteDialogId, setDeleteDialogId] = useState<number | null>(null);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     useEffect(() => {
         async function fetchElements() {
@@ -107,9 +111,19 @@ export function TimelineElementsTable() {
 
     const columns: ColumnDef<TimelineElementTableRow>[] = [
         { accessorKey: "id", header: "ID" },
-        { accessorKey: "projectid", header: "Project ID" },
+        { accessorKey: "timelineid", header: "Timeline ID" },
         { accessorKey: "language", header: "Language" },
-        { accessorKey: "categorie", header: "Categorie" },
+        {
+            accessorKey: "categorie",
+            header: "Categorie",
+            filterFn: (row, columnId, filterValue: string[]) => {
+                if (!filterValue) return true; // safety
+                if (filterValue.length === 0) return false; // empty selection shows no rows
+                const value = row.getValue<string>(columnId);
+                return filterValue.includes(value);
+            },
+        },
+        { accessorKey: "order", header: "Order" },
         { accessorKey: "title", header: "Title" },
         { accessorKey: "location", header: "Location" },
         { accessorKey: "started", header: "Started" },
@@ -180,9 +194,39 @@ export function TimelineElementsTable() {
         },
     });
 
+    // Derive unique categories whenever elements change
+    const categories = React.useMemo(
+        () => Array.from(new Set(elements.map(e => e.categorie).filter(Boolean))).sort(),
+        [elements]
+    );
+
+    // Track whether we've initialized the category selection (so user clearing all is respected)
+    const [categoriesInitialized, setCategoriesInitialized] = useState(false);
+
+    // Initialize selected categories to all on first load
+    useEffect(() => {
+        if (!categoriesInitialized && categories.length > 0) {
+            setSelectedCategories(categories);
+            setCategoriesInitialized(true);
+        }
+    }, [categories, categoriesInitialized]);
+
+    // Sync selectedCategories to the table filter value
+    useEffect(() => {
+        table.getColumn("categorie")?.setFilterValue(selectedCategories);
+    }, [selectedCategories, table]);
+
+    const toggleCategory = (cat: string) => {
+        setSelectedCategories(prev =>
+            prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+        );
+    };
+
+    const clearCategories = () => setSelectedCategories([]); // unused now (kept for potential future use)
+
     return (
         <div className="w-full">
-                    <div className="flex items-center gap-2 py-2">
+            <div className="flex flex-wrap items-center gap-10 py-2">
                 <Input
                     placeholder="Filter title..."
                     value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -191,7 +235,24 @@ export function TimelineElementsTable() {
                     }
                     className="max-w-sm"
                 />
-                        <CreateTimelineElementDialog onCreated={refresh} />
+                <CreateTimelineElementDialog onCreated={refresh} />
+                {categories.length > 0 && categories.map(cat => {
+                    const checked = selectedCategories.includes(cat);
+                    const id = `cat-${cat}`;
+                    return (
+                        <div key={cat} className="flex items-center gap-1 text-xs">
+                            <Checkbox
+                                id={id}
+                                checked={checked}
+                                onCheckedChange={() => toggleCategory(cat)}
+                                className="size-4"
+                            />
+                            <Label htmlFor={id} className="cursor-pointer leading-none">
+                                {cat}
+                            </Label>
+                        </div>
+                    );
+                })}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
@@ -249,9 +310,10 @@ export function TimelineElementsTable() {
                             (() => {
                                 const skeletonWidths: Record<string,string> = {
                                     id: 'w-8',
-                                    projectid: 'w-28',
+                                    timelineid: 'w-28',
                                     language: 'w-16',
                                     categorie: 'w-24',
+                                    order: 'w-16',
                                     title: 'w-44',
                                     location: 'w-40',
                                     started: 'w-20',

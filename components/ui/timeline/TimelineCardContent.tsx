@@ -12,6 +12,7 @@ export type TimelineElement = {
   image_ext?: string;
   tags?: string[];
   logos?: string[];
+  order?: number; // optional ordering (not currently displayed)
 };
 
 const TimelineCardContent: React.FC<{

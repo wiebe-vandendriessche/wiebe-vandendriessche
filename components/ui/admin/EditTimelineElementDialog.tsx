@@ -24,8 +24,9 @@ const langSectionSchema = z.object({
 });
 
 const formSchema = z.object({
-    projectid: z.string().min(1, "Required"),
+    timelineid: z.string().min(1, "Required"),
     categorie: z.string().min(1, "Required"),
+    order: z.string().optional(),
     started: z.string().optional(),
     finished: z.string().optional(),
     image_ext: z.string().optional(),
@@ -38,7 +39,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export interface TimelineElementRowForEdit {
     id: number;
-    projectid: string;
+    timelineid: string;
     language: string;
     categorie: string;
     title: string;
@@ -50,6 +51,7 @@ export interface TimelineElementRowForEdit {
     tags: string[] | null;
     logos: string[] | null;
     image_ext: string | null;
+    order?: number | null;
 }
 
 interface EditTimelineElementDialogProps {
@@ -70,18 +72,19 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            projectid: element.projectid,
+            timelineid: element.timelineid,
             categorie: element.categorie,
             started: element.started ?? "",
             finished: element.finished ?? "",
             image_ext: element.image_ext ?? "",
             logos: (element.logos ?? []).join(", "),
+            order: element.order ? String(element.order) : "",
             en: { title: "", location: "", description: "", description_ext: "", tags: "" },
             nl: { title: "", location: "", description: "", description_ext: "", tags: "" },
         },
     });
 
-    // Populate both languages when dialog opens (fetch by projectid for freshest data)
+    // Populate both languages when dialog opens (fetch by timelineid for freshest data)
     useEffect(() => {
         if (!open) return;
         (async () => {
@@ -89,7 +92,7 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
             const { data, error } = await supabase
                 .from("timeline_elements")
                 .select("*")
-                .eq("projectid", element.projectid);
+                .eq("timelineid", element.timelineid);
             if (error) {
                 toast.error("Failed to load element");
                 setLoading(false);
@@ -102,12 +105,13 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
             // Use whichever row we clicked for shared fallback
             const shared = enRow || nlRow || element;
             form.reset({
-                projectid: shared.projectid,
+                timelineid: shared.timelineid,
                 categorie: shared.categorie,
                 started: shared.started || "",
                 finished: shared.finished || "",
                 image_ext: shared.image_ext || "",
                 logos: (shared.logos || []).join(", "),
+                order: shared.order ? String(shared.order) : "",
                 en: {
                     title: enRow?.title || "",
                     location: enRow?.location || "",
@@ -140,12 +144,13 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
         try {
             const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
             const baseShared = {
-                projectid: values.projectid,
+                timelineid: values.timelineid,
                 categorie: values.categorie,
                 started: toNull(values.started),
                 finished: toNull(values.finished),
                 image_ext: toNull(values.image_ext),
                 logos: parseList(values.logos),
+                order: values.order && values.order.trim() !== '' ? Number(values.order) : null,
             } as const;
 
             const buildLang = (lang: "en" | "nl", section: FormValues["en"]) => ({
@@ -224,9 +229,9 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto p-2">
                             <div className="grid gap-4 md:grid-cols-2">
-                                <FormField name="projectid" control={form.control} render={({ field }) => (
+                <FormField name="timelineid" control={form.control} render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Project ID *</FormLabel>
+                    <FormLabel>Timeline ID *</FormLabel>
                                         <FormControl><Input {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -244,6 +249,13 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                                <FormField name="order" control={form.control} render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Order (per category)</FormLabel>
+                                        <FormControl><Input placeholder="e.g. 1" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
