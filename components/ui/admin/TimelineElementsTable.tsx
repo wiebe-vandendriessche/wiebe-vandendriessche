@@ -46,6 +46,7 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type TimelineElementTableRow = {
     id: number;
@@ -244,7 +245,43 @@ export function TimelineElementsTable() {
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {loading ? (
+                            (() => {
+                                const skeletonWidths: Record<string,string> = {
+                                    id: 'w-8',
+                                    projectid: 'w-28',
+                                    language: 'w-16',
+                                    categorie: 'w-24',
+                                    title: 'w-44',
+                                    location: 'w-40',
+                                    started: 'w-20',
+                                    finished: 'w-20',
+                                    description: 'w-64',
+                                    description_ext: 'w-64',
+                                    tags: 'w-40',
+                                    logos: 'w-48',
+                                    image_ext: 'w-28',
+                                    actions: 'w-24'
+                                };
+                                const rows = 10;
+                                return Array.from({ length: rows }).map((_, r) => (
+                                    <TableRow key={r} className="h-12">
+                                        {columns.map((col, cIdx) => (
+                                            <TableCell key={col.id || cIdx} className={col.id === 'actions' ? 'sticky right-0 bg-card z-10' : ''}>
+                                                {col.id === 'actions' ? (
+                                                    <div className="flex justify-end gap-2">
+                                                        <Skeleton className="h-8 w-14" />
+                                                        <Skeleton className="h-8 w-16" />
+                                                    </div>
+                                                ) : (
+                                                    <Skeleton className={`h-4 ${skeletonWidths[col.id as string] || 'w-24'}`} />
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            })()
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id}>
                                     {row.getVisibleCells().map((cell) => (

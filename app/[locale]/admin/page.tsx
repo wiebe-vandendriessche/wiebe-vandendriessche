@@ -27,9 +27,8 @@ export default function AdminPage() {
     })();
   }, []);
 
-  if (loading) {
-    return <div className="flex justify-center items-center p-12 text-sm opacity-70">Loading...</div>;
-  }
+  // Option B: keep page minimal during session check; AdminLoginForm handles its own skeleton
+  if (loading) return null;
 
   if (!user) {
     return (

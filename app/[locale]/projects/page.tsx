@@ -1,14 +1,19 @@
 "use client";
 
-import Masonry from "@/components/ui/masonry";
+import Masonry from "@/components/ui/projects/masonry";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useMemo } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 const categories = ["all", "web", "ai", "tools", "random", ] as const;
 type Category = typeof categories[number];
 
 export default function ProjectsPage() {
     const [activeCategory, setActiveCategory] = useState<Category>("all");
+    const [selected, setSelected] = useState<{ id: string; img: string; category?: string } | null>(null);
+    const [open, setOpen] = useState(false);
 
     const items = [
         { id: "1", img: "/test.jpg", url: "https://example.com/one", height: 300, category: "web" },
@@ -59,10 +64,34 @@ export default function ProjectsPage() {
                             blurToFocus={true}
                             colorShiftOnHover={false}
                             activeCategory={cat === 'all' ? 'all' : cat}
+                            onSelect={(item) => { setSelected(item); setOpen(true); }}
                         />
                     </TabsContent>
                 ))}
             </Tabs>
+            <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setSelected(null); }}>
+                <DialogContent large aria-describedby={undefined}>
+                    <DialogHeader>
+                        <DialogTitle className="font-bold flex items-center gap-2">
+                            Project Details
+                            {selected?.category && (
+                                <Badge variant="secondary" className="text-xs">{selected.category}</Badge>
+                            )}
+                        </DialogTitle>
+                    </DialogHeader>
+                    {selected && (
+                        <div className="space-y-4">
+                            <div className="rounded-md overflow-hidden border bg-muted/30 flex items-center justify-center">
+                                <Image src={selected.img} alt={selected.id} width={640} height={360} className="object-cover w-full h-auto" />
+                            </div>
+                            <div className="text-sm space-y-1">
+                                <p><span className="font-semibold">ID:</span> {selected.id}</p>
+                                <p><span className="font-semibold">Category:</span> {selected.category}</p>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </section>
     );
 }

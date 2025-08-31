@@ -7,6 +7,7 @@ import {
     SheetContent,
     SheetHeader,
     SheetTitle,
+    SheetDescription,
     SheetClose,
 } from "@/components/ui/sheet";
 import { useTranslations } from 'next-intl';
@@ -49,6 +50,9 @@ export default function Navbar() {
                     <SheetContent side="left" className="p-0 max-w-[16rem] w-full">
                         <SheetHeader className="p-4 border-b">
                             <SheetTitle>{t('menu')}</SheetTitle>
+                            <SheetDescription className="sr-only">
+                                {t('menu')}
+                            </SheetDescription>
                         </SheetHeader>
                         <ul className="flex flex-col">
                             <li>

@@ -9,7 +9,8 @@ import React, {
 } from "react";
 import { gsap } from "gsap";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Car } from "lucide-react";
 
 const useMedia = (
   queries: string[],
@@ -117,6 +118,8 @@ interface MasonryProps {
   activeCategory?: string;
   /** When true (default), on small screens (mobile) filtered-out items are completely removed instead of just dimmed */
   collapseFilteredOnMobile?: boolean;
+  /** Callback when an item is clicked */
+  onSelect?: (item: Item) => void;
 }
 
 const Masonry: React.FC<MasonryProps> = ({
@@ -135,6 +138,7 @@ const Masonry: React.FC<MasonryProps> = ({
   grayscaleToColor = true,
   activeCategory,
   collapseFilteredOnMobile = true,
+  onSelect,
 }) => {
   const columns = useMedia(
     [
@@ -373,7 +377,12 @@ const Masonry: React.FC<MasonryProps> = ({
               style={{ willChange: "transform, width, height, opacity" }}
               onClick={(e) => {
                 if (actuallyDimmed) return;
-                window.open(item.url, "_blank", "noopener");
+                if (onSelect) {
+                  onSelect(item);
+                } else if (item.url) {
+                  // Fallback behaviour if no onSelect provided
+                  window.open(item.url, "_blank", "noopener");
+                }
               }}
               onMouseEnter={(e) => { if (!actuallyDimmed) handleMouseEnter(item.id, e.currentTarget); }}
               onMouseLeave={(e) => { if (!actuallyDimmed) handleMouseLeave(item.id, e.currentTarget); }}
@@ -397,7 +406,11 @@ const Masonry: React.FC<MasonryProps> = ({
                     {item.category}
                   </Badge>
                 )}
+                <CardTitle className="absolute bottom-3 left-3 text-white font-bold">
+                  {item.category}
+                </CardTitle>
               </Card>
+              
             </div>
           );
         })()

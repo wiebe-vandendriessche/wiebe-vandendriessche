@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabaseClient";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Reuse schema from create component (duplicated here to keep file self-contained)
 const langSectionSchema = z.object({
@@ -194,7 +195,31 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                     <DialogTitle>Edit Timeline Element</DialogTitle>
                 </DialogHeader>
                 {loading ? (
-                    <div className="p-6 text-sm">Loading...</div>
+                    <div className="space-y-6 max-h-[70vh] overflow-y-auto p-2">
+                        <div className="grid gap-4 md:grid-cols-2">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className={i === 5 ? 'md:col-span-2 space-y-2' : 'space-y-2'}>
+                                    <Skeleton className="h-4 w-32" />
+                                    <Skeleton className="h-10 w-full" />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-4">
+                            <Skeleton className="h-8 w-40" />
+                            <div className="grid gap-4 md:grid-cols-2">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <div key={i} className={i === 0 || i > 1 ? 'md:col-span-2 space-y-2' : 'space-y-2'}>
+                                        <Skeleton className="h-4 w-40" />
+                                        <Skeleton className={i >= 3 ? 'h-24 w-full' : 'h-10 w-full'} />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-2 pt-2">
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-10 w-24" />
+                        </div>
+                    </div>
                 ) : (
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto p-2">
