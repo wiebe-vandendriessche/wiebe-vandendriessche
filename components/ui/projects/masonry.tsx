@@ -10,7 +10,6 @@ import React, {
 import { gsap } from "gsap";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
-import { Car } from "lucide-react";
 
 const useMedia = (
   queries: string[],
@@ -87,6 +86,8 @@ interface Item {
   height: number;
   /** Optional category for filtering */
   category?: string;
+  /** Optional human readable title */
+  title?: string;
 }
 
 interface GridItem extends Item {
@@ -407,7 +408,7 @@ const Masonry: React.FC<MasonryProps> = ({
                   </Badge>
                 )}
                 <CardTitle className="absolute bottom-3 left-3 text-white font-bold">
-                  {item.category}
+                  {item.title || item.category}
                 </CardTitle>
               </Card>
               
