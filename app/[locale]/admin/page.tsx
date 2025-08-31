@@ -5,6 +5,8 @@ import type { User } from '@supabase/supabase-js';
 import { AdminLoginForm } from '@/components/ui/admin/AdminLoginForm';
 import { supabase } from '@/lib/supabaseClient';
 import { TimelineElementsTable } from '@/components/ui/admin/TimelineElementsTable';
+import { ProjectsTable } from '@/components/ui/admin/ProjectsTable';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -56,7 +58,7 @@ export default function AdminPage() {
       <div className="max-w-6xl w-full relative p-3">
         <div className="foggy-gradient-bg absolute inset-0 w-full h-full" />
         <div className="relative z-10">
-          <h2 className="text-2xl font-bold mb-6">Timeline Elements Admin</h2>
+          <h2 className="text-2xl font-bold mb-6">Admin</h2>
           <div className="mb-4 flex items-center gap-4">
             <p>Logged in as {user?.email}</p>
             <Button
@@ -74,7 +76,18 @@ export default function AdminPage() {
               }}
             >Logout</Button>
           </div>
-          <TimelineElementsTable />
+          <Tabs defaultValue="timeline" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="timeline">Timeline Elements</TabsTrigger>
+              <TabsTrigger value="projects">Projects</TabsTrigger>
+            </TabsList>
+            <TabsContent value="timeline" className="space-y-4">
+              <TimelineElementsTable />
+            </TabsContent>
+            <TabsContent value="projects" className="space-y-4">
+              <ProjectsTable />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
