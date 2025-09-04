@@ -40,15 +40,18 @@ const TimelinePopupContent: React.FC<TimelinePopupContentProps> = ({ item }) => 
           <p>{item.description_ext}</p>
         </div>
       )}
-      {item.image_ext && (
-        <div className="mt-2">
-          <Image
-            src={item.image_ext}
-            alt={item.title + " extra image"}
-            width={320}
-            height={180}
-            className="object-contain rounded shadow max-w-full h-auto"
-          />
+      {Array.isArray(item.image_ext) && item.image_ext.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {item.image_ext.map((imgUrl: string, idx: number) => (
+            <Image
+              key={idx}
+              src={imgUrl}
+              alt={item.title + ` extra image ${idx+1}`}
+              width={320}
+              height={180}
+              className="object-contain rounded shadow max-w-full h-auto"
+            />
+          ))}
         </div>
       )}
       {item.tags && item.tags.length > 0 && (

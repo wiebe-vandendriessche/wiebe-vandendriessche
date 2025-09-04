@@ -20,7 +20,7 @@ type TimelineElementRow = {
     finished: string | null;
     description: string | null;
     description_ext?: string | null;
-    image_ext?: string | null;
+    image_ext?: string[] | null;
     tags?: string[] | null;
     logos?: string[] | null;
 };
@@ -103,7 +103,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
             subtitle: r.location || '',
             description: r.description || '',
             description_ext: r.description_ext || '',
-            image_ext: r.image_ext || '',
+            image_ext: Array.isArray(r.image_ext) ? r.image_ext : (typeof r.image_ext === 'string' && r.image_ext ? [r.image_ext] : []),
             tags: r.tags || [],
             logos: r.logos || [],
         });

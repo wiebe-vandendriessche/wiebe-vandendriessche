@@ -148,7 +148,7 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                 categorie: values.categorie,
                 started: toNull(values.started),
                 finished: toNull(values.finished),
-                image_ext: toNull(values.image_ext),
+                image_ext: parseList(values.image_ext),
                 logos: parseList(values.logos),
                 order: values.order && values.order.trim() !== '' ? Number(values.order) : null,
             } as const;
@@ -275,8 +275,8 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                                 )} />
                                 <FormField name="image_ext" control={form.control} render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Image Ext</FormLabel>
-                                        <FormControl><Input {...field} /></FormControl>
+                                        <FormLabel>Image Ext (comma separated)</FormLabel>
+                                        <FormControl><Input placeholder="/images/img1.jpg, /images/img2.jpg" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />

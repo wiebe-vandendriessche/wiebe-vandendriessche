@@ -37,13 +37,17 @@ export function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }) {
 	})
 
 	useEffect(() => {
-		let active = true
-		;(async () => {
-			// Simulate initial load; resolve immediately if you later add a real session check.
-			if (active) setInitialLoading(false)
-		})()
-		return () => { active = false }
-	}, [])
+		let active = true;
+		(async () => {
+			const { data: { session } } = await supabase.auth.getSession();
+			const adminUUID = process.env.NEXT_PUBLIC_SUPABASE_ADMIN_UUID;
+			if (active && session?.user?.id === adminUUID) {
+				if (onSuccess) onSuccess();
+			}
+			if (active) setInitialLoading(false);
+		})();
+		return () => { active = false };
+	}, [onSuccess]);
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setSubmitting(true);
@@ -75,7 +79,7 @@ export function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }) {
 
 	return (
 		<>
-			{initialLoading || submitting ? (
+			{initialLoading ? (
 				<div className="space-y-8 w-full p-6">
 					<div className="space-y-2">
 						<Skeleton className="h-4 w-24" />

@@ -131,8 +131,8 @@ export function TimelineElementsTable() {
         { accessorKey: "description", header: "Description" },
         { accessorKey: "description_ext", header: "Description Ext" },
         { accessorKey: "tags", header: "Tags", cell: ({ row }) => row.original.tags?.join(", ") ?? "" },
-        { accessorKey: "logos", header: "Logos", cell: ({ row }) => row.original.logos ? row.original.logos.join(", ") : "" },
-        { accessorKey: "image_ext", header: "Image Ext" },
+    { accessorKey: "logos", header: "Logos", cell: ({ row }) => row.original.logos ? row.original.logos.join(", ") : "" },
+    { accessorKey: "image_ext", header: "Image Ext", cell: ({ row }) => Array.isArray(row.original.image_ext) ? row.original.image_ext.join(", ") : "" },
         {
             id: "actions",
             enableHiding: false,

@@ -29,7 +29,7 @@ export default function AdminPage() {
     })();
   }, []);
 
-  // Option B: keep page minimal during session check; AdminLoginForm handles its own skeleton
+  // Keep page minimal during session check; AdminLoginForm handles its own skeleton
   if (loading) return null;
 
   if (!user) {

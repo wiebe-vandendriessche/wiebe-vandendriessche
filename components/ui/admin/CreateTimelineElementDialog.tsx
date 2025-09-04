@@ -63,10 +63,10 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
     });
 
     const parseList = (value?: string) => {
-        if (!value) return null;
-        const trimmed = value.trim();
-        if (!trimmed) return null;
-        return trimmed.split(",").map(s => s.trim()).filter(Boolean);
+    if (!value) return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    return trimmed.split(",").map(s => s.trim()).filter(Boolean);
     };
 
     const onSubmit = async (values: FormValues) => {
@@ -79,7 +79,7 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
                 order: values.order && values.order.trim() !== '' ? Number(values.order) : null,
                 started: toNull(values.started),
                 finished: toNull(values.finished),
-                image_ext: toNull(values.image_ext),
+                image_ext: parseList(values.image_ext),
                 logos: parseList(values.logos),
             };
             const enLang = values.en; const nlLang = values.nl;
@@ -200,8 +200,8 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
                             )} />
                             <FormField name="image_ext" control={form.control} render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Image Ext</FormLabel>
-                                    <FormControl><Input placeholder="optional shared image path" {...field} /></FormControl>
+                                    <FormLabel>Image Ext (comma separated)</FormLabel>
+                                    <FormControl><Input placeholder="/images/img1.jpg, /images/img2.jpg" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
