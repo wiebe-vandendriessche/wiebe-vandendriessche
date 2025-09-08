@@ -358,7 +358,7 @@ const Masonry: React.FC<MasonryProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-max"
+      className="relative h-max"
       // Height is updated via effect for smoother animation, no overflow clipping needed
       style={!animateContainerHeight ? { height: gridHeight ? gridHeight + 16 : undefined, overflowAnchor: 'none' } : { overflowAnchor: 'none' }}
     >
@@ -407,7 +407,7 @@ const Masonry: React.FC<MasonryProps> = ({
                     {item.category}
                   </Badge>
                 )}
-                <CardTitle className="absolute bottom-3 left-3 text-white font-bold">
+                <CardTitle className="absolute bottom-3 left-3 text-primary font-bold">
                   {item.title || item.category}
                 </CardTitle>
               </Card>
