@@ -53,7 +53,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
   const selected = useMemo(() => data.find(d => d.projectid === selectedId), [selectedId, data]);
 
   return (
-    <section className="relative px-4 md:px-10 py-5 flex flex-col">
+    <section className="relative w-full max-w-7xl mx-auto px-4 py-5 flex flex-col items-center">
       <div className="foggy-gradient-bg absolute inset-0 -z-20 pointer-events-none" />
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 z-10">Projects</h1>
       <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v)} className="w-full">

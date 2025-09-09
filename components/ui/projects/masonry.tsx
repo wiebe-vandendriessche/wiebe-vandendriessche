@@ -40,11 +40,11 @@ const useIsMobile = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia('(max-width: 768px)');
-  const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     // Initial
     setIsMobile(mq.matches);
-  mq.addEventListener('change', handler);
-  return () => mq.removeEventListener('change', handler);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
   return isMobile;
 };
@@ -121,6 +121,8 @@ interface MasonryProps {
   collapseFilteredOnMobile?: boolean;
   /** Callback when an item is clicked */
   onSelect?: (item: Item) => void;
+  /** If true, use image aspect ratio for layout instead of item.height */
+  useImageAspectRatio?: boolean;
 }
 
 const Masonry: React.FC<MasonryProps> = ({
@@ -140,8 +142,9 @@ const Masonry: React.FC<MasonryProps> = ({
   activeCategory,
   collapseFilteredOnMobile = true,
   onSelect,
+  useImageAspectRatio = false,
 }) => {
-  const columns = useMedia(
+  const columnsRaw = useMedia(
     [
       "(min-width:1500px)",
       "(min-width:1000px)",
@@ -152,8 +155,17 @@ const Masonry: React.FC<MasonryProps> = ({
     1
   );
 
+  // If too few items, reduce columns so we always have at least 2 rows if possible
+  const columns = useMemo(() => {
+    if (items.length === 0) return 1;
+    // Try to make at least 2 rows if possible
+    const maxColumns = Math.max(1, Math.min(columnsRaw, Math.floor(items.length / 2) || 1));
+    return Math.min(columnsRaw, maxColumns, items.length);
+  }, [columnsRaw, items.length]);
+
   const [containerRef, { width }] = useMeasure<HTMLDivElement>();
   const [imagesReady, setImagesReady] = useState(false);
+  const [aspectRatios, setAspectRatios] = useState<Record<string, number>>({});
   // Detect mobile viewport (up to 768px width)
   const isMobile = useIsMobile();
 
@@ -202,8 +214,37 @@ const Masonry: React.FC<MasonryProps> = ({
   };
 
   useEffect(() => {
-    preloadImages(layoutItems.map((i) => i.img)).then(() => setImagesReady(true));
-  }, [layoutItems]);
+    if (!useImageAspectRatio) {
+      preloadImages(layoutItems.map((i) => i.img)).then(() => setImagesReady(true));
+      return;
+    }
+    // Preload images and get aspect ratios
+    const preloadImagesWithAspect = async (items: Item[]): Promise<Record<string, number>> => {
+      const results: Record<string, number> = {};
+      await Promise.all(
+        items.map(
+          (item) =>
+            new Promise<void>((resolve) => {
+              const img = new window.Image();
+              img.src = item.img;
+              img.onload = () => {
+                results[item.id] = img.naturalWidth / img.naturalHeight;
+                resolve();
+              };
+              img.onerror = () => {
+                results[item.id] = 1; // fallback to 1:1
+                resolve();
+              };
+            })
+        )
+      );
+      return results;
+    };
+    preloadImagesWithAspect(layoutItems).then((ratios) => {
+      setAspectRatios(ratios);
+      setImagesReady(true);
+    });
+  }, [layoutItems, useImageAspectRatio]);
 
   // Build grid layout and compute overall required container height so the parent can grow.
   const { grid, gridHeight } = useMemo(() => {
@@ -215,16 +256,21 @@ const Masonry: React.FC<MasonryProps> = ({
     const built: GridItem[] = layoutItems.map((child) => {
       const col = colHeights.indexOf(Math.min(...colHeights));
       const x = col * (columnWidth + gap);
-      let scaleFactor = 0.5; // fallback similar to previous /2
-      if (responsiveScale) {
-        // Wider grids need smaller heights; single column shows full height
-        if (columns >= 5) scaleFactor = 0.45;
-        else if (columns === 4) scaleFactor = 0.5;
-        else if (columns === 3) scaleFactor = 0.6;
-        else if (columns === 2) scaleFactor = 0.75;
-        else scaleFactor = 1; // 1 column, full height
+      let height: number;
+      if (useImageAspectRatio) {
+        const aspect = aspectRatios[child.id] || 1;
+        height = columnWidth / aspect;
+      } else {
+        let scaleFactor = 0.5;
+        if (responsiveScale) {
+          if (columns >= 5) scaleFactor = 0.45;
+          else if (columns === 4) scaleFactor = 0.5;
+          else if (columns === 3) scaleFactor = 0.6;
+          else if (columns === 2) scaleFactor = 0.75;
+          else scaleFactor = 1;
+        }
+        height = child.height * scaleFactor;
       }
-      const height = child.height * scaleFactor;
       const y = colHeights[col];
       colHeights[col] += height + gap;
       return { ...child, x, y, w: columnWidth, h: height };
@@ -235,7 +281,7 @@ const Masonry: React.FC<MasonryProps> = ({
       : 0;
 
     return { grid: built, gridHeight: maxHeight };
-  }, [columns, layoutItems, width, responsiveScale]);
+  }, [columns, layoutItems, width, responsiveScale, useImageAspectRatio, aspectRatios]);
 
   const hasMounted = useRef(false);
 
@@ -268,13 +314,14 @@ const Masonry: React.FC<MasonryProps> = ({
             start = { x: item.x, y: item.y }; // could also add small scale/blur only
             break;
           case 'random': {
-            const dirs = ['top','bottom','left','right'];
-            const dir = dirs[Math.floor(Math.random()*dirs.length)];
+            const dirs = ['top', 'bottom', 'left', 'right'];
+            const dir = dirs[Math.floor(Math.random() * dirs.length)];
             if (dir === 'top') start.y = item.y - initialOffset;
             else if (dir === 'bottom') start.y = item.y + initialOffset;
             else if (dir === 'left') start.x = item.x - initialOffset;
             else if (dir === 'right') start.x = item.x + initialOffset;
-            break; }
+            break;
+          }
           default:
             start.y = item.y + initialOffset * 0.5;
         }
@@ -372,8 +419,8 @@ const Masonry: React.FC<MasonryProps> = ({
               data-key={item.id}
               data-category={item.category || ''}
               className={
-                  "group absolute box-content " +
-                  (actuallyDimmed ? "pointer-events-none" : "cursor-pointer")
+                "group absolute box-content " +
+                (actuallyDimmed ? "pointer-events-none" : "cursor-pointer")
               }
               style={{ willChange: "transform, width, height, opacity" }}
               onClick={(e) => {
@@ -402,16 +449,17 @@ const Masonry: React.FC<MasonryProps> = ({
                 {item.category && (
                   <Badge
                     variant="secondary"
-                    className="absolute top-2 left-2 backdrop-blur-sm/30 bg-secondary/80 text-xs font-medium px-2 py-0.5"
+                    className="absolute top-3 left-3 backdrop-blur-sm/10 bg-secondary/80 text-xs font-medium px-2 py-0.5"
                   >
                     {item.category}
                   </Badge>
                 )}
-                <CardTitle className="absolute bottom-3 left-3 text-primary font-bold">
-                  {item.title || item.category}
+                <CardTitle className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-secondary/80 backdrop-blur-sm/10"
+>
+                    {item.title || item.category}
                 </CardTitle>
               </Card>
-              
+
             </div>
           );
         })()
