@@ -9,6 +9,8 @@ import { ProjectsTable } from '@/components/ui/admin/ProjectsTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { ProjectCategoryRelations } from '@/components/ui/admin/ProjectCategoryRelations';
+import { CategoriesTable } from '@/components/ui/admin/CategoriesTable';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -80,12 +82,20 @@ export default function AdminPage() {
             <TabsList className="mb-4">
               <TabsTrigger value="timeline">Timeline Elements</TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>
+              <TabsTrigger value="relations">Project Relations</TabsTrigger>
+              <TabsTrigger value="categories">Project Categories</TabsTrigger>
             </TabsList>
             <TabsContent value="timeline" className="space-y-4">
               <TimelineElementsTable />
             </TabsContent>
             <TabsContent value="projects" className="space-y-4">
               <ProjectsTable />
+            </TabsContent>
+            <TabsContent value="relations" className="space-y-4">
+              <ProjectCategoryRelations />
+            </TabsContent>
+            <TabsContent value="categories" className="space-y-4">
+              <CategoriesTable />
             </TabsContent>
           </Tabs>
         </div>
