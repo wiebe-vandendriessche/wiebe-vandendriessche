@@ -26,7 +26,7 @@ const langSectionSchema = z.object({
 
 const formSchema = z.object({
   projectid: z.string().min(1, "Required"),
-  categorie: z.string().min(1, "Required"),
+  // categorie removed; relations will be created separately
   started: z.string().optional(), // numeric year
   finished: z.string().optional(),
   image: z.string().optional(),
@@ -49,7 +49,6 @@ export function CreateProjectDialog({ onCreated }: CreateProjectDialogProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       projectid: "",
-      categorie: "",
       started: "",
       finished: "",
       image: "",
@@ -71,7 +70,6 @@ export function CreateProjectDialog({ onCreated }: CreateProjectDialogProps) {
       const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
       const shared = {
         projectid: values.projectid,
-        categorie: values.categorie,
         started: values.started && values.started.trim() !== '' ? Number(values.started) : null,
         finished: values.finished && values.finished.trim() !== '' ? Number(values.finished) : null,
         image: toNull(values.image),
@@ -142,23 +140,6 @@ export function CreateProjectDialog({ onCreated }: CreateProjectDialogProps) {
                   <FormItem>
                     <FormLabel>Project ID *</FormLabel>
                     <FormControl><Input placeholder="unique id" {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField name="categorie" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category *</FormLabel>
-                    <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full"><SelectValue placeholder="Select category" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AI">AI</SelectItem>
-                          <SelectItem value="3D">3D</SelectItem>
-                          <SelectItem value="webapp">webapp</SelectItem>
-                          <SelectItem value="thesis">thesis</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />

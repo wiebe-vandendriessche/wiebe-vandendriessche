@@ -25,7 +25,7 @@ const langSectionSchema = z.object({
 
 const formSchema = z.object({
   projectid: z.string().min(1, "Required"),
-  categorie: z.string().min(1, "Required"),
+  // categorie removed; categories are managed through relations
   started: z.string().optional(),
   finished: z.string().optional(),
   image: z.string().optional(),
@@ -41,7 +41,7 @@ export interface ProjectRowForEdit {
   id: number; // assumption: projects table has id
   projectid: string;
   language: string;
-  categorie: string;
+  // categorie removed; categories via relations table
   started: number | null;
   finished: number | null;
   title: string | null;
@@ -69,7 +69,6 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
     resolver: zodResolver(formSchema),
     defaultValues: {
       projectid: project.projectid,
-      categorie: project.categorie,
       started: project.started ? String(project.started) : "",
       finished: project.finished ? String(project.finished) : "",
       image: project.image || "",
@@ -96,7 +95,6 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
       const shared: any = enRow || nlRow || project;
       form.reset({
         projectid: shared.projectid,
-        categorie: shared.categorie,
         started: shared.started ? String(shared.started) : "",
         finished: shared.finished ? String(shared.finished) : "",
         image: shared.image || "",
@@ -135,7 +133,6 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
       const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
       const shared = {
         projectid: values.projectid,
-        categorie: values.categorie,
         started: values.started && values.started.trim() !== '' ? Number(values.started) : null,
         finished: values.finished && values.finished.trim() !== '' ? Number(values.finished) : null,
         image: toNull(values.image),
@@ -220,23 +217,6 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
                   <FormItem>
                     <FormLabel>Project ID *</FormLabel>
                     <FormControl><Input {...field} /></FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField name="categorie" control={form.control} render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category *</FormLabel>
-                    <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger className="w-full"><SelectValue placeholder="Select category" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="AI">AI</SelectItem>
-                          <SelectItem value="3D">3D</SelectItem>
-                          <SelectItem value="webapp">webapp</SelectItem>
-                          <SelectItem value="thesis">thesis</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />

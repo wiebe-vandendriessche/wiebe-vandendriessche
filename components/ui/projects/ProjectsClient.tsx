@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 export interface ProjectRecord {
   projectid: string;
   language: string;
-  categorie: string | null;
+  categories: string[];
   started: number | null;
   finished: number | null;
   title: string | null;
@@ -35,19 +35,31 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    data.forEach(d => { if (d.categorie) set.add(d.categorie.toLowerCase()); });
-    return ['all', ...Array.from(set).sort()];
+    data.forEach(d => {
+      (d.categories || []).forEach(c => set.add((c || '').toLowerCase()));
+    });
+    const result = ['all', ...Array.from(set).sort()];
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line no-console
+      console.log('[ProjectsClient] categories tabs:', result);
+    }
+    return result;
   }, [data]);
 
   const masonryItems = useMemo(() => {
-    return data.map(d => ({
+    const items = data.map(d => ({
       id: d.projectid,
       img: d.image || '/test.jpg',
       url: d.url || '',
       height: d.height || 250,
-      category: d.categorie ? d.categorie.toLowerCase() : undefined,
+      categories: (d.categories || []).map(c => c.toLowerCase()),
       title: d.title || undefined
     }));
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line no-console
+      console.log('[ProjectsClient] masonry items sample:', items.slice(0, 6));
+    }
+    return items;
   }, [data]);
 
   const selected = useMemo(() => data.find(d => d.projectid === selectedId), [selectedId, data]);
@@ -89,8 +101,10 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
           <DialogHeader>
             <DialogTitle className="font-bold flex items-center gap-2">
               {selected?.title || 'Project Details'}
-              {selected?.categorie && (
-                <Badge variant="secondary" className="text-xs">{selected.categorie}</Badge>
+              {(selected?.categories && selected.categories.length > 0) && (
+                <span className="flex flex-wrap gap-1">{selected.categories.map(c => (
+                  <Badge key={c} variant="secondary" className="text-xs capitalize">{c}</Badge>
+                ))}</span>
               )}
             </DialogTitle>
           </DialogHeader>

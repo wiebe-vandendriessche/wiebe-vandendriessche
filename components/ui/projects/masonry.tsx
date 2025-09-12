@@ -84,8 +84,8 @@ interface Item {
   img: string;
   url: string;
   height: number;
-  /** Optional category for filtering */
-  category?: string;
+  /** Optional categories for filtering */
+  categories?: string[];
   /** Optional human readable title */
   title?: string;
 }
@@ -159,7 +159,7 @@ const Masonry: React.FC<MasonryProps> = ({
   const columns = useMemo(() => {
     if (items.length === 0) return 1;
     // Try to make at least 2 rows if possible
-    const maxColumns = Math.max(1, Math.min(columnsRaw, Math.floor(items.length / 2) || 1));
+    const maxColumns = Math.max(1, Math.min(columnsRaw, Math.floor(items.length / 1.5) || 1));
     return Math.min(columnsRaw, maxColumns, items.length);
   }, [columnsRaw, items.length]);
 
@@ -171,13 +171,8 @@ const Masonry: React.FC<MasonryProps> = ({
 
   // Decide which items participate in layout (removing non-matching on mobile if requested)
   const layoutItems = useMemo(() => {
-    if (
-      collapseFilteredOnMobile &&
-      isMobile &&
-      activeCategory &&
-      activeCategory !== 'all'
-    ) {
-      return items.filter(i => i.category === activeCategory);
+    if (collapseFilteredOnMobile && isMobile && activeCategory && activeCategory !== 'all') {
+      return items.filter(i => (i.categories || []).includes(activeCategory));
     }
     return items;
   }, [items, collapseFilteredOnMobile, isMobile, activeCategory]);
@@ -411,13 +406,13 @@ const Masonry: React.FC<MasonryProps> = ({
     >
       {grid.map((item) => (
         (() => {
-          const dimmed = !!(activeCategory && activeCategory !== 'all' && item.category !== activeCategory);
+          const dimmed = !!(activeCategory && activeCategory !== 'all' && !(item.categories || []).includes(activeCategory));
           const actuallyDimmed = dimmed && !(collapseFilteredOnMobile && isMobile);
           return (
             <div
               key={item.id}
               data-key={item.id}
-              data-category={item.category || ''}
+              data-category={(item.categories && item.categories[0]) || ''}
               className={
                 "group absolute box-content " +
                 (actuallyDimmed ? "pointer-events-none" : "cursor-pointer")
@@ -446,18 +441,22 @@ const Masonry: React.FC<MasonryProps> = ({
                 {colorShiftOnHover && (
                   <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />
                 )}
-                {item.category && (
-                  <Badge
-                    variant="secondary"
-                    className="absolute top-3 left-3 backdrop-blur-sm/10 bg-secondary/80 text-xs font-medium px-2 py-0.5"
-                  >
-                    {item.category}
-                  </Badge>
+                {(item.categories && item.categories.length > 0) && (
+                  <div className="absolute top-3 left-3 flex gap-1 flex-wrap">
+                    {item.categories.slice(0, 3).map((cat) => (
+                      <Badge
+                        key={cat}
+                        variant="secondary"
+                        className="backdrop-blur-sm/10 bg-secondary/80 text-xs font-medium px-2 py-0.5"
+                      >
+                        {cat}
+                      </Badge>
+                    ))}
+                  </div>
                 )}
-                <CardTitle className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-secondary/80 backdrop-blur-sm/10"
->
-                    {item.title || item.category}
-                </CardTitle>
+        <CardTitle className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-secondary/80 backdrop-blur-sm/10">
+          {item.title || (item.categories && item.categories[0])}
+        </CardTitle>
               </Card>
 
             </div>

@@ -31,7 +31,7 @@ export type ProjectTableRow = {
   id: number; // assumption: table has id
   projectid: string;
   language: string;
-  categorie: string | null;
+  // categorie removed; categories managed via relations table
   started: number | null;
   finished: number | null;
   title: string | null;
@@ -54,8 +54,7 @@ export function ProjectsTable() {
   const [rowSelection, setRowSelection] = useState({});
   const [deletingIds, setDeletingIds] = useState<number[]>([]);
   const [deleteDialogId, setDeleteDialogId] = useState<number | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [categoriesInitialized, setCategoriesInitialized] = useState(false);
+  // Category filtering moved out; relations-based filtering can be added later
 
   useEffect(() => {
     (async () => {
@@ -84,10 +83,7 @@ export function ProjectsTable() {
   const columns: ColumnDef<ProjectTableRow>[] = [
     { accessorKey: "id", header: "ID" },
     { accessorKey: "projectid", header: "Project ID" },
-    { accessorKey: "language", header: "Language" },
-    { accessorKey: "categorie", header: "Category", filterFn: (row, columnId, filterValue: string[]) => {
-      if (!filterValue) return true; if (filterValue.length === 0) return false; const value = row.getValue<string | null>(columnId); return value ? filterValue.includes(value) : false;
-    } },
+  { accessorKey: "language", header: "Language" },
     { accessorKey: "started", header: "Started" },
     { accessorKey: "finished", header: "Finished" },
     { accessorKey: "title", header: "Title" },
@@ -138,27 +134,14 @@ export function ProjectsTable() {
     state: { sorting, columnFilters, columnVisibility, rowSelection },
   });
 
-  const categories = React.useMemo(() => Array.from(new Set(projects.map(p => p.categorie).filter(Boolean) as string[])).sort(), [projects]);
-
-  useEffect(() => { if (!categoriesInitialized && categories.length > 0) { setSelectedCategories(categories as string[]); setCategoriesInitialized(true); } }, [categories, categoriesInitialized]);
-  useEffect(() => { table.getColumn("categorie")?.setFilterValue(selectedCategories); }, [selectedCategories, table]);
-
-  const toggleCategory = (cat: string) => setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
+  // Category chips disabled for now (relations needed). To be implemented with join if desired.
 
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-center gap-10 py-2">
         <Input placeholder="Filter title..." value={(table.getColumn("title")?.getFilterValue() as string) ?? ""} onChange={(e) => table.getColumn("title")?.setFilterValue(e.target.value)} className="max-w-sm" />
         <CreateProjectDialog onCreated={refresh} />
-        {categories.length > 0 && categories.map(cat => {
-          const checked = selectedCategories.includes(cat); const id = `proj-cat-${cat}`;
-          return (
-            <div key={cat} className="flex items-center gap-1 text-xs">
-              <Checkbox id={id} checked={checked} onCheckedChange={() => toggleCategory(cat)} className="size-4" />
-              <Label htmlFor={id} className="cursor-pointer leading-none">{cat}</Label>
-            </div>
-          );
-        })}
+  {/* Category filter UI removed; relations-based UI can be reintroduced */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">Columns <ChevronDown /></Button>
