@@ -5,11 +5,11 @@ import { supabase } from '@/lib/supabaseClient';
 
 // Unified timeline element row definition matching the proposed schema
 // Table name assumed: timeline_elements
-// Columns: id (pk), timelineid (grouping id for translations), language, categorie,
+// Composite PK: (timelineid text, language enum)
+// Columns: timelineid, language, categorie,
 // title, location, started, finished, description
 // Additional optional columns (not required now) could be: logos text[] / meta jsonb
 type TimelineElementRow = {
-    id: number;
     timelineid: string;
     language: string;
     categorie: string;
@@ -42,10 +42,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
             .from('timeline_elements')
             .select('*')
             .eq('language', locale)
-            // Order primarily by category then by provided order then fallback id for stable ordering
+            // Order primarily by category then by provided order then by timelineid for stability
             .order('categorie', { ascending: true })
             .order('order', { ascending: true, nullsFirst: false })
-            .order('id', { ascending: true });
+            .order('timelineid', { ascending: true });
         if (error) {
             console.warn('Supabase fetch error timeline_elements:', error.message);
         } else if (data) {
@@ -68,7 +68,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
     // Debug: log all fetched rows
     if (rows.length) {
         console.log('TimelineElement raw rows:', rows.map(r => ({
-            id: r.id,
             timelineid: r.timelineid,
             language: r.language,
             categorie: r.categorie,
@@ -96,7 +95,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
         if (!key) return acc;
         if (!acc[key]) acc[key] = [];
         acc[key].push({
-            id: r.id, // keep id for sorting
+            timelineid: r.timelineid,
             order: r.order ?? null,
             date: buildDate(r),
             title: r.title,
@@ -110,16 +109,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
         return acc;
     }, {});
 
-    // Sort each category by explicit order (ascending), fallback id
+    // Sort each category by explicit order (ascending), fallback timelineid
     Object.keys(categorized).forEach(cat => {
         categorized[cat].sort((a: any, b: any) => {
             const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
             const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
             if (ao !== bo) return ao - bo;
-            return a.id - b.id;
+            return (a.timelineid || '').localeCompare(b.timelineid || '');
         });
-        // Optionally, remove id after sorting if not needed in UI
-        categorized[cat] = categorized[cat].map(({ id, order, ...rest }) => rest);
+        categorized[cat] = categorized[cat].map(({ order, timelineid, ...rest }) => rest);
     });
 
     // Merge into messages under Timeline namespace

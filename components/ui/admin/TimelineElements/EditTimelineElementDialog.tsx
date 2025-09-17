@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,7 +39,6 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export interface TimelineElementRowForEdit {
-    id: number;
     timelineid: string;
     language: string;
     categorie: string;
@@ -60,14 +60,15 @@ interface EditTimelineElementDialogProps {
 }
 
 export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineElementDialogProps) {
+    const locale = useLocale();
     const [open, setOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState(element.language as "en" | "nl");
+    const [activeTab, setActiveTab] = useState((locale === 'nl' ? 'nl' : 'en') as "en" | "nl");
     const [submitting, setSubmitting] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // Keep ids for both languages (could be identical row or missing other language)
-    const [enId, setEnId] = useState<number | null>(element.language === "en" ? element.id : null);
-    const [nlId, setNlId] = useState<number | null>(element.language === "nl" ? element.id : null);
+    // Track existence of both languages
+    const [hasEn, setHasEn] = useState<boolean>(element.language === "en");
+    const [hasNl, setHasNl] = useState<boolean>(element.language === "nl");
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -100,8 +101,8 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
             }
             const enRow = data.find(r => r.language === "en");
             const nlRow = data.find(r => r.language === "nl");
-            if (enRow) setEnId(enRow.id); else setEnId(null);
-            if (nlRow) setNlId(nlRow.id); else setNlId(null);
+            setHasEn(!!enRow);
+            setHasNl(!!nlRow);
             // Use whichever row we clicked for shared fallback
             const shared = enRow || nlRow || element;
             form.reset({
@@ -142,9 +143,12 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
     const onSubmit = async (values: FormValues) => {
         setSubmitting(true);
         try {
+            const originalId = element.timelineid;
+            const newId = values.timelineid;
+            const idChanged = originalId !== newId;
             const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
             const baseShared = {
-                timelineid: values.timelineid,
+                timelineid: newId,
                 categorie: values.categorie,
                 started: toNull(values.started),
                 finished: toNull(values.finished),
@@ -165,19 +169,54 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
             const enUpdate = buildLang("en", values.en);
             const nlUpdate = buildLang("nl", values.nl);
 
-            if (enId) {
-                const { error } = await supabase.from("timeline_elements").update(enUpdate).eq("id", enId);
-                if (error) throw error;
-            } else if (values.en.title.trim()) {
-                const { error } = await supabase.from("timeline_elements").insert(enUpdate);
-                if (error) throw error;
-            }
-            if (nlId) {
-                const { error } = await supabase.from("timeline_elements").update(nlUpdate).eq("id", nlId);
-                if (error) throw error;
-            } else if (values.nl.title.trim()) {
-                const { error } = await supabase.from("timeline_elements").insert(nlUpdate);
-                if (error) throw error;
+            // If timelineid changed, treat this as a rename operation
+            if (idChanged) {
+                // Upsert new rows first (using the new timelineid)
+                if (values.en.title.trim()) {
+                    const { error } = await supabase
+                        .from("timeline_elements")
+                        .upsert(enUpdate, { onConflict: "timelineid,language" });
+                    if (error) throw error;
+                }
+                if (values.nl.title.trim()) {
+                    const { error } = await supabase
+                        .from("timeline_elements")
+                        .upsert(nlUpdate, { onConflict: "timelineid,language" });
+                    if (error) throw error;
+                }
+                // Remove all rows that still use the old timelineid
+                const { error: delErr } = await supabase
+                    .from("timeline_elements")
+                    .delete()
+                    .eq("timelineid", originalId);
+                if (delErr) throw delErr;
+            } else {
+                // Regular per-language upsert/delete by composite key
+                if (values.en.title.trim()) {
+                    const { error } = await supabase
+                        .from("timeline_elements")
+                        .upsert(enUpdate, { onConflict: "timelineid,language" });
+                    if (error) throw error;
+                } else if (hasEn) {
+                    const { error } = await supabase
+                        .from("timeline_elements")
+                        .delete()
+                        .match({ timelineid: newId, language: "en" });
+                    if (error) throw error;
+                }
+
+                if (values.nl.title.trim()) {
+                    const { error } = await supabase
+                        .from("timeline_elements")
+                        .upsert(nlUpdate, { onConflict: "timelineid,language" });
+                    if (error) throw error;
+                } else if (hasNl) {
+                    const { error } = await supabase
+                        .from("timeline_elements")
+                        .delete()
+                        .match({ timelineid: newId, language: "nl" });
+                    if (error) throw error;
+                }
             }
 
             toast.success("Timeline element updated");
