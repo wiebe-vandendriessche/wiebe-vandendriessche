@@ -24,8 +24,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { CreateProjectDialog } from "@/components/ui/admin/CreateProjectDialog";
-import { EditProjectDialog } from "@/components/ui/admin/EditProjectDialog";
+import { CreateProjectDialog } from "@/components/ui/admin/Projects/CreateProjectDialog";
+import { EditProjectDialog } from "@/components/ui/admin/Projects/EditProjectDialog";
 
 export type ProjectTableRow = {
   id: number; // assumption: table has id

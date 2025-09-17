@@ -32,8 +32,8 @@ import {
     SortingState,
     ColumnFiltersState,
 } from "@tanstack/react-table";
-import { CreateTimelineElementDialog } from "@/components/ui/admin/CreateTimelineElementDialog";
-import { EditTimelineElementDialog } from "@/components/ui/admin/EditTimelineElementDialog";
+import { CreateTimelineElementDialog } from "@/components/ui/admin/TimelineElements/CreateTimelineElementDialog";
+import { EditTimelineElementDialog } from "@/components/ui/admin/TimelineElements/EditTimelineElementDialog";
 import { toast } from "sonner";
 import {
     AlertDialog,

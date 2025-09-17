@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { AdminLoginForm } from '@/components/ui/admin/AdminLoginForm';
 import { supabase } from '@/lib/supabaseClient';
-import { TimelineElementsTable } from '@/components/ui/admin/TimelineElementsTable';
-import { ProjectsTable } from '@/components/ui/admin/ProjectsTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ProjectCategoryRelations } from '@/components/ui/admin/ProjectCategoryRelations';
-import { CategoriesTable } from '@/components/ui/admin/CategoriesTable';
+import { AdminLoginForm } from '@/components/ui/admin/AdminLoginForm';
+import { TimelineElementsTable } from '@/components/ui/admin/TimelineElements/TimelineElementsTable';
+import { ProjectsTable } from '@/components/ui/admin/Projects/ProjectsTable';
+import { ProjectCategoryRelations } from '@/components/ui/admin/ProjectCategoryRelations/ProjectCategoryRelations';
+import { CategoriesTable } from '@/components/ui/admin/Categories/CategoriesTable';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
