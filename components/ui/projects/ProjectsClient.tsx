@@ -33,12 +33,13 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Build a list of unique category names as they appear in the data (already localized)
   const categories = useMemo(() => {
     const set = new Set<string>();
     data.forEach(d => {
-      (d.categories || []).forEach(c => set.add((c || '').toLowerCase()));
+      (d.categories || []).forEach(c => set.add(c));
     });
-    const result = ['all', ...Array.from(set).sort()];
+    const result = ['all', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
     if (typeof window !== 'undefined') {
       // eslint-disable-next-line no-console
       console.log('[ProjectsClient] categories tabs:', result);
@@ -52,7 +53,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
       img: d.image || '/test.jpg',
       url: d.url || '',
       height: d.height || 250,
-      categories: (d.categories || []).map(c => c.toLowerCase()),
+      categories: (d.categories || []), // keep original names
       title: d.title || undefined
     }));
     if (typeof window !== 'undefined') {
@@ -72,8 +73,8 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
         <div className="flex justify-center mb-6">
           <TabsList className="gap-1 sm:gap-3 flex-wrap h-auto p-1 z-10">
             {categories.map(cat => (
-              <TabsTrigger key={cat} value={cat} className="capitalize px-3 py-1 text-sm">
-                {cat}
+              <TabsTrigger key={cat} value={cat} className="px-3 py-1 text-sm">
+                {cat === 'all' ? 'All' : cat}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -103,7 +104,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
               {selected?.title || 'Project Details'}
               {(selected?.categories && selected.categories.length > 0) && (
                 <span className="flex flex-wrap gap-1">{selected.categories.map(c => (
-                  <Badge key={c} variant="secondary" className="text-xs capitalize">{c}</Badge>
+                  <Badge key={c} variant="secondary" className="text-xs">{c}</Badge>
                 ))}</span>
               )}
             </DialogTitle>

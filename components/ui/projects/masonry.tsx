@@ -443,7 +443,7 @@ const Masonry: React.FC<MasonryProps> = ({
                 )}
                 {(item.categories && item.categories.length > 0) && (
                   <div className="absolute top-3 left-3 flex gap-1 flex-wrap">
-                    {item.categories.slice(0, 3).map((cat) => (
+                    {item.categories.map((cat) => (
                       <Badge
                         key={cat}
                         variant="secondary"
