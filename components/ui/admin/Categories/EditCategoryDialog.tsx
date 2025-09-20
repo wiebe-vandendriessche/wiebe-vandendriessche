@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
-type CategoryRow = { id: number; name: string; language: string; project_category_id: string };
+type CategoryRow = { name: string; language: string; project_category_id: string };
 
 interface Props { categorieId: string; onUpdated?: () => void; initialTab?: 'en' | 'nl' }
 
@@ -26,7 +26,7 @@ export function EditCategoryDialog({ categorieId, onUpdated, initialTab = 'en' }
       // Load latest rows for this categorieId
       const { data, error } = await supabase
         .from('project_categories')
-        .select('id,language,name,project_category_id')
+        .select('language,name,project_category_id')
         .eq('project_category_id', categorieId);
       if (error) {
         toast.error(error.message || 'Failed to load category');
@@ -49,28 +49,35 @@ export function EditCategoryDialog({ categorieId, onUpdated, initialTab = 'en' }
       // Load latest rows for this original group
       const { data: existing, error: fetchErr } = await supabase
         .from('project_categories')
-        .select('id,language')
+        .select('language')
         .eq('project_category_id', categorieId);
       if (fetchErr) throw fetchErr;
-      const exByLang = new Map<string, number>();
-      for (const r of (existing as any[]) || []) exByLang.set(r.language, r.id);
+      const exByLang = new Set<string>();
+      for (const r of (existing as any[]) || []) exByLang.add(r.language);
 
       // Prepare operations for EN
       if (enName.trim()) {
   const enPayload = { project_category_id: key.trim(), language: 'en', name: enName.trim() } as const;
-        const enId = exByLang.get('en');
-        if (enId) {
-          const { error } = await supabase.from('project_categories').update(enPayload).eq('id', enId);
+        const enExists = exByLang.has('en');
+        if (enExists) {
+          const { error } = await supabase
+            .from('project_categories')
+            .update(enPayload)
+            .eq('project_category_id', categorieId)
+            .eq('language', 'en');
           if (error) throw error;
         } else {
           const { error } = await supabase.from('project_categories').insert(enPayload);
           if (error) throw error;
         }
       } else {
-        // EN cleared -> delete EN row if existed
-        const enId = exByLang.get('en');
-        if (enId) {
-          const { error } = await supabase.from('project_categories').delete().eq('id', enId);
+        const enExists = exByLang.has('en');
+        if (enExists) {
+          const { error } = await supabase
+            .from('project_categories')
+            .delete()
+            .eq('project_category_id', categorieId)
+            .eq('language', 'en');
           if (error) throw error;
         }
       }
@@ -78,18 +85,26 @@ export function EditCategoryDialog({ categorieId, onUpdated, initialTab = 'en' }
       // NL
       if (nlName.trim()) {
   const nlPayload = { project_category_id: key.trim(), language: 'nl', name: nlName.trim() } as const;
-        const nlId = exByLang.get('nl');
-        if (nlId) {
-          const { error } = await supabase.from('project_categories').update(nlPayload).eq('id', nlId);
+        const nlExists = exByLang.has('nl');
+        if (nlExists) {
+          const { error } = await supabase
+            .from('project_categories')
+            .update(nlPayload)
+            .eq('project_category_id', categorieId)
+            .eq('language', 'nl');
           if (error) throw error;
         } else {
           const { error } = await supabase.from('project_categories').insert(nlPayload);
           if (error) throw error;
         }
       } else {
-        const nlId = exByLang.get('nl');
-        if (nlId) {
-          const { error } = await supabase.from('project_categories').delete().eq('id', nlId);
+        const nlExists = exByLang.has('nl');
+        if (nlExists) {
+          const { error } = await supabase
+            .from('project_categories')
+            .delete()
+            .eq('project_category_id', categorieId)
+            .eq('language', 'nl');
           if (error) throw error;
         }
       }

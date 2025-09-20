@@ -38,10 +38,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export interface ProjectRowForEdit {
-  id: number; // assumption: projects table has id
-  projectid: string;
+  project_id: string;
   language: string;
-  // categorie removed; categories via relations table
   started: number | null;
   finished: number | null;
   title: string | null;
@@ -62,13 +60,13 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
   const [activeTab, setActiveTab] = useState(project.language as "en" | "nl");
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [enId, setEnId] = useState<number | null>(project.language === 'en' ? project.id : null);
-  const [nlId, setNlId] = useState<number | null>(project.language === 'nl' ? project.id : null);
+  const [enExists, setEnExists] = useState<boolean>(project.language === 'en');
+  const [nlExists, setNlExists] = useState<boolean>(project.language === 'nl');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      projectid: project.projectid,
+      projectid: project.project_id,
       started: project.started ? String(project.started) : "",
       finished: project.finished ? String(project.finished) : "",
       image: project.image || "",
@@ -83,18 +81,18 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
     if (!open) return;
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase.from("projects").select("*").eq("projectid", project.projectid);
+  const { data, error } = await supabase.from("projects").select("*").eq("project_id", project.project_id);
       if (error) {
         toast.error("Failed to load project");
         setLoading(false); return;
       }
-      const enRow: any = data.find(r => r.language === 'en');
-      const nlRow: any = data.find(r => r.language === 'nl');
-      if (enRow) setEnId(enRow.id); else setEnId(null);
-      if (nlRow) setNlId(nlRow.id); else setNlId(null);
+  const enRow: any = data.find(r => r.language === 'en');
+  const nlRow: any = data.find(r => r.language === 'nl');
+  setEnExists(!!enRow);
+  setNlExists(!!nlRow);
       const shared: any = enRow || nlRow || project;
       form.reset({
-        projectid: shared.projectid,
+        projectid: shared.project_id ?? project.project_id,
         started: shared.started ? String(shared.started) : "",
         finished: shared.finished ? String(shared.finished) : "",
         image: shared.image || "",
@@ -132,7 +130,7 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
     try {
       const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
       const shared = {
-        projectid: values.projectid,
+        project_id: values.projectid,
         started: values.started && values.started.trim() !== '' ? Number(values.started) : null,
         finished: values.finished && values.finished.trim() !== '' ? Number(values.finished) : null,
         image: toNull(values.image),
@@ -152,19 +150,34 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
       const enUpdate = buildLang("en", values.en);
       const nlUpdate = buildLang("nl", values.nl);
 
-      if (enId) {
-        const { error } = await supabase.from("projects").update(enUpdate).eq("id", enId);
+      // Update or insert EN
+      if (enExists) {
+        const { error } = await supabase
+          .from("projects")
+          .update(enUpdate)
+          .eq("project_id", project.project_id)
+          .eq("language", "en");
         if (error) throw error;
       } else if (values.en.title.trim()) {
         const { error } = await supabase.from("projects").insert(enUpdate);
         if (error) throw error;
+      } else {
+        // If previously existed and now cleared, delete (edge-case: enExists false means nothing to delete)
       }
-      if (nlId) {
-        const { error } = await supabase.from("projects").update(nlUpdate).eq("id", nlId);
+
+      // Update or insert NL
+      if (nlExists) {
+        const { error } = await supabase
+          .from("projects")
+          .update(nlUpdate)
+          .eq("project_id", project.project_id)
+          .eq("language", "nl");
         if (error) throw error;
       } else if (values.nl.title.trim()) {
         const { error } = await supabase.from("projects").insert(nlUpdate);
         if (error) throw error;
+      } else {
+        // If previously existed and now cleared, delete (edge-case: nlExists false means nothing to delete)
       }
       toast.success("Project updated");
       if (onUpdated) onUpdated();

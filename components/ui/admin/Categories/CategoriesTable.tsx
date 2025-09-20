@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CreateCategoryDialog } from "./CreateCategoryDialog";
 import { EditCategoryDialog } from "./EditCategoryDialog";
 
-type CategoryRow = { id: number; name: string; language: string; project_category_id: string };
+type CategoryRow = { name: string; language: string; project_category_id: string };
 
 export function CategoriesTable() {
     const [rows, setRows] = useState<CategoryRow[]>([]);
@@ -23,7 +23,7 @@ export function CategoriesTable() {
         setLoading(true);
         const { data, error } = await supabase
             .from("project_categories")
-            .select("id,name,language,project_category_id")
+            .select("name,language,project_category_id")
             .order('project_category_id', { ascending: true })
             .order('language', { ascending: true });
         if (error) {
@@ -40,20 +40,20 @@ export function CategoriesTable() {
         const f = filter.trim().toLowerCase();
         if (!f) return rows;
         return rows.filter(r =>
-            String(r.id).includes(f) ||
             (r.name || '').toLowerCase().includes(f) ||
             (r.language || '').toLowerCase().includes(f) ||
             (r.project_category_id || '').toLowerCase().includes(f)
         );
     }, [filter, rows]);
 
-    const deleteRow = async (id: number) => {
+    const deleteRow = async (project_category_id: string, language: string) => {
         try {
-            setDeletingId(id);
+            setDeletingId(1);
             const { error: delErr } = await supabase
                 .from("project_categories")
                 .delete()
-                .eq("id", id);
+                .eq("project_category_id", project_category_id)
+                .eq("language", language);
             if (delErr) throw delErr;
             toast.success("Category row deleted");
             await load();
@@ -75,7 +75,6 @@ export function CategoriesTable() {
                 <Table className="min-w-full">
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-24">ID</TableHead>
                             <TableHead className="w-56">project_category_id</TableHead>
                             <TableHead className="w-24">language</TableHead>
                             <TableHead>name</TableHead>
@@ -86,7 +85,6 @@ export function CategoriesTable() {
                         {loading ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <TableRow key={i}>
-                                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-56" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                                     <TableCell><Skeleton className="h-4 w-64" /></TableCell>
@@ -95,8 +93,7 @@ export function CategoriesTable() {
                             ))
                         ) : filtered.length ? (
                             filtered.map(r => (
-                                <TableRow key={r.id}>
-                                    <TableCell>{r.id}</TableCell>
+                                <TableRow key={`${r.project_category_id}:${r.language}`}>
                                     <TableCell>{r.project_category_id}</TableCell>
                                     <TableCell>{r.language}</TableCell>
                                     <TableCell>{r.name}</TableCell>
@@ -105,8 +102,8 @@ export function CategoriesTable() {
                                             <EditCategoryDialog categorieId={r.project_category_id} initialTab={r.language as 'en' | 'nl'} onUpdated={load} />
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
-                                                    <Button variant="destructive" size="sm" disabled={deletingId === r.id}>
-                                                        {deletingId === r.id ? "Deleting..." : "Delete"}
+                                                    <Button variant="destructive" size="sm" disabled={deletingId !== null}>
+                                                        {deletingId !== null ? "Deleting..." : "Delete"}
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent>
@@ -118,8 +115,8 @@ export function CategoriesTable() {
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
                                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction onClick={() => deleteRow(r.id)} disabled={deletingId === r.id}>
-                                                            {deletingId === r.id ? "Deleting..." : "Delete"}
+                                                        <AlertDialogAction onClick={() => deleteRow(r.project_category_id, r.language)} disabled={deletingId !== null}>
+                                                            {deletingId !== null ? "Deleting..." : "Delete"}
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>

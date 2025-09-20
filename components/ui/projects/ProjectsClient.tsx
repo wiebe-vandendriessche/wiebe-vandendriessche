@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 
 export interface ProjectRecord {
-  projectid: string;
+  project_id: string;
   language: string;
   categories: string[];
   started: number | null;
@@ -48,7 +48,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
 
   const masonryItems = useMemo(() => {
     const items = data.map(d => ({
-      id: d.projectid,
+      id: d.project_id,
       img: d.image || '/test.jpg',
       url: d.url || '',
       height: d.height || 250,
@@ -62,7 +62,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
     return items;
   }, [data]);
 
-  const selected = useMemo(() => data.find(d => d.projectid === selectedId), [selectedId, data]);
+  const selected = useMemo(() => data.find(d => d.project_id === selectedId), [selectedId, data]);
 
   return (
     <section className="relative w-full max-w-7xl mx-auto px-4 py-5 flex flex-col items-center">
@@ -111,7 +111,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
           {selected && (
             <div className="space-y-4">
               <div className="rounded-md overflow-hidden border bg-muted/30 flex items-center justify-center">
-                <Image src={selected.image || '/test.jpg'} alt={selected.title || selected.projectid} width={640} height={360} className="object-cover w-full h-auto" />
+                <Image src={selected.image || '/test.jpg'} alt={selected.title || selected.project_id} width={640} height={360} className="object-cover w-full h-auto" />
               </div>
               <div className="text-sm space-y-1">
                 {selected.title_ext && <p className="italic text-muted-foreground">{selected.title_ext}</p>}

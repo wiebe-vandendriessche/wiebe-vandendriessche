@@ -69,7 +69,7 @@ export function CreateProjectDialog({ onCreated }: CreateProjectDialogProps) {
     try {
       const toNull = (v?: string) => (v && v.trim() !== "" ? v : null);
       const shared = {
-        projectid: values.projectid,
+        project_id: values.projectid,
         started: values.started && values.started.trim() !== '' ? Number(values.started) : null,
         finished: values.finished && values.finished.trim() !== '' ? Number(values.finished) : null,
         image: toNull(values.image),

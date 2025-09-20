@@ -5,17 +5,4 @@ project_id,category_id
 3,5
 4,4
 4,6
-5,5
-6,6
-7,3
-7,5
-8,4
-8,6
-9,5
-10,6
-11,5
-12,6
-13,7
-13,1
-14,8
-14,2
+DEPRECATED FILE - use project_category_relations_seed.csv

@@ -9,11 +9,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type ProjectRow = { id: number; projectid: string; language: string; title: string | null };
-type CategoryRow = { id: number; name: string; language: string; project_category_id: string };
+type ProjectRow = { project_id: string; language: string; title: string | null };
+type CategoryRow = { name: string; language: string; project_category_id: string };
 
 type ProjectGroup = {
-    projectid: string;
+    project_id: string;
     en?: ProjectRow;
     nl?: ProjectRow;
     displayTitle: string;
@@ -29,7 +29,7 @@ type LogicalCategory = {
 export function ProjectCategoryRelations() {
     const [projectGroups, setProjectGroups] = useState<ProjectGroup[]>([]);
     const [logicalCategories, setLogicalCategories] = useState<LogicalCategory[]>([]);
-    const [selectedByProject, setSelectedByProject] = useState<Record<string, Set<string>>>({}); // projectid -> set(project_category_id)
+    const [selectedByProject, setSelectedByProject] = useState<Record<string, Set<string>>>({}); // project_id (logical) -> set(project_category_id)
     const [loading, setLoading] = useState(true);
     const [savingFor, setSavingFor] = useState<string | null>(null);
     const [filterProject, setFilterProject] = useState("");
@@ -38,33 +38,32 @@ export function ProjectCategoryRelations() {
         setLoading(true);
         // Load all projects in both languages
         const { data: projs, error: pErr } = await supabase
-            .from("projects").select("id,projectid,language,title");
+            .from("projects").select("project_id,language,title");
         if (pErr) {
             toast.error(pErr.message);
             setLoading(false); return;
         }
         const byProjectId = new Map<string, ProjectGroup>();
         for (const p of (projs as any as ProjectRow[]) || []) {
-            const g = byProjectId.get(p.projectid) || {
-                projectid: p.projectid,
+            const g = byProjectId.get(p.project_id) || {
+                project_id: p.project_id,
                 displayTitle: "",
             };
             if (p.language === 'en') g.en = p; else if (p.language === 'nl') g.nl = p;
-            g.displayTitle = g.displayTitle || p.title || p.projectid;
-            byProjectId.set(p.projectid, g);
+            g.displayTitle = g.displayTitle || p.title || p.project_id;
+            byProjectId.set(p.project_id, g);
         }
-        const groups = Array.from(byProjectId.values()).sort((a, b) => a.projectid.localeCompare(b.projectid));
+        const groups = Array.from(byProjectId.values()).sort((a, b) => a.project_id.localeCompare(b.project_id));
         setProjectGroups(groups);
 
         // Load categories in both languages and group by project_category_id
         const { data: cats, error: cErr } = await supabase
-            .from("project_categories").select("id,name,language,project_category_id");
+            .from("project_categories").select("project_category_id,name,language");
         if (cErr) {
             toast.error(cErr.message);
             setLoading(false); return;
         }
         const byCatKey = new Map<string, LogicalCategory>();
-        const idToProjectCategoryId = new Map<number, string>();
         for (const c of (cats as any as CategoryRow[]) || []) {
             const lc = byCatKey.get(c.project_category_id) || {
                 project_category_id: c.project_category_id,
@@ -74,30 +73,25 @@ export function ProjectCategoryRelations() {
             // prefer English name for display, fallback NL, then key
             lc.displayName = lc.en?.name || lc.nl?.name || c.project_category_id;
             byCatKey.set(c.project_category_id, lc);
-            idToProjectCategoryId.set(c.id, c.project_category_id);
         }
         const logical = Array.from(byCatKey.values()).sort((a, b) => a.displayName.localeCompare(b.displayName));
         setLogicalCategories(logical);
 
-        // Load existing relations for all language-specific project ids
-        const allProjectIds = groups.flatMap(g => [g.en?.id, g.nl?.id].filter(Boolean)) as number[];
+        // Load existing relations for all projects (both languages), key by logical project_id
         let selected: Record<string, Set<string>> = {};
-        if (allProjectIds.length) {
+        const projectKeys = groups.map(g => g.project_id);
+        if (projectKeys.length) {
             const { data: rels, error: rErr } = await supabase
-                .from("project_categorie_relations")
-                .select("project_id,category_id")
-                .in("project_id", allProjectIds);
-            if (rErr) {
-                toast.error(rErr.message);
-            } else {
+                .from("project_category_relations")
+                .select("project_id,project_category_id,language")
+                .in("project_id", projectKeys);
+            if (rErr) toast.error(rErr.message);
+            else {
                 for (const g of groups) {
                     const set = new Set<string>();
-                    const idsForGroup = (rels as any[]).filter(r => r.project_id === g.en?.id || r.project_id === g.nl?.id);
-                    for (const r of idsForGroup) {
-                        const key = idToProjectCategoryId.get(r.category_id);
-                        if (key) set.add(key);
-                    }
-                    selected[g.projectid] = set;
+                    const rowsForGroup = (rels as any[]).filter(r => r.project_id === g.project_id);
+                    for (const r of rowsForGroup) set.add(r.project_category_id as string);
+                    selected[g.project_id] = set;
                 }
             }
         }
@@ -111,66 +105,60 @@ export function ProjectCategoryRelations() {
         const f = filterProject.trim().toLowerCase();
         if (!f) return projectGroups;
         return projectGroups.filter(g =>
-            g.projectid.toLowerCase().includes(f) || (g.displayTitle || "").toLowerCase().includes(f)
+            g.project_id.toLowerCase().includes(f) || (g.displayTitle || "").toLowerCase().includes(f)
         );
     }, [projectGroups, filterProject]);
 
-    const toggle = (projectid: string, catKey: string) => {
+    const toggle = (project_id: string, catKey: string) => {
         setSelectedByProject(prev => {
             const copy: Record<string, Set<string>> = { ...prev };
-            const set = new Set(copy[projectid] || []);
+            const set = new Set(copy[project_id] || []);
             if (set.has(catKey)) set.delete(catKey); else set.add(catKey);
-            copy[projectid] = set; return copy;
+            copy[project_id] = set; return copy;
         });
     };
 
     const saveProject = async (group: ProjectGroup) => {
-        const enId = group.en?.id || null;
-        const nlId = group.nl?.id || null;
-        if (!enId && !nlId) return;
+    const hasEn = !!group.en;
+    const hasNl = !!group.nl;
+    if (!hasEn && !hasNl) return;
         try {
-            setSavingFor(group.projectid);
-            const selectedKeys = Array.from(selectedByProject[group.projectid] || []);
-
-            // Build map from project_category_id -> language-specific category ids
-            const keyToCatIds: Record<string, { en?: number; nl?: number }> = {};
-            for (const lc of logicalCategories) {
-                keyToCatIds[lc.project_category_id] = { en: lc.en?.id, nl: lc.nl?.id } as any;
-            }
+            setSavingFor(group.project_id);
+            const selectedKeys = Array.from(selectedByProject[group.project_id] || []);
 
             // For each language-specific project row present, compute diff and apply
-            const applyFor = async (projId: number, lang: 'en' | 'nl') => {
-                // Fetch existing relations for this project
+            const applyFor = async (projKey: string, lang: 'en' | 'nl') => {
+                // Fetch existing relations for this project+language
                 const { data: existing, error } = await supabase
-                    .from("project_categorie_relations")
-                    .select("category_id")
-                    .eq("project_id", projId);
+                    .from("project_category_relations")
+                    .select("project_category_id")
+                    .eq("project_id", projKey)
+                    .eq("language", lang);
                 if (error) throw error;
-                const existingSet = new Set(((existing as any[]) || []).map(r => r.category_id as number));
-                // Desired numeric category ids for this lang
-                const desiredIds = selectedKeys
-                    .map(k => keyToCatIds[k]?.[lang])
-                    .filter((v): v is number => typeof v === 'number');
-                const desiredSet = new Set(desiredIds);
-                const toAdd = desiredIds.filter(id => !existingSet.has(id));
-                const toRemove = Array.from(existingSet).filter(id => !desiredSet.has(id));
+                const existingSet = new Set(((existing as any[]) || []).map(r => r.project_category_id as string));
+                // Desired category keys for this lang
+                const desiredKeys = selectedKeys;
+                const desiredSet = new Set(desiredKeys);
+                const toAdd = desiredKeys.filter(k => !existingSet.has(k));
+                const toRemove = Array.from(existingSet).filter(k => !desiredSet.has(k));
                 if (toAdd.length) {
-                    const rows = toAdd.map(id => ({ project_id: projId, category_id: id }));
-                    const { error: addErr } = await supabase.from("project_categorie_relations").insert(rows);
+                    const rows = toAdd.map(k => ({ project_id: projKey, project_category_id: k, language: lang }));
+                    const { error: addErr } = await supabase.from("project_category_relations").insert(rows);
                     if (addErr) throw addErr;
                 }
                 if (toRemove.length) {
                     const { error: delErr } = await supabase
-                        .from("project_categorie_relations")
+                        .from("project_category_relations")
                         .delete()
-                        .eq("project_id", projId)
-                        .in("category_id", toRemove);
+                        .eq("project_id", projKey)
+                        .eq("language", lang)
+                        .in("project_category_id", toRemove);
                     if (delErr) throw delErr;
                 }
             };
 
-            if (enId) await applyFor(enId, 'en');
-            if (nlId) await applyFor(nlId, 'nl');
+            if (hasEn) await applyFor(group.project_id, 'en');
+            if (hasNl) await applyFor(group.project_id, 'nl');
 
             toast.success("Relations saved for EN/NL");
         } catch (e: any) {
@@ -205,16 +193,16 @@ export function ProjectCategoryRelations() {
                             ))
                         ) : filteredGroups.length ? (
                             filteredGroups.map(g => (
-                                <TableRow key={g.projectid}>
-                                    <TableCell>{g.projectid}</TableCell>
+                                <TableRow key={g.project_id}>
+                                    <TableCell>{g.project_id}</TableCell>
                                     <TableCell>{g.displayTitle || '-'}</TableCell>
                                     <TableCell>
                                         <div className="flex flex-wrap gap-3">
                                             {logicalCategories.map(c => {
-                                                const checked = !!selectedByProject[g.projectid]?.has(c.project_category_id);
+                                                const checked = !!selectedByProject[g.project_id]?.has(c.project_category_id);
                                                 return (
                                                     <label key={c.project_category_id} className="inline-flex items-center gap-2 border rounded px-2 py-1 text-sm cursor-pointer select-none">
-                                                        <Checkbox checked={checked} onCheckedChange={() => toggle(g.projectid, c.project_category_id)} />
+                                                        <Checkbox checked={checked} onCheckedChange={() => toggle(g.project_id, c.project_category_id)} />
                                                         <span>{c.displayName}</span>
                                                     </label>
                                                 );
@@ -222,8 +210,8 @@ export function ProjectCategoryRelations() {
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-right sticky right-0 bg-card z-10">
-                                        <Button size="sm" onClick={() => saveProject(g)} disabled={savingFor === g.projectid}>
-                                            {savingFor === g.projectid ? "Saving..." : "Save"}
+                                        <Button size="sm" onClick={() => saveProject(g)} disabled={savingFor === g.project_id}>
+                                            {savingFor === g.project_id ? "Saving..." : "Save"}
                                         </Button>
                                     </TableCell>
                                 </TableRow>

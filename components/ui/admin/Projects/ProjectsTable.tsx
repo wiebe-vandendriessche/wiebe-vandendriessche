@@ -28,8 +28,7 @@ import { CreateProjectDialog } from "@/components/ui/admin/Projects/CreateProjec
 import { EditProjectDialog } from "@/components/ui/admin/Projects/EditProjectDialog";
 
 export type ProjectTableRow = {
-  id: number; // assumption: table has id
-  projectid: string;
+  project_id: string;
   language: string;
   // categorie removed; categories managed via relations table
   started: number | null;
@@ -48,12 +47,12 @@ export type ProjectTableRow = {
 export function ProjectsTable() {
   const [projects, setProjects] = useState<ProjectTableRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: false }]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: "project_id", desc: false }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [deletingIds, setDeletingIds] = useState<number[]>([]);
-  const [deleteDialogId, setDeleteDialogId] = useState<number | null>(null);
+  const [deletingKeys, setDeletingKeys] = useState<string[]>([]); // key = `${project_id}:${language}`
+  const [deleteDialogKey, setDeleteDialogKey] = useState<string | null>(null);
   // Category filtering moved out; relations-based filtering can be added later
 
   useEffect(() => {
@@ -70,20 +69,27 @@ export function ProjectsTable() {
     if (!error && data) setProjects(data as any);
   };
 
-  const handleDelete = async (id: number) => {
-    if (deletingIds.includes(id)) return;
-    setDeletingIds(prev => [...prev, id]);
-    const { error } = await supabase.from("projects").delete().eq("id", id);
-    if (error) toast.error("Failed to delete project");
-    else { setProjects(prev => prev.filter(p => p.id !== id)); toast.success("Project deleted"); }
-    setDeletingIds(prev => prev.filter(x => x !== id));
-    setDeleteDialogId(null);
+  const handleDelete = async (project_id: string, language: string) => {
+    const key = `${project_id}:${language}`;
+    if (deletingKeys.includes(key)) return;
+    setDeletingKeys(prev => [...prev, key]);
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("project_id", project_id)
+      .eq("language", language);
+    if (error) toast.error("Failed to delete project entry");
+    else {
+      setProjects(prev => prev.filter(p => !(p.project_id === project_id && p.language === language)));
+      toast.success("Project entry deleted");
+    }
+    setDeletingKeys(prev => prev.filter(x => x !== key));
+    setDeleteDialogKey(null);
   };
 
   const columns: ColumnDef<ProjectTableRow>[] = [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "projectid", header: "Project ID" },
-  { accessorKey: "language", header: "Language" },
+    { accessorKey: "project_id", header: "Project ID" },
+    { accessorKey: "language", header: "Language" },
     { accessorKey: "started", header: "Started" },
     { accessorKey: "finished", header: "Finished" },
     { accessorKey: "title", header: "Title" },
@@ -96,11 +102,13 @@ export function ProjectsTable() {
     { accessorKey: "url", header: "URL" },
     { accessorKey: "height", header: "Height" },
     { id: "actions", enableHiding: false, header: () => <div className="text-right">Actions</div>, cell: ({ row }) => {
-      const id = row.original.id; const isDeleting = deletingIds.includes(id);
+      const { project_id, language } = row.original;
+      const key = `${project_id}:${language}`;
+      const isDeleting = deletingKeys.includes(key);
       return (
         <div className="flex gap-2 justify-end">
           <EditProjectDialog project={row.original as any} onUpdated={refresh} />
-          <AlertDialog open={deleteDialogId === id} onOpenChange={(open) => setDeleteDialogId(open ? id : null)}>
+          <AlertDialog open={deleteDialogKey === key} onOpenChange={(open) => setDeleteDialogKey(open ? key : null)}>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm" disabled={isDeleting}>{isDeleting ? "Deleting..." : "Delete"}</Button>
             </AlertDialogTrigger>
@@ -111,7 +119,7 @@ export function ProjectsTable() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                <AlertDialogAction disabled={isDeleting} onClick={() => handleDelete(id)}>{isDeleting ? "Deleting..." : "Delete"}</AlertDialogAction>
+                <AlertDialogAction disabled={isDeleting} onClick={() => handleDelete(project_id, language)}>{isDeleting ? "Deleting..." : "Delete"}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -169,7 +177,7 @@ export function ProjectsTable() {
           <TableBody>
             {loading ? (
               (() => {
-                const skeletonWidths: Record<string,string> = { id: 'w-8', projectid: 'w-32', language: 'w-16', categorie: 'w-20', started: 'w-16', finished: 'w-16', title: 'w-44', title_ext: 'w-48', location: 'w-40', tags: 'w-40', technologies: 'w-48', description: 'w-64', image: 'w-32', url: 'w-48', height: 'w-16', actions: 'w-24' };
+                const skeletonWidths: Record<string,string> = { project_id: 'w-32', language: 'w-16', categorie: 'w-20', started: 'w-16', finished: 'w-16', title: 'w-44', title_ext: 'w-48', location: 'w-40', tags: 'w-40', technologies: 'w-48', description: 'w-64', image: 'w-32', url: 'w-48', height: 'w-16', actions: 'w-24' };
                 return Array.from({ length: 10 }).map((_, r) => (
                   <TableRow key={r} className="h-12">
                     {columns.map((col, cIdx) => (

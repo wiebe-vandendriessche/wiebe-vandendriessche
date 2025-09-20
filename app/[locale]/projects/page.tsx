@@ -21,27 +21,28 @@ export default async function ProjectsPage({ params }: PageProps) {
         return <ProjectsClient data={[]} />;
     }
 
-    // Resolve categories via relations for this locale
-    const projectIds = (projects || []).map((p: any) => p.id).filter(Boolean);
-    let categoriesByProject: Record<number, string[]> = {};
-    if (projectIds.length) {
+    // Resolve categories via new relations for this locale (composite key)
+    const projectKeys = (projects || []).map((p: any) => p.project_id).filter(Boolean);
+    let categoriesByProject: Record<string, string[]> = {};
+    if (projectKeys.length) {
         const { data: rels, error: relErr } = await supabase
-            .from('project_categorie_relations')
-            .select('project_id,category_id')
-            .in('project_id', projectIds);
+            .from('project_category_relations')
+            .select('project_id,project_category_id,language')
+            .eq('language', locale)
+            .in('project_id', projectKeys);
 
         if (!relErr && rels && rels.length) {
-            const catIds = Array.from(new Set(rels.map((r: any) => r.category_id)));
+            const catKeys = Array.from(new Set(rels.map((r: any) => r.project_category_id)));
             const { data: cats, error: catErr } = await supabase
                 .from('project_categories')
-                .select('id,name,language')
+                .select('project_category_id,name,language')
                 .eq('language', locale)
-                .in('id', catIds);
+                .in('project_category_id', catKeys);
             if (!catErr && cats) {
-                const catsById = new Map<number, string>(cats.map((c: any) => [c.id, c.name]));
+                const catsByKey = new Map<string, string>(cats.map((c: any) => [c.project_category_id, c.name]));
                 for (const r of rels as any[]) {
-                    const name = catsById.get(r.category_id);
-                    if (!name) continue; // skip categories in other languages
+                    const name = catsByKey.get(r.project_category_id);
+                    if (!name) continue; // ensure same-language join
                     if (!categoriesByProject[r.project_id]) categoriesByProject[r.project_id] = [];
                     if (!categoriesByProject[r.project_id].includes(name)) categoriesByProject[r.project_id].push(name);
                 }
@@ -50,9 +51,9 @@ export default async function ProjectsPage({ params }: PageProps) {
     }
 
     const shaped: ProjectRecord[] = (projects as any[]).map((p) => ({
-        projectid: p.projectid,
+        project_id: p.project_id ?? p.projectid,
         language: p.language,
-        categories: (categoriesByProject[p.id] || []).map((n) => String(n)),
+        categories: (categoriesByProject[p.project_id] || []).map((n) => String(n)),
         started: p.started ?? null,
         finished: p.finished ?? null,
         title: p.title ?? null,
