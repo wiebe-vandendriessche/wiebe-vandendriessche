@@ -29,5 +29,9 @@
     "workExperienceLabel": "Work Experience",
     "educationLabel": "Education",
     "hobbiesLabel": "Hobbies"
+  },
+  "Projects": {
+    "title": "Projects",
+    "allLabel": "All"
   }
 }

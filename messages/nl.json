@@ -30,4 +30,9 @@
     "educationLabel": "Opleiding",
     "hobbiesLabel": "Hobby's"
   }
+  ,
+  "Projects": {
+    "title": "Projecten",
+    "allLabel": "Alles"
+  }
 }

@@ -6,6 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
+
+// Helper to get messages for current locale
 
 export interface ProjectRecord {
   project_id: string;
@@ -29,6 +32,9 @@ interface ProjectsClientProps {
 }
 
 export default function ProjectsClient({ data }: ProjectsClientProps) {
+  const t = useTranslations('Projects');
+  const allLabel = t('allLabel');
+  const projectsTitle = t('title');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -68,13 +74,13 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
   return (
     <section className="relative w-full max-w-7xl mx-auto px-4 py-5 flex flex-col items-center">
       <div className="foggy-gradient-bg absolute inset-0 -z-20 pointer-events-none" />
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 z-10">Projects</h1>
+      <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 z-10">{projectsTitle}</h1>
       <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v)} className="w-full">
         <div className="flex justify-center mb-6">
           <TabsList className="gap-1 sm:gap-3 flex-wrap h-auto p-1 z-10">
             {categories.map(cat => (
               <TabsTrigger key={cat} value={cat} className="px-3 py-1 text-sm">
-                {cat === 'all' ? 'All' : cat}
+                {cat === 'all' ? allLabel : cat}
               </TabsTrigger>
             ))}
           </TabsList>

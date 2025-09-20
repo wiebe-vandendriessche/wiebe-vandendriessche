@@ -51,7 +51,7 @@ export default async function ProjectsPage({ params }: PageProps) {
     }
 
     const shaped: ProjectRecord[] = (projects as any[]).map((p) => ({
-        project_id: p.project_id ?? p.projectid,
+        project_id: p.project_id,
         language: p.language,
         categories: (categoriesByProject[p.project_id] || []).map((n) => String(n)),
         started: p.started ?? null,
