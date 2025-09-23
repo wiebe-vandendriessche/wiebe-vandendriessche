@@ -11,6 +11,7 @@ import { TimelineElementsTable } from '@/components/ui/admin/TimelineElements/Ti
 import { ProjectsTable } from '@/components/ui/admin/Projects/ProjectsTable';
 import { ProjectCategoryRelations } from '@/components/ui/admin/ProjectCategoryRelations/ProjectCategoryRelations';
 import { CategoriesTable } from '@/components/ui/admin/Categories/CategoriesTable';
+import { BlogsTable } from '@/components/ui/admin/Blogs/BlogsTable';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -84,6 +85,7 @@ export default function AdminPage() {
               <TabsTrigger value="projects">Projects</TabsTrigger>
               <TabsTrigger value="relations">Project Relations</TabsTrigger>
               <TabsTrigger value="categories">Project Categories</TabsTrigger>
+              <TabsTrigger value="blogs">Blogs</TabsTrigger>
             </TabsList>
             <TabsContent value="timeline" className="space-y-4">
               <TimelineElementsTable />
@@ -96,6 +98,9 @@ export default function AdminPage() {
             </TabsContent>
             <TabsContent value="categories" className="space-y-4">
               <CategoriesTable />
+            </TabsContent>
+            <TabsContent value="blogs" className="space-y-4">
+              <BlogsTable />
             </TabsContent>
           </Tabs>
         </div>
