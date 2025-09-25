@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useRef, useState, useEffect, Suspense } from 'react'
+import * as THREE from 'three'
 import { Link } from '@/i18n/navigation'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, useGLTF, useProgress } from '@react-three/drei'
@@ -36,22 +37,78 @@ export default function HeroSection() {
     )
 
     function RotatingModel(props: any) {
-        const ref = useRef<any>(null)
+        // Group we animate (rot/scale)
+        const groupRef = useRef<THREE.Group>(null!)
         const notifiedRef = useRef(false)
-        useFrame(() => {
-            if (ref.current) {
-                ref.current.rotation.y += 0.002;
+        const [hovered, setHovered] = useState(false)
+        const speedRef = useRef(0.007)
+        const baseScaleRef = useRef<number>(props.scale ?? 1)
+        const { pointer } = useThree()
+        const [collider, setCollider] = useState<{ size: THREE.Vector3; center: THREE.Vector3 } | null>(null)
+
+        useEffect(() => {
+            // Visual feedback via cursor
+            document.body.style.cursor = hovered ? 'pointer' : ''
+            return () => {
+                document.body.style.cursor = ''
             }
+        }, [hovered])
+
+        useFrame(() => {
+            if (!groupRef.current) return
+            // Smoothly adjust rotation speed on hover
+            const targetSpeed = hovered ? 0.005 : 0.01
+            speedRef.current += (targetSpeed - speedRef.current) * 0.1
+            groupRef.current.rotation.y += speedRef.current
+
+            // Subtle tilt towards pointer when hovered
+            const targetTiltX = hovered ? pointer.y * 0.2 : 0
+            const targetTiltZ = hovered ? -pointer.x * 0.2 : 0
+            groupRef.current.rotation.x += (targetTiltX - groupRef.current.rotation.x) * 0.2
+            groupRef.current.rotation.z += (targetTiltZ - groupRef.current.rotation.z) * 0.2
+
+            // Gentle scale up on hover
+            const targetScale = hovered ? baseScaleRef.current * 1.05 : baseScaleRef.current
+            const s = groupRef.current.scale.x
+            const newS = s + (targetScale - s) * 0.12
+            groupRef.current.scale.set(newS, newS, newS)
         })
+
         const { scene } = useGLTF('/avatar2export.glb')
         // Notify parent once when scene becomes available (Suspense resolved)
         useEffect(() => {
             if (scene && !notifiedRef.current) {
                 notifiedRef.current = true
                 setModelLoaded(true)
+                // Compute collider bounds from scene
+                const box = new THREE.Box3().setFromObject(scene)
+                const size = new THREE.Vector3()
+                const center = new THREE.Vector3()
+                box.getSize(size)
+                box.getCenter(center)
+                // Add a small margin so it’s easier to hover
+                size.multiplyScalar(1.1)
+                setCollider({ size, center })
             }
         }, [scene])
-        return <primitive ref={ref} object={scene} {...props} />
+
+        return (
+            <group ref={groupRef}>
+                {/* Hover collider: transparent box sized to model bounds */}
+                {collider && (
+                    <mesh
+                        position={[collider.center.x, collider.center.y, collider.center.z]}
+                        onPointerOver={(e: any) => { e.stopPropagation(); setHovered(true) }}
+                        onPointerOut={(e: any) => { e.stopPropagation(); setHovered(false) }}
+                    >
+                        <boxGeometry args={[collider.size.x, collider.size.y, collider.size.z]} />
+                        <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
+                    </mesh>
+                )}
+                {/* Actual model */}
+                <primitive object={scene} {...props} />
+            </group>
+        )
     }
 
     const t = useTranslations('HomePage');
@@ -135,7 +192,7 @@ export default function HeroSection() {
                                         <directionalLight position={[0, 5, -5]} intensity={1} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
                                         {/* Fill light from the side */}
                                         <directionalLight position={[-5, 2, -2]} intensity={0.7} />
-                                        <RotatingModel scale={1.5} />
+                                        <RotatingModel scale={1.2} />
                                     </Suspense>
                                 </Canvas>
                             </div>

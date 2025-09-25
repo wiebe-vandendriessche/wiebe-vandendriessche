@@ -433,28 +433,34 @@ const Masonry: React.FC<MasonryProps> = ({
               <Card
                 className={
                   "relative w-full h-full overflow-hidden transition-all duration-300 " +
-                  (grayscaleToColor ? 'grayscale ease-out group-hover:grayscale-0 ' : '') +
                   (actuallyDimmed ? ' blur-[2px] opacity-30 scale-[0.98]' : '')
                 }
-                style={{ backgroundImage: `url(${item.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
               >
+                {/* Background image with grayscale effect */}
+                <div 
+                  className={
+                    "absolute inset-0 transition-all duration-300 " +
+                    (grayscaleToColor ? 'grayscale ease-out group-hover:grayscale-0 ' : '')
+                  }
+                  style={{ backgroundImage: `url(${item.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                />
                 {colorShiftOnHover && (
                   <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />
                 )}
                 {(item.categories && item.categories.length > 0) && (
-                  <div className="absolute top-3 left-3 flex gap-1 flex-wrap">
+                  <div className="absolute top-3 left-3 flex gap-1 flex-wrap z-10">
                     {item.categories.map((cat) => (
                       <Badge
                         key={cat}
                         variant="secondary"
-                        className="backdrop-blur-sm/10 bg-secondary/80 text-xs font-medium px-2 py-0.5"
+                        className="backdrop-blur-sm/10 bg-secondary/90 text-xs font-small px-2 py-0.5"
                       >
                         {cat}
                       </Badge>
                     ))}
                   </div>
                 )}
-        <CardTitle className="absolute bottom-3 left-3 px-2 py-1 rounded-full bg-secondary/80 backdrop-blur-sm/10">
+        <CardTitle className="absolute bottom-3 left-3 inline-flex items-center justify-center rounded-md border border-transparent text-primary px-3 py-1 text-sm font-medium w-fit whitespace-nowrap shrink-0 [a&]:hover:bg-secondary/90 transition-[color,box-shadow] z-10 backdrop-blur-sm/10 bg-secondary/90">
           {item.title || (item.categories && item.categories[0])}
         </CardTitle>
               </Card>

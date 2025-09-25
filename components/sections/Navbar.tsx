@@ -31,7 +31,7 @@ export default function Navbar() {
     return (
         <nav className="w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky left-0 right-0 top-0 z-50">
             <div className="container mx-auto flex items-center justify-between py-2 flex-shrink-0">
-                <div className="text-xl font-bold tracking-tight ml-2 flex-shrink-0">{t('brand')}</div>
+                <div className="text-xl font-bold tracking-tight ml-4 flex-shrink-0">{t('brand')}</div>
                 {/* Hamburger for mobile using Sheet */}
                 <Sheet
                     open={menuOpen}
@@ -98,9 +98,9 @@ export default function Navbar() {
                     </SheetContent>
                 </Sheet>
                 {/* Desktop menu */}
-                <div className="hidden md:flex flex-shrink-0">
+                <div className="hidden md:flex">
                     <NavigationMenu>
-                        <NavigationMenuList>
+                        <NavigationMenuList className="gap-2 mr-4">
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
                                     <Button asChild variant="outline" className="px-3 py-1">

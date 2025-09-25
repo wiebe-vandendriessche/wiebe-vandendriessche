@@ -6,6 +6,7 @@ import Link from 'next/link';
 type BlogPost = {
 	post_id: string;
 	language: string;
+	title: string;
 	content: string;
 	summary: string;
 	status: string;
@@ -52,7 +53,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 								<div>
 									<h2 className="text-xl font-semibold">
 										<Link href={`/${locale}/blog/${encodeURIComponent(p.post_id)}`} className="hover:underline">
-											{p.summary}
+											{p.title}
 										</Link>
 									</h2>
 									<p className="text-sm text-muted-foreground mt-1">
@@ -65,7 +66,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 											))}
 										</div>
 									)}
-									<p className="mt-3 text-sm leading-6 line-clamp-3 whitespace-pre-line">{p.content}</p>
+									<p className="mt-3 text-sm leading-6 line-clamp-3 whitespace-pre-line">{p.summary}</p>
 								</div>
 							</div>
 						</li>

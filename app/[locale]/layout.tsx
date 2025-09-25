@@ -11,6 +11,9 @@ import FooterSection from "@/components/sections/Footer";
 import { ThemeProvider } from "@/components/theme-provider"
 import { getTranslations } from 'next-intl/server';
 import { Toaster } from "@/components/ui/sonner"
+import LiquidEther from "@/components/ui/liquidether/LiquidEther";
+import LiquidEtherBackground from "@/components/ui/liquidether/LiquidEtherBackground";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,12 +59,11 @@ export default async function LocaleLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div
-            className="relative bg-secondary z-1 min-h-screen"
-          >
+          <div className="relative bg-secondary min-h-screen">
             {/* Absolutely positioned waves background that covers the full content height */}
-            <WavesBackground />
-            <div className="relative flex flex-col min-h-screen">
+            {/*<WavesBackground />*/}
+            <LiquidEtherBackground />
+            <div className="relative z-10 flex flex-col min-h-screen">
               <NextIntlClientProvider locale={locale}>
                 <Navbar />
                 <main className="flex-1 flex flex-col relative z-10 pt-10">

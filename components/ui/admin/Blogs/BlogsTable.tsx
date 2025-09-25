@@ -28,6 +28,7 @@ import { EditBlogDialog } from "./EditBlogDialog";
 export type BlogRow = {
   post_id: string;
   language: string; // en|nl
+  title: string;
   content: string;
   summary: string;
   status: string; // draft|published
@@ -81,6 +82,7 @@ export function BlogsTable() {
   const columns: ColumnDef<BlogRow>[] = [
     { accessorKey: "post_id", header: "Post ID" },
     { accessorKey: "language", header: "Language" },
+    { accessorKey: "title", header: "Title" },
     { accessorKey: "summary", header: "Summary" },
     { accessorKey: "status", header: "Status" },
     { accessorKey: "published_at", header: "Published", cell: ({ row }) => row.original.published_at ? new Date(row.original.published_at).toLocaleDateString() : "" },
@@ -131,7 +133,7 @@ export function BlogsTable() {
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-center gap-10 py-2">
-        <Input placeholder="Filter summary..." value={(table.getColumn("summary")?.getFilterValue() as string) ?? ""} onChange={(e) => table.getColumn("summary")?.setFilterValue(e.target.value)} className="max-w-sm" />
+        <Input placeholder="Filter title..." value={(table.getColumn("title")?.getFilterValue() as string) ?? ""} onChange={(e) => table.getColumn("title")?.setFilterValue(e.target.value)} className="max-w-sm" />
         <CreateBlogDialog onCreated={refresh} />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -160,7 +162,7 @@ export function BlogsTable() {
           <TableBody>
             {loading ? (
               (() => {
-                const skeletonWidths: Record<string,string> = { post_id: 'w-32', language: 'w-16', summary: 'w-64', status: 'w-24', published_at: 'w-24', author: 'w-40', tags: 'w-40', images: 'w-12', actions: 'w-24' };
+                const skeletonWidths: Record<string,string> = { post_id: 'w-32', language: 'w-16', title: 'w-64', summary: 'w-64', status: 'w-24', published_at: 'w-24', author: 'w-40', tags: 'w-40', images: 'w-12', actions: 'w-24' };
                 return Array.from({ length: 10 }).map((_, r) => (
                   <TableRow key={r} className="h-12">
                     {columns.map((col, cIdx) => (

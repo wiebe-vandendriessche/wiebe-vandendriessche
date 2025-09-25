@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const langSectionSchema = z.object({
+  title: z.string().min(1, "Required"),
   summary: z.string().min(1, "Required"),
   content: z.string().min(1, "Required"),
   author: z.string().optional(),
@@ -33,6 +34,7 @@ type FormValues = z.infer<typeof formSchema>;
 export interface BlogRowForEdit {
   post_id: string;
   language: string; // en|nl
+  title: string;
   content: string;
   summary: string;
   status: string;
@@ -56,8 +58,8 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
     resolver: zodResolver(formSchema),
     defaultValues: {
       postid: post.post_id,
-      en: { summary: '', content: '', author: '', tags: '', images: '' },
-      nl: { summary: '', content: '', author: '', tags: '', images: '' },
+      en: { title: '', summary: '', content: '', author: '', tags: '', images: '' },
+      nl: { title: '', summary: '', content: '', author: '', tags: '', images: '' },
     }
   });
 
@@ -78,6 +80,7 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
       form.reset({
         postid: shared.post_id ?? post.post_id,
         en: {
+          title: enRow?.title || '',
           summary: enRow?.summary || '',
           content: enRow?.content || '',
           author: enRow?.author || '',
@@ -85,6 +88,7 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
           images: (enRow?.images || []).join(', '),
         },
         nl: {
+          title: nlRow?.title || '',
           summary: nlRow?.summary || '',
           content: nlRow?.content || '',
           author: nlRow?.author || '',
@@ -117,6 +121,7 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
       const buildLang = (lang: 'en' | 'nl', section: FormValues['en']) => ({
         ...shared,
         language: lang,
+        title: section.title,
         summary: section.summary,
         content: section.content,
         author: toNull(section.author) ?? 'Wiebe Vandendriessche',
@@ -198,6 +203,13 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
                 {(['en', 'nl'] as const).map(lang => (
                   <TabsContent key={lang} value={lang} className="mt-4 space-y-4">
                     <div className="grid gap-4 md:grid-cols-2">
+                      <FormField name={`${lang}.title` as const} control={form.control} render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                          <FormLabel>Title ({lang.toUpperCase()}) *</FormLabel>
+                          <FormControl><Input {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
                       <FormField name={`${lang}.summary` as const} control={form.control} render={({ field }) => (
                         <FormItem className="md:col-span-2">
                           <FormLabel>Summary ({lang.toUpperCase()}) *</FormLabel>

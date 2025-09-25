@@ -32,7 +32,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
   return (
     <article className="container mx-auto px-4 py-8 prose dark:prose-invert max-w-3xl">
-      <h1>{post.summary}</h1>
+      <h1>{post.title ?? post.summary}</h1>
       <p className="text-sm text-muted-foreground">{post.author} • {post.published_at ? new Date(post.published_at).toLocaleDateString(locale) : ''}</p>
       {Array.isArray(post.images) && post.images.length > 0 && (
         <div className="my-4 grid grid-cols-1 gap-4">
