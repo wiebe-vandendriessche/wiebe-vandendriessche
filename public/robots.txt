@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://wiebevandendriessche.tech
+
+# Sitemaps
+Sitemap: https://wiebevandendriessche.tech/sitemap.xml
