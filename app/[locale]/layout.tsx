@@ -13,7 +13,8 @@ import { getTranslations } from 'next-intl/server';
 import { Toaster } from "@/components/ui/sonner"
 import LiquidEther from "@/components/ui/liquidether/LiquidEther";
 import LiquidEtherBackground from "@/components/ui/liquidether/LiquidEtherBackground";
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -85,6 +86,8 @@ export default async function LocaleLayout({
           </div>
           <Toaster position="bottom-right" className="z-50" />
         </ThemeProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
