@@ -1,3 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-</sitemapindex>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://wiebevandendriessche.tech/en</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/en/admin</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/en/blog</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/en/contact</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/en/projects</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/en/timeline</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/nl</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/nl/admin</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/nl/blog</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/nl/contact</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/nl/projects</loc>
+  </url>
+  <url>
+    <loc>https://wiebevandendriessche.tech/nl/timeline</loc>
+  </url>
+</urlset>
