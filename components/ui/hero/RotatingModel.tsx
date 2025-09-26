@@ -180,6 +180,27 @@ export default function RotatingModel(props: RotatingModelProps) {
                         setHovered(false)
                         aligningRef.current = false
                     }}
+                    onPointerDown={(e: any) => {
+                        e.stopPropagation()
+                        setHovered(true)
+                        if (groupRef.current) {
+                            const pos = groupRef.current.getWorldPosition(new THREE.Vector3())
+                            const dx = camera.position.x - pos.x
+                            const dz = camera.position.z - pos.z
+                            const yaw = Math.atan2(dx, dz) + facingOffsetRef.current
+                            targetYawRef.current = yaw
+                            aligningRef.current = true
+                        }
+                    }}
+                    onPointerMove={(e: any) => {
+                        e.stopPropagation()
+                        setHovered(true)
+                    }}
+                    onPointerUp={(e: any) => {
+                        e.stopPropagation()
+                        setHovered(false)
+                        aligningRef.current = false
+                    }}
                 >
                     <boxGeometry args={[collider.size.x, collider.size.y, collider.size.z]} />
                     <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />

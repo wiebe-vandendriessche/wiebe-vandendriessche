@@ -96,7 +96,7 @@ export default function HeroSection() {
             </div>
             <div className="w-full md:w-1/2 flex justify-center items-center">
               <div style={{ width: '100%', height: '400px' }} className="relative">
-                <Canvas camera={{ position: [-2, -0.3, -6], fov: 45 }}>
+                <Canvas camera={{ position: [-2, -0.3, -6], fov: 45 }} style={{ touchAction: 'none' }}>
                   <Suspense fallback={null}>
                     <CameraLookForward />
                     <ambientLight intensity={0.5} />
