@@ -102,7 +102,32 @@ export default function HeroSection() {
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[0, 5, -5]} intensity={1} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
                     <directionalLight position={[-5, 2, -2]} intensity={0.7} />
-                    <RotatingModel scale={1.2} onLoaded={() => setModelLoaded(true)} />
+                    {/**
+                     * Rotating model configuration
+                     * Tweak these values to adjust default framing and interaction.
+                     */}
+                    <RotatingModel
+                      // Visual
+                      scale={1.5}
+                      hoverScale={1.06}
+                      showPointer
+                      // Spin/tilt behavior
+                      idleSpinSpeed={0.01}
+                      stopSpinOnHover
+                      hoverAlignSpeed={0.3}
+                      alignSnap={0.012}
+                      hoverTilt={0.22}
+                      enableTilt
+                      // Facing & collider
+                      facingOffset={Math.PI}
+                      colliderMargin={0.9}
+                      // Damping
+                      dampSpeed={0.12}
+                      dampTilt={0.18}
+                      dampScale={0.12}
+                      // Lifecycle
+                      onLoaded={() => setModelLoaded(true)}
+                    />
                   </Suspense>
                 </Canvas>
               </div>
