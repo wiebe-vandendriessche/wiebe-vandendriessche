@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from "next-intl";
 import DecryptedText from '@/components/ui/decrypted-text'
 import RotatingModel from './RotatingModel'
+import { log } from 'console'
 
 export default function HeroSection() {
   const [modelLoaded, setModelLoaded] = useState(false)
@@ -40,6 +41,20 @@ export default function HeroSection() {
     })
     return null
   }
+
+  // Track theme and set ambient light intensity accordingly
+  const [ambientIntensity, setAmbientIntensity] = useState(0.1);
+  useEffect(() => {
+    const getIntensity = () => {
+      return document.documentElement.classList.contains("dark") ? 0.1 : 0.7;
+    };
+    setAmbientIntensity(getIntensity());
+    const observer = new MutationObserver(() => {
+      setAmbientIntensity(getIntensity());
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -99,9 +114,14 @@ export default function HeroSection() {
                 <Canvas camera={{ position: [-2, -0.3, -6], fov: 45 }} style={{ touchAction: 'none' }}>
                   <Suspense fallback={null}>
                     <CameraLookForward />
-                    <ambientLight intensity={0.5} />
-                    <directionalLight position={[0, 5, -5]} intensity={1} castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
-                    <directionalLight position={[-5, 2, -2]} intensity={0.7} />
+                    <ambientLight intensity={0.7} color={"#ff6fcf"} />
+                    <ambientLight intensity={ambientIntensity} color={"#fff"} />
+                    <directionalLight
+                      position={[0, 5, -5]}
+                      intensity={1}
+                      castShadow
+                      color={"#01ffcc"}
+                    />
                     {/**
                      * Rotating model configuration
                      * Tweak these values to adjust default framing and interaction.

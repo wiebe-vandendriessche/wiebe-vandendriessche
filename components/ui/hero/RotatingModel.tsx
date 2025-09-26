@@ -141,6 +141,13 @@ export default function RotatingModel(props: RotatingModelProps) {
     const { scene } = useGLTF('/avatar2export.glb')
     useEffect(() => {
         if (!scene) return
+        // Ensure all meshes in the model cast and receive shadows
+        scene.traverse((obj: any) => {
+            if (obj.isMesh) {
+                obj.castShadow = true
+                obj.receiveShadow = true
+            }
+        })
         onLoaded?.()
         const box = new THREE.Box3().setFromObject(scene)
         const size = new THREE.Vector3()
