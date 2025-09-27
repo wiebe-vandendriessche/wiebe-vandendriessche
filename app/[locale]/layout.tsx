@@ -29,16 +29,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // This ensures relative URLs (like '/IMG_7827_cropped.jpg') are turned into absolute URLs.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://wiebevandendriessche.tech'),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://wiebevandendriessche.tech'),
 
   title: "Wiebe",
   description: "Wiebe Vandendriessche: Portfolio Website",
 
   // Use your photo as the site icon (favicon) and Apple touch icon.
+  // Add a version query to bust aggressive browser caches of favicons.
   icons: {
-    icon: '/IMG_7827_cropped.jpg',
-    shortcut: '/IMG_7827_cropped.jpg',
-    apple: '/IMG_7827_cropped.jpg'
+    icon: [
+      { url: '/IMG_7827_cropped.jpg?v=2', type: 'image/jpeg', rel: 'icon', sizes: 'any' }
+    ],
+    shortcut: [
+      { url: '/IMG_7827_cropped.jpg?v=2', type: 'image/jpeg' }
+    ],
+    apple: [
+      { url: '/IMG_7827_cropped.jpg?v=2', type: 'image/jpeg' }
+    ]
   },
 
   // Default Open Graph image (used by social platforms and sometimes search engines)
@@ -48,7 +55,7 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'Wiebe Vandendriessche',
     type: 'website',
-    images: ['/IMG_7827_cropped.jpg']
+    images: ['/IMG_7827_cropped.jpg?v=2']
   },
 
   // Default Twitter card
@@ -56,7 +63,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Wiebe',
     description: 'Wiebe Vandendriessche: Portfolio Website',
-    images: ['/IMG_7827_cropped.jpg']
+    images: ['/IMG_7827_cropped.jpg?v=2']
     // site: '@yourhandle' // Optional if you have one
   },
 
