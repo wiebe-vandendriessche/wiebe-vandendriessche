@@ -15,6 +15,7 @@ import LiquidEther from "@/components/ui/liquidether/LiquidEther";
 import LiquidEtherBackground from "@/components/ui/liquidether/LiquidEtherBackground";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
+import UnderConstructionWrapper from "@/components/UnderConstructionWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,8 +28,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // This ensures relative URLs (like '/IMG_7827_cropped.jpg') are turned into absolute URLs.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://wiebevandendriessche.tech'),
+
   title: "Wiebe",
   description: "Wiebe Vandendriessche: Portfolio Website",
+
+  // Use your photo as the site icon (favicon) and Apple touch icon.
+  icons: {
+    icon: '/IMG_7827_cropped.jpg',
+    shortcut: '/IMG_7827_cropped.jpg',
+    apple: '/IMG_7827_cropped.jpg'
+  },
+
+  // Default Open Graph image (used by social platforms and sometimes search engines)
+  openGraph: {
+    title: "Wiebe",
+    description: "Wiebe Vandendriessche: Portfolio Website",
+    url: '/',
+    siteName: 'Wiebe Vandendriessche',
+    type: 'website',
+    images: ['/IMG_7827_cropped.jpg']
+  },
+
+  // Default Twitter card
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wiebe',
+    description: 'Wiebe Vandendriessche: Portfolio Website',
+    images: ['/IMG_7827_cropped.jpg']
+    // site: '@yourhandle' // Optional if you have one
+  },
+
+  // Helpful hint for Google to allow large previews
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: 'index, follow, max-image-preview:large'
+  }
 };
 
 
@@ -68,7 +105,9 @@ export default async function LocaleLayout({
               <NextIntlClientProvider locale={locale}>
                 <Navbar />
                 <main className="flex-1 flex flex-col relative z-10 pt-10">
-                  {children}
+                  <UnderConstructionWrapper>
+                    {children}
+                  </UnderConstructionWrapper>
                 </main>
                 <div className="z-20 backdrop-blur-md">
                   <FooterSection
