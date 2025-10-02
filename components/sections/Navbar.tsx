@@ -24,15 +24,24 @@ import { ModeToggle } from "../ui/mode-toggle";
 import LocaleSwitcher from "../LocaleSwitcher";
 import { Menu } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 
 export default function Navbar() {
     const t = useTranslations('Navbar');
     const [menuOpen, setMenuOpen] = useState(false);
     return (
         <nav className="w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky left-0 right-0 top-0 z-50">
-            <div className="container mx-auto flex items-center justify-between py-2 flex-shrink-0">
-                <div className="text-xl font-bold tracking-tight ml-4 flex-shrink-0">{t('brand')}</div>
-                {/* Hamburger for mobile using Sheet */}
+            <div className="container mx-auto flex items-center justify-between min-h-[4.5rem] flex-shrink-0">
+                <Link href="/" className="group flex items-center ml-2 flex-shrink-0 gap-3 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-[var(--radius)]">
+                    <Image
+                        src="/IMG_7827_cropped.jpg"
+                        alt="Wiebe Vandendriessche"
+                        className="object-cover rounded-[var(--radius)] shadow-lg"
+                        width={52}
+                        height={52}
+                    />
+                    <span className="text-xl font-bold tracking-tight group-hover:underline">{t('brand')}</span>
+                </Link>
                 <Sheet
                     open={menuOpen}
                     onOpenChange={setMenuOpen}

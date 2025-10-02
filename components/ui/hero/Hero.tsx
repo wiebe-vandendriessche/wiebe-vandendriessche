@@ -11,6 +11,57 @@ import DecryptedText from '@/components/ui/decrypted-text'
 import RotatingModel from './RotatingModel'
 import { log } from 'console'
 
+// Animated scroll icon SVG component
+function AnimatedScrollIcon() {
+  return (
+    <div
+      className="fixed left-1/2 -translate-x-1/2 z-50 flex items-center justify-center"
+      style={{
+        bottom: '8%', // Lower 10% of the screen
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          width: 180,
+          height: 180,
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 0,
+          background: 'radial-gradient(circle, var(--secondary) 0%, var(--secondary) 30%, transparent 80%)',
+          opacity: 0.7,
+          pointerEvents: 'none',
+        }}
+      />
+      <svg width="40" height="60" viewBox="0 0 40 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce" style={{ position: 'relative', zIndex: 1 }}>
+        <rect x="2" y="2" width="36" height="56" rx="18" stroke="var(--primary)" strokeWidth="4" fill="none" />
+        <circle cx="20" cy="18" r="6" fill="var(--primary)" className="scroll-dot" />
+      </svg>
+      <style>{`
+        @media (min-width: 768px) {
+          .scroll-indicator-mobile { display: none !important; }
+        }
+        .animate-bounce {
+          animation: bounce-scroll 1.4s infinite;
+        }
+        @keyframes bounce-scroll {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(16px); }
+        }
+        .scroll-dot {
+          animation: dot-move 1.4s infinite;
+        }
+        @keyframes dot-move {
+          0%, 100% { cy: 18; }
+          50% { cy: 40; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function HeroSection() {
   const [modelLoaded, setModelLoaded] = useState(false)
   const { progress } = useProgress()
@@ -56,9 +107,25 @@ export default function HeroSection() {
     return () => observer.disconnect();
   }, []);
 
+  // Show scroll icon on mobile until user scrolls
+  const [showScrollIcon, setShowScrollIcon] = useState(true);
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 10) setShowScrollIcon(false);
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
       <LoaderOverlay />
+      {/* Show scroll icon only on mobile, only if not scrolled yet and after loading */}
+      {modelLoaded && showScrollIcon && (
+        <div className="scroll-indicator-mobile md:hidden">
+          <AnimatedScrollIcon />
+        </div>
+      )}
       <section className="pb-4 md:pb-8">
         <div className="pb-2 pt-2 sm:pb-4 sm:pt-4 md:pb-8 lg:pb-12 lg:pt-8">
           <div className="relative mx-auto flex max-w-6xl flex-col-reverse md:flex-row items-center gap-8 px-6">
