@@ -7,7 +7,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useProgress } from '@react-three/drei'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from "next-intl";
-import DecryptedText from '@/components/ui/decrypted-text'
+import TextType from '@/components/ui/texttype'
 import RotatingModel from './RotatingModel'
 import { log } from 'console'
 
@@ -126,98 +126,84 @@ export default function HeroSection() {
           <AnimatedScrollIcon />
         </div>
       )}
-      <section className="pb-4 md:pb-8">
-        <div className="pb-2 pt-2 sm:pb-4 sm:pt-4 md:pb-8 lg:pb-12 lg:pt-8">
-          <div className="relative mx-auto flex max-w-6xl flex-col-reverse md:flex-row items-center gap-8 px-6">
-            <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left">
-              <div className="relative w-full">
-                <div className="absolute inset-0 w-full h-full foggy-gradient-bg rounded-xl z-0" />
-                <div className="relative z-10">
-                  <h1>
-                    {modelLoaded && (
-                      <DecryptedText
-                        text={t('name')}
-                        className="mt-8 max-w-md text-balance text-2xl font-extrabold tracking-widest uppercase font-mono text-left sm:text-3xl md:text-5xl lg:mt-16 xl:text-6xl"
-                        encryptedClassName="mt-8 max-w-md text-balance text-2xl font-extrabold tracking-widest uppercase font-mono text-left sm:text-3xl md:text-5xl lg:mt-16 xl:text-6xl"
-                        animateOn="view"
-                        sequential
-                        revealDirection="start"
-                        speed={15}
-                        useOriginalCharsOnly
-                      />
-                    )}
-                  </h1>
-                  <p className="mt-8 max-w-2xl text-pretty text-lg">
-                    {modelLoaded && (
-                      <DecryptedText
-                        text={t('description')}
-                        className="text-base font-mono tracking-wider text-left sm:text-lg"
-                        encryptedClassName="text-base font-mono tracking-wider text-left sm:text-lg"
-                        animateOn="view"
-                        sequential
-                        revealDirection="start"
-                        speed={10}
-                        useOriginalCharsOnly
-                      />
-                    )}
-                  </p>
-                  <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
-                    <Button size="lg" className="px-5 text-base">
-                      <Link href="/contact">
-                        <span className="text-nowrap">{t('contactMe')}</span>
-                      </Link>
-                    </Button>
-                    <Button size="lg" variant="ghost" className="px-5 text-base">
-                      <Link href="/projects">
-                        <span className="text-nowrap">{t('myProjects')}</span>
-                      </Link>
-                    </Button>
-                  </div>
+      <section className="pb-4 md:pb-8 select-none">
+        <div className="relative mx-auto flex max-w-7xl flex-col-reverse md:flex-row items-center gap-7 px-6">
+          <div className="w-full md:w-3/5 flex flex-col justify-center items-start text-left">
+            <div className="relative w-full">
+              <div className="absolute inset-0 w-full h-full foggy-gradient-bg rounded-xl z-0" />
+              <div className="relative z-10">
+                <div className="h-20 mt-4 sm:mt-0s">
+                  <TextType
+                    as="h1"
+                    text={[t('name'), "PhD Researcher"]}
+                    typingSpeed={75}
+                    pauseDuration={1500}
+                    deletingSpeed={50}
+                    cursorBlinkDuration={0.5}
+                    showCursor={true}
+                    cursorCharacter="_"
+                    className="max-w-xl text-balance text-3xl sm:text-4xl md:text-[2.5rem] xl:text-5xl font-extrabold tracking-widest font-mono text-left"
+                  />
+                </div>
+                <p className="mt-8 max-w-3xl text-pretty text-base font-mono tracking-wider text-left sm:text-lg">
+                  {t('description')}
+                </p>
+                <div className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start">
+                  <Button size="lg" className="px-5 text-base">
+                    <Link href="/contact">
+                      <span className="text-nowrap">{t('contactMe')}</span>
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="ghost" className="px-5 text-base">
+                    <Link href="/projects">
+                      <span className="text-nowrap">{t('myProjects')}</span>
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
-            <div className="w-full md:w-1/2 flex justify-center items-center">
-              <div style={{ width: '100%', height: '400px' }} className="relative">
-                <Canvas camera={{ position: [-2, -0.3, -6], fov: 45 }} style={{ touchAction: 'none' }}>
-                  <Suspense fallback={null}>
-                    <CameraLookForward />
-                    <ambientLight intensity={0.7} color={"#ff6fcf"} />
-                    <ambientLight intensity={ambientIntensity} color={"#fff"} />
-                    <directionalLight
-                      position={[0, 5, -5]}
-                      intensity={1}
-                      castShadow
-                      color={"#01ffcc"}
-                    />
-                    {/**
+          </div>
+          <div className="w-full md:w-3/5 flex justify-center items-center">
+            <div style={{ width: '100%', height: '400px' }} className="relative">
+              <Canvas camera={{ position: [-2, -0.3, -6], fov: 45 }} style={{ touchAction: 'none' }}>
+                <Suspense fallback={null}>
+                  <CameraLookForward />
+                  <ambientLight intensity={0.7} color={"#ff6fcf"} />
+                  <ambientLight intensity={ambientIntensity} color={"#fff"} />
+                  <directionalLight
+                    position={[0, 5, -5]}
+                    intensity={1}
+                    castShadow
+                    color={"#01ffcc"}
+                  />
+                  {/**
                      * Rotating model configuration
                      * Tweak these values to adjust default framing and interaction.
                      */}
-                    <RotatingModel
-                      // Visual
-                      scale={1.5}
-                      hoverScale={1.06}
-                      showPointer
-                      // Spin/tilt behavior
-                      idleSpinSpeed={0.01}
-                      stopSpinOnHover
-                      hoverAlignSpeed={0.3}
-                      alignSnap={0.012}
-                      hoverTilt={0.22}
-                      enableTilt
-                      // Facing & collider
-                      facingOffset={Math.PI}
-                      colliderMargin={0.9}
-                      // Damping
-                      dampSpeed={0.12}
-                      dampTilt={0.18}
-                      dampScale={0.12}
-                      // Lifecycle
-                      onLoaded={() => setModelLoaded(true)}
-                    />
-                  </Suspense>
-                </Canvas>
-              </div>
+                  <RotatingModel
+                    // Visual
+                    scale={1.5}
+                    hoverScale={1.06}
+                    showPointer
+                    // Spin/tilt behavior
+                    idleSpinSpeed={0.01}
+                    stopSpinOnHover
+                    hoverAlignSpeed={0.3}
+                    alignSnap={0.012}
+                    hoverTilt={0.22}
+                    enableTilt
+                    // Facing & collider
+                    facingOffset={Math.PI}
+                    colliderMargin={0.9}
+                    // Damping
+                    dampSpeed={0.12}
+                    dampTilt={0.18}
+                    dampScale={0.12}
+                    // Lifecycle
+                    onLoaded={() => setModelLoaded(true)}
+                  />
+                </Suspense>
+              </Canvas>
             </div>
           </div>
         </div>

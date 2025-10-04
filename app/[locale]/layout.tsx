@@ -2,16 +2,14 @@ import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { NextIntlClientProvider, hasLocale, useTranslations } from 'next-intl';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Navbar from "@/components/sections/Navbar";
-import WavesBackground from "@/components/ui/waves/waves-background";
 import FooterSection from "@/components/sections/Footer";
 import { ThemeProvider } from "@/components/theme-provider"
 import { getTranslations } from 'next-intl/server';
 import { Toaster } from "@/components/ui/sonner"
-import LiquidEther from "@/components/ui/liquidether/LiquidEther";
 import LiquidEtherBackground from "@/components/ui/liquidether/LiquidEtherBackground";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
@@ -27,8 +25,51 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wiebe",
+  // This ensures relative URLs (like '/IMG_7827_cropped.jpg') are turned into absolute URLs.
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://wiebevandendriessche.tech'),
+
+  title: "Wiebe Vandendriessche",
   description: "Wiebe Vandendriessche: Portfolio Website",
+
+  // Use your photo as the site icon (favicon) and Apple touch icon.
+  // Add a version query to bust aggressive browser caches of favicons.
+  icons: {
+    icon: [
+      { url: '/IMG_7827_cropped_rounded.png?v=2', type: 'image/png', rel: 'icon', sizes: 'any' }
+    ],
+    shortcut: [
+      { url: '/IMG_7827_cropped_rounded.png?v=2', type: 'image/png' }
+    ],
+    apple: [
+      { url: '/IMG_7827_cropped_rounded.png?v=2', type: 'image/png' }
+    ]
+  },
+
+  // Default Open Graph image (used by social platforms and sometimes search engines)
+  openGraph: {
+    title: "Wiebe",
+    description: "Wiebe Vandendriessche: Portfolio Website",
+    url: '/',
+    siteName: 'Wiebe Vandendriessche',
+    type: 'website',
+  images: ['/IMG_7827_cropped_rounded.png?v=2']
+  },
+
+  // Default Twitter card
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wiebe',
+    description: 'Wiebe Vandendriessche: Portfolio Website',
+  images: ['/IMG_7827_cropped_rounded.png?v=2']
+    // site: '@yourhandle' // Optional if you have one
+  },
+
+  // Helpful hint for Google to allow large previews
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: 'index, follow, max-image-preview:large'
+  }
 };
 
 
