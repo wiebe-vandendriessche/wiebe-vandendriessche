@@ -2,8 +2,8 @@ import { supabase } from '@/lib/supabaseClient';
 import { routing } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import { hasLocale } from 'next-intl';
-import Link from 'next/link';
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from '@/i18n/navigation';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Rss } from 'lucide-react';
@@ -63,7 +63,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 					<ul className="grid gap-4 sm:gap-6">
 						{posts.map((p) => (
 							<li key={`${p.post_id}:${p.language}`}>
-								<Card className="overflow-hidden">
+								<Card className="overflow-hidden flex flex-col">
 									<CardHeader className="border-b">
 										<CardTitle className="text-xl">
 											<Link href={`/${locale}/blog/${encodeURIComponent(p.post_id)}`} className="hover:underline">
@@ -87,31 +87,31 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 											</div>
 										)}
 									</CardHeader>
-									<CardContent>
+									<CardContent className="flex-1 flex flex-col">
 										<div className="text-sm leading-6 line-clamp-3">
 											<Markdown content={p.summary || ''} hideImages summaryMode />
 										</div>
-									</CardContent>
-									<CardFooter className="border-t justify-between">
-										<div className="text-xs text-muted-foreground">
-											{p.updated_at ? t('lastUpdated', { date: new Date(p.updated_at).toLocaleDateString(locale) }) : ''}
-										</div>
-										<CardAction>
+										<div className="mt-auto pt-3 flex justify-end">
 											<Button asChild>
-												<Link href={`/${locale}/blog/${encodeURIComponent(p.post_id)}`}>
+												<Link href={`/blog/${encodeURIComponent(p.post_id)}`}>
 													{t('readArticle')}
 												</Link>
 											</Button>
-										</CardAction>
-									</CardFooter>
+										</div>
+									</CardContent>
 								</Card>
+								{p.updated_at && (
+									<div className="mt-3 ml-3 text-left text-xs text-muted-foreground">
+										{t('lastUpdated', { date: new Date(p.updated_at).toLocaleDateString(locale) })}
+									</div>
+								)}
 							</li>
 						))}
 					</ul>
 				)}
 				<div className="mt-8 flex justify-center">
 					<Button asChild variant="outline">
-						<Link href={`/${locale}/blog/rss.xml`} target="_blank" rel="noopener noreferrer">
+						<Link href={`/blog/rss.xml`} target="_blank" rel="noopener noreferrer">
 							<Rss />
 							{t('rssButton')}
 						</Link>
