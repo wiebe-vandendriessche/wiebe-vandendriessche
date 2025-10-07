@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Rss } from 'lucide-react';
 import Image from 'next/image';
+import Markdown from '@/components/ui/markdown';
 
 type BlogPost = {
 	post_id: string;
@@ -62,19 +63,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 					<ul className="grid gap-4 sm:gap-6">
 						{posts.map((p) => (
 							<li key={`${p.post_id}:${p.language}`}>
-								<Card className={`overflow-hidden ${(p.images && p.images.length > 0) ? 'pt-0' : ''}`}>
-									{((p.images && p.images.length > 0) ? p.images[0] : null) && (
-										<div className="relative w-full h-40 sm:h-48 overflow-hidden border-b">
-											<Image
-												src={(p.images && p.images.length > 0) ? p.images[0] : '/test.jpg'}
-												alt={p.title || 'Blog post image'}
-												fill
-												className="object-cover"
-												sizes="(max-width: 768px) 100vw, 768px"
-												priority={false}
-											/>
-										</div>
-									)}
+								<Card className="overflow-hidden">
 									<CardHeader className="border-b">
 										<CardTitle className="text-xl">
 											<Link href={`/${locale}/blog/${encodeURIComponent(p.post_id)}`} className="hover:underline">
@@ -99,7 +88,9 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 										)}
 									</CardHeader>
 									<CardContent>
-										<p className="text-sm leading-6 line-clamp-3 whitespace-pre-line">{p.summary}</p>
+										<div className="text-sm leading-6 line-clamp-3">
+											<Markdown content={p.summary || ''} hideImages summaryMode />
+										</div>
 									</CardContent>
 									<CardFooter className="border-t justify-between">
 										<div className="text-xs text-muted-foreground">
