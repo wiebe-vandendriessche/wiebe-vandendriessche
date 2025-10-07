@@ -1,6 +1,10 @@
 import { supabase } from '@/lib/supabaseClient';
 import { routing } from '@/i18n/routing';
 import { hasLocale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +25,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   const { locale: rawLocale, post_id } = await params;
   const locale = hasLocale(routing.locales, rawLocale) ? (rawLocale as 'en' | 'nl') : routing.defaultLocale;
   const post = await getPost(post_id, locale);
+  const t = await getTranslations('Blog');
 
   if (!post) {
     return (
@@ -49,6 +54,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
           ))}
         </div>
       )}
+      <div className="mt-8">
+        <Button asChild variant="outline">
+          <Link href={`/${locale}/blog`} className="inline-flex items-center gap-2">
+            <ArrowLeft />
+            {t('backToBlog')}
+          </Link>
+        </Button>
+      </div>
     </article>
   );
 }
