@@ -62,7 +62,7 @@ const TextType = ({
   }, [variableSpeed, typingSpeed]);
 
   const getCurrentTextColor = () => {
-    if (textColors.length === 0) return '#ffffff';
+    if (textColors.length === 0) return undefined;
     return textColors[currentTextIndex % textColors.length];
   };
 
@@ -169,6 +169,8 @@ const TextType = ({
   const shouldHideCursor =
     hideCursorWhileTyping && (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
 
+  const colorStyle = getCurrentTextColor() ? { color: getCurrentTextColor() } : undefined;
+
   return createElement(
     Component,
     {
@@ -176,7 +178,7 @@ const TextType = ({
       className: `inline-block whitespace-pre-wrap tracking-tight ${className}`,
       ...props
     },
-    <span className="inline" style={{ color: getCurrentTextColor() }}>
+    <span className="inline" style={colorStyle}>
       {displayedText}
     </span>,
     showCursor && (

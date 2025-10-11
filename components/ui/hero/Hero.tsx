@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { useTranslations } from "next-intl";
 import TextType from '@/components/ui/texttype'
 import RotatingModel from './RotatingModel'
-import { log } from 'console'
 
 // Animated scroll icon SVG component
 function AnimatedScrollIcon() {

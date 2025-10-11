@@ -37,7 +37,7 @@
   },
   "Blog": {
     "title": "Blog",
-    "description": "Af en toe deel ik hier bevindingen, write-ups en korte reviews over wat ik bouw of leer. Geen strak schema—gewoon notities die het delen waard zijn.",
+    "description": "Af en toe deel ik hier bevindingen, write-ups en korte reviews over wat ik bouw of leer. Geen strak schema, gewoon notities die het delen waard zijn.",
     "empty": "Nog geen posts.",
     "readArticle": "Lees artikel",
     "rssButton": "RSS-feed",

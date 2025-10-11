@@ -36,7 +36,7 @@
   },
   "Blog": {
     "title": "Blog",
-    "description": "Occasionally I jot down findings, write-ups, and lightweight reviews about things I build or learn. No strict schedule—just notes worth sharing.",
+    "description": "Occasionally I jot down findings, write-ups, and lightweight reviews about things I build or learn. No strict schedule, just notes worth sharing.",
     "empty": "No posts yet.",
     "readArticle": "Read article",
     "rssButton": "RSS feed",

@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Rss } from 'lucide-react';
+import { Rss, BookOpen } from 'lucide-react';
 import Image from 'next/image';
 import Markdown from '@/components/ui/markdown';
 
@@ -57,6 +57,14 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 					<h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t('title')}</h1>
 					<p className="text-muted-foreground mt-2 max-w-2xl mx-auto">{t('description')}</p>
 				</header>
+				<div className="my-6 flex justify-center">
+					<Button asChild variant="outline">
+						<Link href={`/blog/rss.xml`} target="_blank" rel="noopener noreferrer">
+							<Rss />
+							{t('rssButton')}
+						</Link>
+					</Button>
+				</div>
 				{posts.length === 0 ? (
 					<p className="text-muted-foreground">{t('empty')}</p>
 				) : (
@@ -65,11 +73,9 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 							<li key={`${p.post_id}:${p.language}`}>
 								<Card className="overflow-hidden flex flex-col">
 									<CardHeader className="border-b">
-										<CardTitle className="text-xl">
-											<Link href={`/${locale}/blog/${encodeURIComponent(p.post_id)}`} className="hover:underline">
-												{p.title}
-											</Link>
-										</CardTitle>
+																<CardTitle className="text-xl">
+																	{p.title}
+																</CardTitle>
 										<CardDescription>
 											{p.author}
 											{p.published_at && (
@@ -92,8 +98,9 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 											<Markdown content={p.summary || ''} hideImages summaryMode />
 										</div>
 										<div className="mt-auto pt-3 flex justify-end">
-											<Button asChild>
+											<Button asChild variant="default">
 												<Link href={`/blog/${encodeURIComponent(p.post_id)}`}>
+													<BookOpen className="mr-2 h-4 w-4" />
 													{t('readArticle')}
 												</Link>
 											</Button>
@@ -109,14 +116,6 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 						))}
 					</ul>
 				)}
-				<div className="mt-8 flex justify-center">
-					<Button asChild variant="outline">
-						<Link href={`/blog/rss.xml`} target="_blank" rel="noopener noreferrer">
-							<Rss />
-							{t('rssButton')}
-						</Link>
-					</Button>
-				</div>
 			</div>
 		</section>
 	);
