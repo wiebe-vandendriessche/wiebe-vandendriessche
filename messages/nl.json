@@ -34,5 +34,14 @@
   "Projects": {
     "title": "Projecten",
     "allLabel": "Alles"
+  },
+  "Blog": {
+    "title": "Blog",
+    "description": "Af en toe deel ik hier bevindingen, write-ups en korte reviews over wat ik bouw of leer. Geen strak schema, gewoon notities die het delen waard zijn.",
+    "empty": "Nog geen posts.",
+    "readArticle": "Lees artikel",
+    "rssButton": "RSS-feed",
+    "lastUpdated": "Bijgewerkt op {date}",
+    "backToBlog": "Terug naar blog"
   }
 }

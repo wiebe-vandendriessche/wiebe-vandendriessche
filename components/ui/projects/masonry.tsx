@@ -66,18 +66,7 @@ const useMeasure = <T extends HTMLElement>() => {
   return [ref, size] as const;
 };
 
-const preloadImages = async (urls: string[]): Promise<void> => {
-  await Promise.all(
-    urls.map(
-      (src) =>
-        new Promise<void>((resolve) => {
-          const img = new Image();
-          img.src = src;
-          img.onload = img.onerror = () => resolve();
-        })
-    )
-  );
-};
+// We no longer use a global preload gate; images are preloaded per-item and revealed when ready.
 
 interface Item {
   id: string;
@@ -123,6 +112,8 @@ interface MasonryProps {
   onSelect?: (item: Item) => void;
   /** If true, use image aspect ratio for layout instead of item.height */
   useImageAspectRatio?: boolean;
+  /** Debug: when true, delay image reveal by 3 seconds to simulate slow loads */
+  debugSlow?: boolean;
 }
 
 const Masonry: React.FC<MasonryProps> = ({
@@ -143,6 +134,7 @@ const Masonry: React.FC<MasonryProps> = ({
   collapseFilteredOnMobile = true,
   onSelect,
   useImageAspectRatio = false,
+  debugSlow = false,
 }) => {
   const columnsRaw = useMedia(
     [
@@ -164,7 +156,8 @@ const Masonry: React.FC<MasonryProps> = ({
   }, [columnsRaw, items.length]);
 
   const [containerRef, { width }] = useMeasure<HTMLDivElement>();
-  const [imagesReady, setImagesReady] = useState(false);
+  // Track loaded state for each image to reveal them independently after layout animates
+  const [loadedMap, setLoadedMap] = useState<Record<string, boolean>>({});
   const [aspectRatios, setAspectRatios] = useState<Record<string, number>>({});
   // Detect mobile viewport (up to 768px width)
   const isMobile = useIsMobile();
@@ -176,6 +169,8 @@ const Masonry: React.FC<MasonryProps> = ({
     }
     return items;
   }, [items, collapseFilteredOnMobile, isMobile, activeCategory]);
+
+  const SLOW_DELAY_MS = 3000;
 
   const getInitialPosition = (item: GridItem) => {
     const containerRect = containerRef.current?.getBoundingClientRect();
@@ -209,37 +204,44 @@ const Masonry: React.FC<MasonryProps> = ({
   };
 
   useEffect(() => {
-    if (!useImageAspectRatio) {
-      preloadImages(layoutItems.map((i) => i.img)).then(() => setImagesReady(true));
-      return;
-    }
-    // Preload images and get aspect ratios
-    const preloadImagesWithAspect = async (items: Item[]): Promise<Record<string, number>> => {
-      const results: Record<string, number> = {};
-      await Promise.all(
-        items.map(
-          (item) =>
-            new Promise<void>((resolve) => {
-              const img = new window.Image();
-              img.src = item.img;
-              img.onload = () => {
-                results[item.id] = img.naturalWidth / img.naturalHeight;
-                resolve();
-              };
-              img.onerror = () => {
-                results[item.id] = 1; // fallback to 1:1
-                resolve();
-              };
-            })
-        )
-      );
-      return results;
-    };
-    preloadImagesWithAspect(layoutItems).then((ratios) => {
-      setAspectRatios(ratios);
-      setImagesReady(true);
+    if (typeof window === 'undefined') return;
+    let cancelled = false;
+    const seen = new Set<string>();
+
+    layoutItems.forEach((item) => {
+      if (seen.has(item.id)) return;
+      seen.add(item.id);
+      const img = new window.Image();
+      img.src = item.img;
+      img.onload = () => {
+        if (cancelled) return;
+        const ratio = img.naturalWidth && img.naturalHeight ? (img.naturalWidth / img.naturalHeight) : 1;
+        if (useImageAspectRatio) {
+          setAspectRatios((prev) => ({ ...prev, [item.id]: ratio || 1 }));
+        }
+        const markLoaded = () => setLoadedMap((prev) => ({ ...prev, [item.id]: true }));
+        if (debugSlow) {
+          setTimeout(() => { if (!cancelled) markLoaded(); }, SLOW_DELAY_MS);
+        } else {
+          markLoaded();
+        }
+      };
+      img.onerror = () => {
+        if (cancelled) return;
+        if (useImageAspectRatio) {
+          setAspectRatios((prev) => ({ ...prev, [item.id]: 1 }));
+        }
+        const markLoaded = () => setLoadedMap((prev) => ({ ...prev, [item.id]: true }));
+        if (debugSlow) {
+          setTimeout(() => { if (!cancelled) markLoaded(); }, SLOW_DELAY_MS);
+        } else {
+          markLoaded();
+        }
+      };
     });
-  }, [layoutItems, useImageAspectRatio]);
+
+    return () => { cancelled = true; };
+  }, [layoutItems, useImageAspectRatio, debugSlow]);
 
   // Build grid layout and compute overall required container height so the parent can grow.
   const { grid, gridHeight } = useMemo(() => {
@@ -281,7 +283,7 @@ const Masonry: React.FC<MasonryProps> = ({
   const hasMounted = useRef(false);
 
   useLayoutEffect(() => {
-    if (!imagesReady) return;
+    if (!grid.length) return;
 
     grid.forEach((item, index) => {
       const selector = `[data-key="${item.id}"]`;
@@ -350,7 +352,7 @@ const Masonry: React.FC<MasonryProps> = ({
     });
 
     hasMounted.current = true;
-  }, [grid, imagesReady, stagger, animateFrom, blurToFocus, duration, ease, initialOffset]);
+  }, [grid, stagger, animateFrom, blurToFocus, duration, ease, initialOffset]);
 
   const handleMouseEnter = (id: string, element: HTMLElement) => {
     if (scaleOnHover) {
@@ -437,12 +439,24 @@ const Masonry: React.FC<MasonryProps> = ({
                 }
               >
                 {/* Background image with grayscale effect */}
+                {/* Placeholder shimmer while image loads */}
+                <div
+                  className="absolute inset-0 bg-muted/40 animate-pulse"
+                  style={{ opacity: loadedMap[item.id] ? 0 : 1 }}
+                />
+                {/* Image layer revealed only after it has loaded */}
                 <div 
                   className={
-                    "absolute inset-0 transition-all duration-300 " +
-                    (grayscaleToColor ? 'grayscale ease-out group-hover:grayscale-0 ' : '')
+                    "absolute inset-0 transition-all duration-500 ease-out " +
+                    (grayscaleToColor ? 'grayscale group-hover:grayscale-0 ' : '')
                   }
-                  style={{ backgroundImage: `url(${item.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                  style={{
+                    backgroundImage: loadedMap[item.id] ? `url(${item.img})` : undefined,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: loadedMap[item.id] ? 1 : 0,
+                    filter: loadedMap[item.id] ? undefined : 'blur(6px)'
+                  }}
                 />
                 {colorShiftOnHover && (
                   <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />

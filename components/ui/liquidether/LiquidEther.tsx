@@ -26,6 +26,12 @@ export interface LiquidEtherProps {
   takeoverDuration?: number;
   autoResumeDelay?: number;
   autoRampDuration?: number;
+  // Performance controls
+  maxFPS?: number; // caps the update/render loop
+  adaptiveQuality?: boolean; // dynamically adjust resolution to hit a frame time target
+  targetFrameMs?: number; // target frame time for adaptive quality
+  minQualityResolution?: number; // floor for adaptive resolution
+  maxQualityResolution?: number; // ceiling for adaptive resolution (default: current resolution)
 }
 
 interface SimOptions {
@@ -53,6 +59,10 @@ interface LiquidEtherWebGL {
     mouse?: { autoIntensity: number; takeoverDuration: number };
     forceStop: () => void;
   };
+  // runtime props for performance management
+  frameIntervalMs?: number;
+  baseIterations?: { viscous: number; poisson: number };
+  props?: any;
   resize: () => void;
   start: () => void;
   pause: () => void;
@@ -83,7 +93,13 @@ export default function LiquidEther({
   autoIntensity = 2.2,
   takeoverDuration = 0.25,
   autoResumeDelay = 1000,
-  autoRampDuration = 0.6
+  autoRampDuration = 0.6,
+  // perf defaults
+  maxFPS = 45,
+  adaptiveQuality = true,
+  targetFrameMs = 18,
+  minQualityResolution,
+  maxQualityResolution
 }: LiquidEtherProps): React.ReactElement {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const webglRef = useRef<LiquidEtherWebGL | null>(null);
@@ -143,7 +159,7 @@ export default function LiquidEther({
       init(container: HTMLElement) {
         this.container = container;
         // Slightly lower max pixel ratio for performance
-        this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+        this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
         this.resize();
         // Antialiasing isn't necessary for a full-screen post-process quad and costs GPU
         this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
@@ -1013,6 +1029,14 @@ export default function LiquidEther({
       autoDriver?: AutoDriver;
       lastUserInteraction = performance.now();
       running = false;
+      // frame cap
+      frameIntervalMs = 0;
+      lastFrameTime = 0;
+      // adaptive quality
+      emaFrameMs = 18;
+      lastQualityAdjust = 0;
+      qualityAdjustCooldownMs = 800;
+      baseIterations = { viscous: iterationsViscous, poisson: iterationsPoisson };
       private _loop = this.loop.bind(this);
       private _resize = this.resize.bind(this);
       private _onVisibility?: () => void;
@@ -1033,6 +1057,8 @@ export default function LiquidEther({
           rampDuration: props.autoRampDuration
         });
         this.init();
+        // apply frame cap
+        this.frameIntervalMs = props.maxFPS && props.maxFPS > 0 ? 1000 / props.maxFPS : 0;
         window.addEventListener('resize', this._resize);
         this._onVisibility = () => {
           const hidden = document.hidden;
@@ -1057,10 +1083,54 @@ export default function LiquidEther({
         if (this.autoDriver) this.autoDriver.update();
         Mouse.update();
         Common.update();
+        // update EMA frame time (use Common.delta in ms, clamp to reasonable range)
+        if (Common.delta) {
+          const dtMs = Math.min(Math.max(Common.delta * 1000, 5), 100);
+          this.emaFrameMs = this.emaFrameMs * 0.9 + dtMs * 0.1;
+        }
+        // adaptive quality: tweak simulation resolution and iterations
+        if (this.props.adaptiveQuality) this.updateAdaptiveQuality();
         this.output.update();
+      }
+      updateAdaptiveQuality() {
+        const now = performance.now();
+        if (now - this.lastQualityAdjust < this.qualityAdjustCooldownMs) return;
+        const sim = this.output?.simulation;
+        if (!sim) return;
+        const target = this.props.targetFrameMs ?? 18;
+        const maxRes = (this.props.maxQualityResolution ?? sim.options.resolution) as number;
+        const minRes = (this.props.minQualityResolution ?? Math.min(0.35, maxRes * 0.8)) as number;
+        let res = sim.options.resolution;
+        let changed = false;
+        // downscale if we're slow
+        if (this.emaFrameMs > target * 1.15 && res > minRes) {
+          res = Math.max(minRes, res * 0.9);
+          changed = true;
+        } else if (this.emaFrameMs < target * 0.85 && res < maxRes) {
+          res = Math.min(maxRes, res * 1.1);
+          changed = true;
+        }
+        if (changed) {
+          sim.options.resolution = res;
+          // scale iterations with resolution (fewer when lower res)
+          const scale = Math.max(0.6, Math.min(1, res / maxRes));
+          sim.options.iterations_viscous = Math.max(8, Math.round(this.baseIterations.viscous * scale));
+          sim.options.iterations_poisson = Math.max(12, Math.round(this.baseIterations.poisson * scale));
+          sim.resize();
+          this.lastQualityAdjust = now;
+        }
       }
       loop() {
         if (!this.running) return;
+        const now = performance.now();
+        if (this.frameIntervalMs > 0 && this.lastFrameTime > 0) {
+          const elapsed = now - this.lastFrameTime;
+          if (elapsed < this.frameIntervalMs) {
+            rafRef.current = requestAnimationFrame(this._loop);
+            return;
+          }
+        }
+        this.lastFrameTime = now;
         this.render();
         rafRef.current = requestAnimationFrame(this._loop);
       }
@@ -1103,7 +1173,12 @@ export default function LiquidEther({
       autoIntensity,
       takeoverDuration,
       autoResumeDelay,
-      autoRampDuration
+      autoRampDuration,
+      maxFPS,
+      adaptiveQuality,
+      targetFrameMs,
+      minQualityResolution,
+      maxQualityResolution
     });
     webglRef.current = webgl;
 
@@ -1220,6 +1295,15 @@ export default function LiquidEther({
       resolution,
       isBounce
     });
+    // Update performance controls on-the-fly
+    webgl.frameIntervalMs = maxFPS && maxFPS > 0 ? 1000 / maxFPS : 0;
+    // Keep a local copy in manager props for adaptive logic
+    webgl.props.adaptiveQuality = adaptiveQuality;
+    webgl.props.targetFrameMs = targetFrameMs;
+    webgl.props.minQualityResolution = minQualityResolution;
+    webgl.props.maxQualityResolution = maxQualityResolution ?? resolution;
+    // Refresh base iterations if the props changed
+    webgl.baseIterations = { viscous: iterationsViscous, poisson: iterationsPoisson };
     if (webgl.autoDriver) {
       webgl.autoDriver.enabled = autoDemo;
       webgl.autoDriver.speed = autoSpeed;
@@ -1247,7 +1331,12 @@ export default function LiquidEther({
     autoIntensity,
     takeoverDuration,
     autoResumeDelay,
-    autoRampDuration
+    autoRampDuration,
+    maxFPS,
+    adaptiveQuality,
+    targetFrameMs,
+    minQualityResolution,
+    maxQualityResolution
   ]);
 
   return (

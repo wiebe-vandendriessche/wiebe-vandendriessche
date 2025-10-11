@@ -1,6 +1,11 @@
 import { supabase } from '@/lib/supabaseClient';
 import { routing } from '@/i18n/routing';
 import { hasLocale } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import Markdown from '@/components/ui/markdown';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +26,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   const { locale: rawLocale, post_id } = await params;
   const locale = hasLocale(routing.locales, rawLocale) ? (rawLocale as 'en' | 'nl') : routing.defaultLocale;
   const post = await getPost(post_id, locale);
+  const t = await getTranslations('Blog');
 
   if (!post) {
     return (
@@ -31,17 +37,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   }
 
   return (
-    <article className="container mx-auto px-4 py-8 prose dark:prose-invert max-w-3xl">
+    <article className="container mx-auto px-4 py-8 max-w-3xl">
       <h1>{post.title ?? post.summary}</h1>
       <p className="text-sm text-muted-foreground">{post.author} • {post.published_at ? new Date(post.published_at).toLocaleDateString(locale) : ''}</p>
-      {Array.isArray(post.images) && post.images.length > 0 && (
-        <div className="my-4 grid grid-cols-1 gap-4">
-          {post.images.map((src: string) => (
-            <img key={src} src={src} alt="" className="rounded-md border" />
-          ))}
-        </div>
-      )}
-      <div className="whitespace-pre-wrap leading-7">{post.content}</div>
+      <Markdown content={post.content || ''} className="leading-7" />
       {Array.isArray(post.tags) && post.tags.length > 0 && (
         <div className="mt-6 flex flex-wrap gap-2">
           {post.tags.map((t: string) => (
@@ -49,6 +48,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
           ))}
         </div>
       )}
+      <div className="mt-8">
+        <Button asChild variant="outline">
+          <Link href={`/${locale}/blog`} className="inline-flex items-center gap-2">
+            <ArrowLeft />
+            {t('backToBlog')}
+          </Link>
+        </Button>
+      </div>
     </article>
   );
 }

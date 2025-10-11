@@ -99,6 +99,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
               colorShiftOnHover={false}
               activeCategory={cat === 'all' ? 'all' : cat}
               onSelect={(item) => { setSelectedId(item.id); setOpen(true); }}
+              debugSlow={true}
             />
           </TabsContent>
         ))}
