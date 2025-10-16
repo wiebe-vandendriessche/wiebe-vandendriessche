@@ -110,9 +110,7 @@ export default async function LocaleLayout({
               <NextIntlClientProvider locale={locale}>
                 <Navbar />
                 <main className="flex-1 flex flex-col relative z-10 pt-10">
-                  <UnderConstructionWrapper>
                     {children}
-                  </UnderConstructionWrapper>
                 </main>
                 <div className="z-20 backdrop-blur-md">
                   <FooterSection
