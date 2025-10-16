@@ -2,7 +2,7 @@ import React from "react";
 import TimelineCardContent from "./TimelineCardContent";
 import timelineStyles from "./timelineStyles";
 import { TimelineElement } from "./TimelineCardContent";
-import { TimelineType } from "./useTimelineData";
+import { TimelineType } from "./types";
 import VerticalTimeline from "./VerticalTimeline";
 import VerticalTimelineElement from "./VerticalTimelineElement";
 

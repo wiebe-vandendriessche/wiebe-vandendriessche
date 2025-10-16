@@ -99,7 +99,7 @@ const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
                     ].filter(Boolean).join(' ')}
                 >
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 font-bold">
+                        <CardTitle className="flex items-center gap-2 font-bold h-3 mt-2">
                             <Calendar size={16} className="mr-1" />
                             {date && (
                                 <span className={[dateClassName, 'vertical-timeline-element-date', 'opacity-70 text-sm'].filter(Boolean).join(' ')}>

@@ -72,7 +72,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
   const selected = useMemo(() => data.find(d => d.project_id === selectedId), [selectedId, data]);
 
   return (
-    <section className="relative w-full max-w-7xl mx-auto px-4 py-5 flex flex-col items-center">
+    <section className="relative w-full max-w-7xl mx-auto px-4 flex flex-col items-center">
       <div className="foggy-gradient-bg absolute inset-0 -z-20 pointer-events-none" />
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 z-10">{projectsTitle}</h1>
       <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v)} className="w-full">
@@ -99,7 +99,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
               colorShiftOnHover={false}
               activeCategory={cat === 'all' ? 'all' : cat}
               onSelect={(item) => { setSelectedId(item.id); setOpen(true); }}
-              debugSlow={true}
+              debugSlow={false}
             />
           </TabsContent>
         ))}
