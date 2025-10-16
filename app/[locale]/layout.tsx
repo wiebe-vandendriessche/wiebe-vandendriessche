@@ -13,6 +13,7 @@ import { Toaster } from "@/components/ui/sonner"
 import LiquidEtherBackground from "@/components/ui/liquidether/LiquidEtherBackground";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
+import UnderConstructionWrapper from "@/components/UnderConstructionWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -109,7 +110,9 @@ export default async function LocaleLayout({
               <NextIntlClientProvider locale={locale}>
                 <Navbar />
                 <main className="flex-1 flex flex-col relative z-10 pt-10">
-                  {children}
+                  <UnderConstructionWrapper>
+                    {children}
+                  </UnderConstructionWrapper>
                 </main>
                 <div className="z-20 backdrop-blur-md">
                   <FooterSection
