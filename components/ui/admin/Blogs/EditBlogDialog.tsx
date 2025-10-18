@@ -20,11 +20,11 @@ const langSectionSchema = z.object({
   content: z.string().min(1, "Required"),
   author: z.string().optional(),
   tags: z.string().optional(),
-  images: z.string().optional(),
 });
 
 const formSchema = z.object({
   postid: z.string().min(1, "Required"),
+  images: z.string().optional(),
   en: langSectionSchema,
   nl: langSectionSchema,
 });
@@ -58,8 +58,9 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
     resolver: zodResolver(formSchema),
     defaultValues: {
       postid: post.post_id,
-      en: { title: '', summary: '', content: '', author: '', tags: '', images: '' },
-      nl: { title: '', summary: '', content: '', author: '', tags: '', images: '' },
+      images: '',
+      en: { title: '', summary: '', content: '', author: '', tags: '' },
+      nl: { title: '', summary: '', content: '', author: '', tags: '' },
     }
   });
 
@@ -79,13 +80,13 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
       const shared: any = enRow || nlRow || post;
       form.reset({
         postid: shared.post_id ?? post.post_id,
+        images: (enRow?.images || nlRow?.images || []).join(', '),
         en: {
           title: enRow?.title || '',
           summary: enRow?.summary || '',
           content: enRow?.content || '',
           author: enRow?.author || '',
           tags: (enRow?.tags || []).join(', '),
-          images: (enRow?.images || []).join(', '),
         },
         nl: {
           title: nlRow?.title || '',
@@ -93,7 +94,6 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
           content: nlRow?.content || '',
           author: nlRow?.author || '',
           tags: (nlRow?.tags || []).join(', '),
-          images: (nlRow?.images || []).join(', '),
         },
       });
       setLoading(false);
@@ -117,6 +117,7 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
         status: mode === 'publish' ? 'published' : 'draft',
         published_at: pubAt,
         updated_at: nowIso,
+        images: parseList(values.images),
       } as const;
       const buildLang = (lang: 'en' | 'nl', section: FormValues['en']) => ({
         ...shared,
@@ -126,7 +127,6 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
         content: section.content,
         author: toNull(section.author) ?? 'Wiebe Vandendriessche',
         tags: parseList(section.tags),
-        images: parseList(section.images),
       });
       const enUpdate = buildLang('en', values.en);
       const nlUpdate = buildLang('nl', values.nl);
@@ -194,6 +194,16 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
                     <FormMessage />
                   </FormItem>
                 )} />
+                <FormField name="images" control={form.control} render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Images (comma paths)</FormLabel>
+                    <FormControl><Input placeholder="/img1.jpg, /img2.jpg" {...field} /></FormControl>
+                    <FormMessage />
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Images listed here can be referenced in the markdown content. The first image will be used as the blog post banner.
+                    </div>
+                  </FormItem>
+                )} />
               </div>
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
                 <TabsList>
@@ -231,16 +241,12 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
                           <FormMessage />
                         </FormItem>
                       )} />
-                      <FormField name={`${lang}.images` as const} control={form.control} render={({ field }) => (
-                        <FormItem className="md:col-span-2">
-                          <FormLabel>Images ({lang.toUpperCase()}) (comma)</FormLabel>
-                          <FormControl><Input placeholder="/img1.jpg, /img2.jpg" {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
                       <FormField name={`${lang}.content` as const} control={form.control} render={({ field }) => (
                         <FormItem className="md:col-span-2">
-                          <FormLabel>Content ({lang.toUpperCase()}) *</FormLabel>
+                          <div className="flex items-center gap-2">
+                            <FormLabel>Content ({lang.toUpperCase()}) *</FormLabel>
+                            <span className="text-xs text-muted-foreground">Tip: This field uses <b>Markdown</b>. To display an image, use: <code>![](/path/to/image.jpg)</code></span>
+                          </div>
                           <FormControl>
                             <textarea className="border bg-background rounded-md p-2 text-sm w-full min-h-[160px]" {...field} />
                           </FormControl>
