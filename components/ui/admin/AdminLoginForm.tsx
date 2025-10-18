@@ -74,11 +74,14 @@ export function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }) {
 			setSubmitting(true)
 			setError(null)
 			const origin = typeof window !== 'undefined' ? window.location.origin : ''
-			const nextPath = typeof window !== 'undefined' ? window.location.pathname : '/admin'
+			const redirectTo = `${origin}/auth/callback`;
+			console.log('Google OAuth Debug:');
+			console.log('origin:', origin);
+			console.log('redirectTo:', redirectTo);
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: 'google',
 				options: {
-					redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+					redirectTo,
 					queryParams: {
 						prompt: 'consent',
 						access_type: 'offline',
