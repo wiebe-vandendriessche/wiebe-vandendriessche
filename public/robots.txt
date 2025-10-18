@@ -1,6 +1,11 @@
 # *
 User-agent: *
 Allow: /
+# Avoid indexing admin screens (localized)
+Disallow: /en/admin
+Disallow: /en/admin/
+Disallow: /nl/admin
+Disallow: /nl/admin/
 
 # Host
 Host: https://wiebevandendriessche.tech

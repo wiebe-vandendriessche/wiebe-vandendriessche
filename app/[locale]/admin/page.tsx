@@ -20,14 +20,9 @@ export default function AdminPage() {
   // Restore session on mount
   useEffect(() => {
     (async () => {
-      const adminUUID = process.env.NEXT_PUBLIC_SUPABASE_ADMIN_UUID;
       const { data: { user } } = await supabase.auth.getUser();
-      if (user && adminUUID && user.id === adminUUID) {
-        setUser(user);
-      } else if (user && adminUUID && user.id !== adminUUID) {
-        // Auto sign out if a non-admin user somehow had a session
-        await supabase.auth.signOut();
-      }
+      // If a session exists, we'll render admin UI; middleware will gate access server-side.
+      if (user) setUser(user);
       setLoading(false);
     })();
   }, []);
@@ -44,10 +39,7 @@ export default function AdminPage() {
             <h2 className="text-2xl font-bold mb-6">Admin Login</h2>
             <AdminLoginForm onSuccess={async () => {
               const { data } = await supabase.auth.getUser();
-              const adminUUID = process.env.NEXT_PUBLIC_SUPABASE_ADMIN_UUID;
-              if (data.user && adminUUID && data.user.id === adminUUID) {
-                setUser(data.user);
-              }
+              if (data.user) setUser(data.user);
             }} />
           </div>
         </div>
