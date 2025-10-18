@@ -209,22 +209,36 @@ export default function LiquidEther({
       takeoverTo = new THREE.Vector2();
       onInteract: (() => void) | null = null;
       private _onMouseMove = this.onDocumentMouseMove.bind(this);
+      private _onMouseDown = this.onDocumentMouseDown.bind(this);
+      private _onMouseUp = this.onDocumentMouseUp.bind(this);
       private _onTouchStart = this.onDocumentTouchStart.bind(this);
       private _onTouchMove = this.onDocumentTouchMove.bind(this);
       private _onTouchEnd = this.onTouchEnd.bind(this);
+      private _mouseActive = false;
+      private _touchActive = false;
       init(container: HTMLElement) {
         this.container = container;
-        // Listen globally so the canvas can remain pointer-events:none and not block UI
-        window.addEventListener('mousemove', this._onMouseMove);
+        // Only start listening for move events when mouse is down or touch is active
+        window.addEventListener('mousedown', this._onMouseDown);
+        window.addEventListener('mouseup', this._onMouseUp);
         window.addEventListener('touchstart', this._onTouchStart, { passive: true } as any);
-        window.addEventListener('touchmove', this._onTouchMove, { passive: true } as any);
         window.addEventListener('touchend', this._onTouchEnd);
       }
       dispose() {
+        window.removeEventListener('mousedown', this._onMouseDown);
+        window.removeEventListener('mouseup', this._onMouseUp);
         window.removeEventListener('mousemove', this._onMouseMove);
         window.removeEventListener('touchstart', this._onTouchStart as any);
         window.removeEventListener('touchmove', this._onTouchMove as any);
         window.removeEventListener('touchend', this._onTouchEnd);
+      }
+      onDocumentMouseDown(event: MouseEvent) {
+        this._mouseActive = true;
+        window.addEventListener('mousemove', this._onMouseMove);
+      }
+      onDocumentMouseUp(event: MouseEvent) {
+        this._mouseActive = false;
+        window.removeEventListener('mousemove', this._onMouseMove);
       }
       setCoords(x: number, y: number) {
         if (!this.container) return;
@@ -274,6 +288,8 @@ export default function LiquidEther({
       onDocumentTouchStart(event: TouchEvent) {
         if (!this.container) return;
         if (event.touches.length === 1) {
+          this._touchActive = true;
+          window.addEventListener('touchmove', this._onTouchMove, { passive: true } as any);
           const t = event.touches[0];
           const rect = this.container.getBoundingClientRect();
           const inside = t.pageX >= rect.left && t.pageX <= rect.right && t.pageY >= rect.top && t.pageY <= rect.bottom;
@@ -302,6 +318,8 @@ export default function LiquidEther({
       }
       onTouchEnd() {
         this.isHoverInside = false;
+        this._touchActive = false;
+        window.removeEventListener('touchmove', this._onTouchMove as any);
       }
       // Hover state is computed from coordinates; explicit enter/leave not needed
       update() {

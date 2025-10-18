@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Rss, BookOpen } from 'lucide-react';
+import { Rss, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Markdown from '@/components/ui/markdown';
 
@@ -66,7 +66,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 					</Button>
 				</div>
 				{posts.length === 0 ? (
-					<p className="text-muted-foreground">{t('empty')}</p>
+					<p>{t('empty')}</p>
 				) : (
 					<ul className="grid gap-4 sm:gap-6">
 						{posts.map((p) => (
@@ -112,11 +112,15 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 										<div className="text-sm leading-6 line-clamp-3">
 											<Markdown content={p.summary || ''} hideImages summaryMode />
 										</div>
-										<div className="mt-auto pt-3 flex justify-end">
-											<Button asChild variant="default">
+										<div className="flex gap-2 mt-2">
+											<Button
+												size="sm"
+												variant="outline"
+												className="flex items-center gap-1 text-primary"
+												asChild
+											>
 												<Link href={`/blog/${encodeURIComponent(p.post_id)}`}>
-													<BookOpen className="mr-2 h-4 w-4" />
-													{t('readArticle')}
+													{t('readArticle')} <ArrowRight size={14} />
 												</Link>
 											</Button>
 										</div>
