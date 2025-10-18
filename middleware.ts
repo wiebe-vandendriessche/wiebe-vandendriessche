@@ -6,6 +6,10 @@ import { createServerClient } from '@supabase/ssr';
 const intlMiddleware = createIntlMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
+    // Allow OPTIONS requests to pass through (CORS preflight, browser navigation)
+    if (req.method === 'OPTIONS') {
+        return NextResponse.next();
+    }
     const url = new URL(req.url);
     const pathname = url.pathname;
     const isApi = pathname.startsWith('/api');
