@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import TimelineClient from '@/components/ui/timeline/TimelineClient';
+import type { TimelineElement } from '@/components/ui/timeline/TimelineCardContent';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -61,44 +62,59 @@ export default async function TimelinePage({ params }: PageProps) {
     hobbies: 'hobbies',
   };
 
-  const categorized = rows.reduce<Record<string, any[]>>((acc, r) => {
+  type TimelineItem = TimelineElement & { timelineid: string };
+  const categorized = rows.reduce<Record<string, TimelineItem[]>>((acc, r) => {
     const norm = catNormalize(r.categorie);
     const key = catMap[norm];
     if (!key) return acc;
     if (!acc[key]) acc[key] = [];
     acc[key].push({
       timelineid: r.timelineid,
-      order: r.order ?? null,
+      order: typeof r.order === 'number' ? r.order : undefined,
       date: buildDate(r),
       title: r.title,
       subtitle: r.location || '',
       description: r.description || '',
-      description_ext: r.description_ext || '',
+      description_ext: r.description_ext || undefined,
       image_ext: Array.isArray(r.image_ext) ? r.image_ext : (typeof r.image_ext === 'string' && r.image_ext ? [r.image_ext] : []),
-      tags: r.tags || [],
-      logos: r.logos || [],
+      tags: r.tags || undefined,
+      logos: r.logos || undefined,
     });
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, TimelineItem[]>);
 
   // Sort and remove timelineid/order from payload
-  (['workExperience', 'education', 'hobbies'] as const).forEach((cat) => {
-    if (!categorized[cat]) categorized[cat] = [];
-    categorized[cat].sort((a: any, b: any) => {
-      const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
-      const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
-      if (ao !== bo) return ao - bo;
-      return (a.timelineid || '').localeCompare(b.timelineid || '');
-    });
-    categorized[cat] = categorized[cat].map(({ order, timelineid, ...rest }) => rest);
-  });
+  const output = (['workExperience', 'education', 'hobbies'] as const).reduce(
+    (acc, cat) => {
+      const list = (categorized[cat] || []).slice();
+      list.sort((a, b) => {
+        const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+        const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+        if (ao !== bo) return ao - bo;
+        return (a.timelineid || '').localeCompare(b.timelineid || '');
+      });
+      acc[cat] = list.map((item): TimelineElement => ({
+        date: item.date,
+        title: item.title,
+        subtitle: item.subtitle,
+        description: item.description,
+        description_ext: item.description_ext,
+        image_ext: item.image_ext,
+        tags: item.tags,
+        logos: item.logos,
+        order: item.order,
+      }));
+      return acc;
+    },
+    { workExperience: [] as TimelineElement[], education: [] as TimelineElement[], hobbies: [] as TimelineElement[] }
+  );
 
   return (
     // Render client component with server-fetched data (keeps same behavior as projects page)
     <TimelineClient
-      workExperience={categorized['workExperience'] || []}
-      education={categorized['education'] || []}
-      hobbies={categorized['hobbies'] || []}
+      workExperience={output.workExperience}
+      education={output.education}
+      hobbies={output.hobbies}
     />
   );
 }

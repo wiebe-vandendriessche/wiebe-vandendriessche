@@ -47,8 +47,8 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
     });
     const result = ['all', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
     if (typeof window !== 'undefined') {
-      // eslint-disable-next-line no-console
-      console.log('[ProjectsClient] categories tabs:', result);
+      // console.debug is fine; no eslint disable needed
+      console.debug('[ProjectsClient] categories tabs:', result);
     }
     return result;
   }, [data]);
@@ -63,8 +63,7 @@ export default function ProjectsClient({ data }: ProjectsClientProps) {
       title: d.title || undefined
     }));
     if (typeof window !== 'undefined') {
-      // eslint-disable-next-line no-console
-      console.log('[ProjectsClient] masonry items sample:', items.slice(0, 6));
+      console.debug('[ProjectsClient] masonry items sample:', items.slice(0, 6));
     }
     return items;
   }, [data]);

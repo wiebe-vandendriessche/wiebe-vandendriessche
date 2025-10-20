@@ -73,11 +73,12 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
         .select('*')
         .eq('post_id', post.post_id);
       if (error) { toast.error('Failed to load post'); setLoading(false); return; }
-      const enRow: any = data?.find(r => r.language === 'en');
-      const nlRow: any = data?.find(r => r.language === 'nl');
+      type Row = BlogRowForEdit;
+      const enRow: Row | undefined = (data as Row[] | null)?.find(r => r.language === 'en');
+      const nlRow: Row | undefined = (data as Row[] | null)?.find(r => r.language === 'nl');
       setEnExists(!!enRow);
       setNlExists(!!nlRow);
-      const shared: any = enRow || nlRow || post;
+      const shared: Row = (enRow || nlRow || post) as Row;
       form.reset({
         postid: shared.post_id ?? post.post_id,
         images: (enRow?.images || nlRow?.images || []).join(', '),
@@ -158,8 +159,9 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
       toast.success(mode === 'publish' ? 'Post published' : 'Draft saved');
       onUpdated?.();
       setOpen(false);
-    } catch (e: any) {
-      toast.error(e.message || 'Failed to update post');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to update post';
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 
@@ -205,7 +207,7 @@ export function EditBlogDialog({ post, onUpdated }: { post: BlogRowForEdit; onUp
                   </FormItem>
                 )} />
               </div>
-              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "en" | "nl")}>
                 <TabsList>
                   <TabsTrigger value="en">English</TabsTrigger>
                   <TabsTrigger value="nl">Dutch</TabsTrigger>

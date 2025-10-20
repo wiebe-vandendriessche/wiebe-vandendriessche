@@ -64,7 +64,7 @@ class Noise {
     seed = Math.floor(seed);
     if (seed < 256) seed |= seed << 8;
     for (let i = 0; i < 256; i++) {
-      let v =
+      const v =
         i & 1 ? this.p[i] ^ (seed & 255) : this.p[i] ^ ((seed >> 8) & 255);
       this.perm[i] = this.perm[i + 256] = v;
       this.gradP[i] = this.gradP[i + 256] = this.grad3[v % 12];
@@ -236,9 +236,6 @@ const Waves: React.FC<WavesProps> = ({
     if (!canvas || !container) return;
     ctxRef.current = canvas.getContext("2d");
 
-    let animatingLines = false;
-    let prevTotalLines = 0;
-    let prevTotalPoints = 0;
 
     function setSize() {
       if (!container || !canvas) return;

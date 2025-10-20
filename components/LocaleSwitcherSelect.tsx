@@ -5,20 +5,19 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Locale } from "next-intl";
 import { useParams } from "next/navigation";
-import { ChangeEvent, ReactNode, useTransition } from "react";
+import { useTransition } from "react";
 import { Globe } from "lucide-react";
 
 type Props = {
-  children: ReactNode;
   defaultValue: string;
   label: string;
 };
 
-export default function LocaleSwitcherSelect({ children, defaultValue, label }: Props) {
+export default function LocaleSwitcherSelect({ defaultValue, label }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
-  const params = useParams();
+  const params = useParams() as { locale?: string };
 
   function onLocaleChange(nextLocale: string) {
     startTransition(() => {
@@ -34,7 +33,7 @@ export default function LocaleSwitcherSelect({ children, defaultValue, label }: 
 
   return (
     <Select
-      value={(params as any)?.locale?.toString?.() ?? defaultValue}
+      value={typeof params?.locale === 'string' ? params.locale : defaultValue}
       onValueChange={onLocaleChange}
     >
       <SelectTrigger

@@ -25,7 +25,8 @@ export function CreateCategoryDialog({ onCreated }: Props) {
     if (!enName.trim() && !nlName.trim()) { toast.error("Provide at least one language name"); return; }
     setSubmitting(true);
     try {
-      const rows: any[] = [];
+      type Row = { project_category_id: string; language: 'en' | 'nl'; name: string };
+      const rows: Row[] = [];
       if (enName.trim()) rows.push({ project_category_id: key.trim(), language: 'en', name: enName.trim() });
       if (nlName.trim()) rows.push({ project_category_id: key.trim(), language: 'nl', name: nlName.trim() });
       const { error } = await supabase.from('project_categories').insert(rows);
@@ -33,8 +34,9 @@ export function CreateCategoryDialog({ onCreated }: Props) {
       toast.success('Category created');
       if (onCreated) await onCreated();
       setOpen(false); reset();
-    } catch (e: any) {
-      toast.error(e.message || 'Create failed');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Create failed';
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 

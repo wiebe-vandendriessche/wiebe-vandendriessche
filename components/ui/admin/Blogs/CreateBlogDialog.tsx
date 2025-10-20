@@ -78,8 +78,9 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
       toast.success(mode === 'publish' ? "Published EN + NL blog posts" : "Saved draft (EN + NL)");
       onCreated?.();
       setTimeout(() => { setOpen(false); form.reset(); }, 500);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to create blog posts");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to create blog posts";
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 

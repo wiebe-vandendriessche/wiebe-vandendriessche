@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useRef, useState, useEffect, Suspense } from 'react'
-import * as THREE from 'three'
+import React, { useState, useEffect, Suspense } from 'react'
 import { Link } from '@/i18n/navigation'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useProgress } from '@react-three/drei'

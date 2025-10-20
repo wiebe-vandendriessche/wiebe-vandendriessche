@@ -65,8 +65,9 @@ export default function AdminPage() {
                   if (error) throw error;
                   setUser(null);
                   toast.success('Logged out');
-                } catch (e: any) {
-                  toast.error(e.message || 'Logout failed');
+                } catch (e) {
+                  const message = e instanceof Error ? e.message : 'Logout failed';
+                  toast.error(message);
                 }
               }}
             >Logout</Button>

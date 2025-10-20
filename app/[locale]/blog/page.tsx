@@ -45,7 +45,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 			.not('published_at', 'is', null)
 			.order('published_at', { ascending: false });
 		if (!error && data) posts = data as BlogPost[];
-	} catch (e) {
+    } catch {
 		// ignore and render empty state
 	}
 

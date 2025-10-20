@@ -111,7 +111,7 @@ export default function RotatingModel(props: RotatingModelProps) {
                 // When hovered and not aligning, smoothly rotate baseYaw to look at mouse
                 const targetYaw = (lastAlignedYawRef.current || baseYaw) + pointer.x * hoverYawRange
                 baseYaw += (targetYaw - baseYaw) * 0.18 // smooth follow
-                targetSpeed = 0
+                targetSpeed = stopSpinOnHover ? 0 : idleSpinSpeed
             }
         }
         else {
@@ -142,12 +142,13 @@ export default function RotatingModel(props: RotatingModelProps) {
     useEffect(() => {
         if (!scene) return
         // Ensure all meshes in the model cast and receive shadows
-        scene.traverse((obj: any) => {
-            if (obj.isMesh) {
-                obj.castShadow = true
-                obj.receiveShadow = true
+        scene.traverse((obj: THREE.Object3D) => {
+            if ((obj as THREE.Mesh).isMesh) {
+                const m = obj as THREE.Mesh;
+                m.castShadow = true;
+                m.receiveShadow = true;
             }
-        })
+        });
         onLoaded?.()
         const box = new THREE.Box3().setFromObject(scene)
         const size = new THREE.Vector3()
@@ -170,7 +171,7 @@ export default function RotatingModel(props: RotatingModelProps) {
             {collider && (
                 <mesh
                     position={[collider.center.x, collider.center.y, collider.center.z]}
-                    onPointerOver={(e: any) => {
+                    onPointerOver={(e) => {
                         e.stopPropagation()
                         if (groupRef.current) {
                             const pos = groupRef.current.getWorldPosition(new THREE.Vector3())
@@ -182,12 +183,12 @@ export default function RotatingModel(props: RotatingModelProps) {
                         }
                         setHovered(true)
                     }}
-                    onPointerOut={(e: any) => {
+                    onPointerOut={(e) => {
                         e.stopPropagation()
                         setHovered(false)
                         aligningRef.current = false
                     }}
-                    onPointerDown={(e: any) => {
+                    onPointerDown={(e) => {
                         e.stopPropagation()
                         setHovered(true)
                         if (groupRef.current) {
@@ -199,11 +200,11 @@ export default function RotatingModel(props: RotatingModelProps) {
                             aligningRef.current = true
                         }
                     }}
-                    onPointerMove={(e: any) => {
+                    onPointerMove={(e) => {
                         e.stopPropagation()
                         setHovered(true)
                     }}
-                    onPointerUp={(e: any) => {
+                    onPointerUp={(e) => {
                         e.stopPropagation()
                         setHovered(false)
                         aligningRef.current = false

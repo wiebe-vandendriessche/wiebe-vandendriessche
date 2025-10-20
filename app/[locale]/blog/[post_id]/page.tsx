@@ -19,7 +19,17 @@ async function getPost(post_id: string, locale: 'en' | 'nl') {
     .not('published_at', 'is', null)
     .maybeSingle();
   if (error) return null;
-  return data as any;
+  type Post = {
+    post_id: string;
+    language: 'en' | 'nl';
+    title: string | null;
+    summary: string | null;
+    content: string | null;
+    author: string | null;
+    published_at: string | null;
+    tags: string[] | null;
+  };
+  return data as Post;
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ locale: string; post_id: string }> }) {

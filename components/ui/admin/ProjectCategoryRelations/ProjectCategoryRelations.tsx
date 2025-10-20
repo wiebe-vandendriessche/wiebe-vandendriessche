@@ -44,7 +44,7 @@ export function ProjectCategoryRelations() {
             setLoading(false); return;
         }
         const byProjectId = new Map<string, ProjectGroup>();
-        for (const p of (projs as any as ProjectRow[]) || []) {
+    for (const p of ((projs as ProjectRow[] | null) ?? [])) {
             const g = byProjectId.get(p.project_id) || {
                 project_id: p.project_id,
                 displayTitle: "",
@@ -64,7 +64,7 @@ export function ProjectCategoryRelations() {
             setLoading(false); return;
         }
         const byCatKey = new Map<string, LogicalCategory>();
-        for (const c of (cats as any as CategoryRow[]) || []) {
+    for (const c of ((cats as CategoryRow[] | null) ?? [])) {
             const lc = byCatKey.get(c.project_category_id) || {
                 project_category_id: c.project_category_id,
                 displayName: c.name || c.project_category_id,
@@ -78,7 +78,7 @@ export function ProjectCategoryRelations() {
         setLogicalCategories(logical);
 
         // Load existing relations for all projects (both languages), key by logical project_id
-        let selected: Record<string, Set<string>> = {};
+    const selected: Record<string, Set<string>> = {};
         const projectKeys = groups.map(g => g.project_id);
         if (projectKeys.length) {
             const { data: rels, error: rErr } = await supabase
@@ -89,7 +89,8 @@ export function ProjectCategoryRelations() {
             else {
                 for (const g of groups) {
                     const set = new Set<string>();
-                    const rowsForGroup = (rels as any[]).filter(r => r.project_id === g.project_id);
+                                        const rowsForGroup = ((rels as Array<{ project_id: string; project_category_id: string }> | null) ?? [])
+                                            .filter(r => r.project_id === g.project_id);
                     for (const r of rowsForGroup) set.add(r.project_category_id as string);
                     selected[g.project_id] = set;
                 }
@@ -135,7 +136,9 @@ export function ProjectCategoryRelations() {
                     .eq("project_id", projKey)
                     .eq("language", lang);
                 if (error) throw error;
-                const existingSet = new Set(((existing as any[]) || []).map(r => r.project_category_id as string));
+                                const existingSet = new Set(
+                                    (((existing as Array<{ project_category_id: string }> | null) ?? [])).map(r => r.project_category_id as string)
+                                );
                 // Desired category keys for this lang
                 const desiredKeys = selectedKeys;
                 const desiredSet = new Set(desiredKeys);
@@ -161,8 +164,9 @@ export function ProjectCategoryRelations() {
             if (hasNl) await applyFor(group.project_id, 'nl');
 
             toast.success("Relations saved for EN/NL");
-        } catch (e: any) {
-            toast.error(e.message || "Save failed");
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Save failed';
+            toast.error(msg);
         } finally { setSavingFor(null); }
     };
 

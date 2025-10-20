@@ -28,12 +28,12 @@ function SelectTrigger({
   className,
   size = "default",
   children,
-  ...props
+  hideIcon,
+  ...rest
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: "sm" | "default"
   hideIcon?: boolean
 }) {
-  const { hideIcon, ...rest } = props as any
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"

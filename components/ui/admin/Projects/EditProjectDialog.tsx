@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+// import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabaseClient";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -86,11 +86,11 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
         toast.error("Failed to load project");
         setLoading(false); return;
       }
-  const enRow: any = data.find(r => r.language === 'en');
-  const nlRow: any = data.find(r => r.language === 'nl');
+  const enRow: ProjectRowForEdit | undefined = (data as ProjectRowForEdit[] | null)?.find(r => r.language === 'en');
+  const nlRow: ProjectRowForEdit | undefined = (data as ProjectRowForEdit[] | null)?.find(r => r.language === 'nl');
   setEnExists(!!enRow);
   setNlExists(!!nlRow);
-      const shared: any = enRow || nlRow || project;
+  const shared: ProjectRowForEdit = (enRow || nlRow || project) as ProjectRowForEdit;
       form.reset({
         projectid: shared.project_id ?? project.project_id,
         started: shared.started ? String(shared.started) : "",
@@ -182,8 +182,9 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
       toast.success("Project updated");
       if (onUpdated) onUpdated();
       setOpen(false);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to update project");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to update project';
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 
@@ -269,7 +270,7 @@ export function EditProjectDialog({ project, onUpdated }: EditProjectDialogProps
                   </FormItem>
                 )} />
               </div>
-              <Tabs value={activeTab} onValueChange={val => setActiveTab(val as any)}>
+              <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as "en" | "nl")}>
                 <TabsList>
                   <TabsTrigger value="en">English</TabsTrigger>
                   <TabsTrigger value="nl">Dutch</TabsTrigger>

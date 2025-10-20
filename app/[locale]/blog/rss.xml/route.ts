@@ -52,7 +52,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ loc
   }
 
   // Basic XML escaping
-  const esc = (s: any) => String(s ?? '')
+  const esc = (s: unknown) => String(s ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -66,14 +66,22 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ loc
     : 'Articles and notes by Wiebe Vandendriessche';
 
   const itemCount = (posts || []).length;
-  const items = (posts || []).map((p: any) => {
-    const link = `${siteUrl}/${locale}/blog/${encodeURIComponent(p.post_id)}`;
-    const pubDate = p.published_at ? new Date(p.published_at).toUTCString() : new Date().toUTCString();
+  type Post = {
+    post_id: string;
+    title?: string | null;
+    summary?: string | null;
+    published_at?: string | null;
+  };
+
+  const items = (posts || []).map((p) => {
+    const post = p as Post;
+    const link = `${siteUrl}/${locale}/blog/${encodeURIComponent(post.post_id)}`;
+    const pubDate = post.published_at ? new Date(post.published_at).toUTCString() : new Date().toUTCString();
     return `\n    <item>
-      <title>${esc(p.title || p.summary || p.post_id)}</title>
+      <title>${esc(post.title || post.summary || post.post_id)}</title>
       <link>${esc(link)}</link>
       <guid isPermaLink="true">${esc(link)}</guid>
-      <description>${esc(p.summary || '')}</description>
+      <description>${esc(post.summary || '')}</description>
       <pubDate>${esc(pubDate)}</pubDate>
     </item>`;
   }).join('');

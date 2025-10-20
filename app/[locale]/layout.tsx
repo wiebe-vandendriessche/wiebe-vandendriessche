@@ -7,13 +7,13 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import Navbar from "@/components/sections/Navbar";
 import FooterSection from "@/components/sections/Footer";
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
 import { getTranslations } from 'next-intl/server';
 import { Toaster } from "@/components/ui/sonner"
 import LiquidEtherBackground from "@/components/ui/liquidether/LiquidEtherBackground";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Analytics } from "@vercel/analytics/next"
-import UnderConstructionWrapper from "@/components/UnderConstructionWrapper";
+// UnderConstructionWrapper
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

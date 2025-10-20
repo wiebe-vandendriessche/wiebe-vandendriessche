@@ -117,7 +117,7 @@ export function TimelineElementsTable() {
                 .order("categorie", { ascending: true })
                 .order("order", { ascending: true, nullsFirst: false })
                 .order("timelineid", { ascending: true });
-            if (!error && data) setRowsRaw(data as any);
+            if (!error && data) setRowsRaw((data as RawRow[]) ?? []);
             setLoading(false);
         };
         fetchElements();
@@ -130,7 +130,7 @@ export function TimelineElementsTable() {
             .order("categorie", { ascending: true })
             .order("order", { ascending: true, nullsFirst: false })
             .order("timelineid", { ascending: true });
-        if (!error && data) setRowsRaw(data as any);
+    if (!error && data) setRowsRaw((data as RawRow[]) ?? []);
     };
 
     const handleDelete = async (timelineid: string) => {
@@ -176,7 +176,7 @@ export function TimelineElementsTable() {
                     [lang]: langBlock,
                 } as GroupedRow);
             } else {
-                (g as any)[lang] = langBlock;
+                if (lang === 'en') g.en = langBlock; else g.nl = langBlock;
                 g.shared = {
                     started: g.shared.started ?? r.started,
                     finished: g.shared.finished ?? r.finished,
@@ -246,13 +246,13 @@ export function TimelineElementsTable() {
                                 timelineid,
                                 language: currentLang,
                                 categorie: r.categorie,
-                                title: (r as any)[currentLang]?.title || "",
-                                location: (r as any)[currentLang]?.location || "",
+                                title: (currentLang === 'nl' ? r.nl?.title : r.en?.title) || "",
+                                location: (currentLang === 'nl' ? r.nl?.location : r.en?.location) || "",
                                 started: r.shared.started,
                                 finished: r.shared.finished,
-                                description: (r as any)[currentLang]?.description || "",
-                                description_ext: (r as any)[currentLang]?.description_ext || "",
-                                tags: (r as any)[currentLang]?.tags || [],
+                                description: (currentLang === 'nl' ? r.nl?.description : r.en?.description) || "",
+                                description_ext: (currentLang === 'nl' ? r.nl?.description_ext : r.en?.description_ext) || "",
+                                tags: (currentLang === 'nl' ? r.nl?.tags : r.en?.tags) || [],
                                 logos: r.shared.logos || [],
                                 image_ext: null,
                                 order: r.order ?? null,

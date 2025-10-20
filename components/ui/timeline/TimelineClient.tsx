@@ -38,7 +38,7 @@ const TimelineClient: React.FC<{
       <div className="foggy-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
       <div className="relative z-10 w-full flex flex-col items-center overflow-x-hidden">
         <h1 className="text-3xl md:text-4xl font-bold text-center mb-6">{t('Timeline.title')}</h1>
-        <Tabs value={activeSection} onValueChange={(v) => setActiveSection(v as any)} className="w-full">
+  <Tabs value={activeSection} onValueChange={(v) => setActiveSection(v as 'all' | TimelineType)} className="w-full">
           <div className="flex justify-center mb-4">
             <TabsList className="gap-1 sm:gap-3">
               {['all', ...Object.keys(sectionMap)].map((section) => (

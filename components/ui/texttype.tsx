@@ -61,10 +61,10 @@ const TextType = ({
     return Math.random() * (max - min) + min;
   }, [variableSpeed, typingSpeed]);
 
-  const getCurrentTextColor = () => {
+  const getCurrentTextColor = useCallback(() => {
     if (textColors.length === 0) return undefined;
     return textColors[currentTextIndex % textColors.length];
-  };
+  }, [textColors, currentTextIndex]);
 
   useEffect(() => {
     if (!startOnVisible || !containerRef.current) return;
@@ -163,13 +163,17 @@ const TextType = ({
     isVisible,
     reverseMode,
     variableSpeed,
+    getRandomSpeed,
     onSentenceComplete
   ]);
 
   const shouldHideCursor =
     hideCursorWhileTyping && (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
 
-  const colorStyle = getCurrentTextColor() ? { color: getCurrentTextColor() } : undefined;
+  const colorStyle = useMemo(() => {
+    const c = getCurrentTextColor();
+    return c ? { color: c } : undefined;
+  }, [getCurrentTextColor]);
 
   return createElement(
     Component,

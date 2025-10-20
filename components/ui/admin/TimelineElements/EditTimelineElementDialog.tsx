@@ -222,8 +222,9 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
             toast.success("Timeline element updated");
             if (onUpdated) onUpdated();
             setOpen(false);
-        } catch (e: any) {
-            toast.error(e.message || "Failed to update");
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Failed to update';
+            toast.error(msg);
         } finally {
             setSubmitting(false);
         }
@@ -268,9 +269,9 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto p-2">
                             <div className="grid gap-4 md:grid-cols-2">
-                <FormField name="timelineid" control={form.control} render={({ field }) => (
+                                <FormField name="timelineid" control={form.control} render={({ field }) => (
                                     <FormItem>
-                    <FormLabel>Timeline ID *</FormLabel>
+                                        <FormLabel>Timeline ID *</FormLabel>
                                         <FormControl><Input {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -327,7 +328,7 @@ export function EditTimelineElementDialog({ element, onUpdated }: EditTimelineEl
                                     </FormItem>
                                 )} />
                             </div>
-                            <Tabs value={activeTab} onValueChange={val => setActiveTab(val as any)}>
+                            <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as "en" | "nl")}>
                                 <TabsList>
                                     <TabsTrigger value="en">English</TabsTrigger>
                                     <TabsTrigger value="nl">Dutch</TabsTrigger>

@@ -52,15 +52,15 @@ export function BlogsTable() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data } = await supabase.from("blog_posts").select("*");
-      if (data) setRows(data as any);
+  const { data } = await supabase.from("blog_posts").select("*");
+  if (data) setRows(data as BlogRow[]);
       setLoading(false);
     })();
   }, []);
 
   const refresh = async () => {
     const { data } = await supabase.from("blog_posts").select("*");
-    if (data) setRows(data as any);
+    if (data) setRows(data as BlogRow[]);
   };
 
   const handleDelete = async (post_id: string, language: string) => {
@@ -95,7 +95,7 @@ export function BlogsTable() {
       const isDeleting = deletingKey === key;
       return (
         <div className="flex gap-2 justify-end">
-          <EditBlogDialog post={row.original as any} onUpdated={refresh} />
+          <EditBlogDialog post={row.original} onUpdated={refresh} />
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm" disabled={isDeleting}>{isDeleting ? "Deleting..." : "Delete"}</Button>

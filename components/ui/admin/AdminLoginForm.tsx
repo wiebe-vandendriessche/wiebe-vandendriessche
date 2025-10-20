@@ -89,9 +89,10 @@ export function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }) {
 				},
 			})
 			if (error) throw error
-		} catch (e: any) {
-			setError(e.message || 'Google sign-in failed')
-			toast.error(e.message || 'Google sign-in failed')
+		} catch (e) {
+			const message = e instanceof Error ? e.message : 'Google sign-in failed'
+			setError(message)
+			toast.error(message)
 		} finally {
 			setSubmitting(false)
 		}
@@ -114,6 +115,11 @@ export function AdminLoginForm({ onSuccess }: { onSuccess?: () => void }) {
 			) : (
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full p-6">
+						{error && (
+							<div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2">
+								{error}
+							</div>
+						)}
 						<FormField
 							control={form.control}
 							name="email"
