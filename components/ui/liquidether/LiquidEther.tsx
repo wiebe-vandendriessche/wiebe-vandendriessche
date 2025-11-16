@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 import * as THREE from 'three';
 
 export interface LiquidEtherProps {
@@ -123,6 +124,7 @@ export default function LiquidEther({
   const intersectionObserverRef = useRef<IntersectionObserver | null>(null);
   const isVisibleRef = useRef<boolean>(true);
   const resizeRafRef = useRef<number | null>(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -153,9 +155,15 @@ export default function LiquidEther({
       return tex;
     }
 
+    // Theme-dependent initial background vector (will be kept in sync by a separate effect)
     const paletteTex = makePaletteTexture(colors);
-    // Hard-code transparent background vector (alpha 0)
-    const bgVec4 = new THREE.Vector4(0, 0, 0, 0);
+    // Use next-themes theme for background vector
+    let bgVec4: THREE.Vector4;
+    if (resolvedTheme === 'dark') {
+      bgVec4 = new THREE.Vector4(0, 0, 0, 0); // transparent for dark
+    } else {
+      bgVec4 = new THREE.Vector4(1, 1, 1, 1); // solid white for light
+    }
 
     class CommonClass {
       width = 0;
@@ -1374,6 +1382,24 @@ export default function LiquidEther({
     autoResumeDelay,
     autoRampDuration
   ]);
+
+  // Immediately react to theme changes without rebuilding the whole simulation
+  useEffect(() => {
+    const webgl = webglRef.current;
+    if (!webgl) return;
+    // Access internal manager Output safely via any-cast
+    const managerOutput = (webgl as any).output;
+    const mesh: THREE.Mesh | undefined = managerOutput?.output;
+    if (!mesh) return;
+    const material = mesh.material as THREE.RawShaderMaterial;
+    const uniforms = material.uniforms;
+    if (!uniforms?.bgColor) return;
+    if (resolvedTheme === 'dark') {
+      (uniforms.bgColor.value as THREE.Vector4).set(0, 0, 0, 0);
+    } else {
+      (uniforms.bgColor.value as THREE.Vector4).set(1, 1, 1, 1);
+    }
+  }, [resolvedTheme]);
 
   useEffect(() => {
     const webgl = webglRef.current;
