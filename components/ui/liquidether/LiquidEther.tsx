@@ -50,8 +50,14 @@ interface SimOptions {
   BFECC: boolean;
 }
 
+// Minimal shape of the manager's output to avoid forward type refs
+interface OutputLike {
+  simulation: { options: SimOptions; resize: () => void };
+  output: THREE.Mesh;
+}
+
 interface LiquidEtherWebGL {
-  output?: { simulation?: { options: SimOptions; resize: () => void } };
+  output?: OutputLike;
   autoDriver?: {
     enabled: boolean;
     speed: number;
@@ -1386,18 +1392,17 @@ export default function LiquidEther({
   // Immediately react to theme changes without rebuilding the whole simulation
   useEffect(() => {
     const webgl = webglRef.current;
-    if (!webgl) return;
-    // Access internal manager Output safely via any-cast
-    const managerOutput = (webgl as any).output;
-    const mesh: THREE.Mesh | undefined = managerOutput?.output;
+    if (!webgl || !webgl.output) return;
+    const mesh = webgl.output.output;
     if (!mesh) return;
     const material = mesh.material as THREE.RawShaderMaterial;
     const uniforms = material.uniforms;
     if (!uniforms?.bgColor) return;
+    const bg = uniforms.bgColor.value as THREE.Vector4;
     if (resolvedTheme === 'dark') {
-      (uniforms.bgColor.value as THREE.Vector4).set(0, 0, 0, 0);
+      bg.set(0, 0, 0, 0);
     } else {
-      (uniforms.bgColor.value as THREE.Vector4).set(1, 1, 1, 1);
+      bg.set(1, 1, 1, 1);
     }
   }, [resolvedTheme]);
 
