@@ -6,7 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Rss, BookOpen } from 'lucide-react';
+import { Rss, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Markdown from '@/components/ui/markdown';
 
@@ -45,7 +45,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 			.not('published_at', 'is', null)
 			.order('published_at', { ascending: false });
 		if (!error && data) posts = data as BlogPost[];
-	} catch (e) {
+    } catch {
 		// ignore and render empty state
 	}
 
@@ -66,42 +66,61 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 					</Button>
 				</div>
 				{posts.length === 0 ? (
-					<p className="text-muted-foreground">{t('empty')}</p>
+					<p>{t('empty')}</p>
 				) : (
 					<ul className="grid gap-4 sm:gap-6">
 						{posts.map((p) => (
 							<li key={`${p.post_id}:${p.language}`}>
 								<Card className="overflow-hidden flex flex-col">
 									<CardHeader className="border-b">
-																<CardTitle className="text-xl">
-																	{p.title}
-																</CardTitle>
-										<CardDescription>
-											{p.author}
-											{p.published_at && (
-												<>
-													{' '}•{' '}
-													{new Date(p.published_at).toLocaleDateString(locale)}
-												</>
-											)}
-										</CardDescription>
-										{p.tags && p.tags.length > 0 && (
-											<div className="mt-2 flex flex-wrap gap-2">
-												{p.tags.map((tag) => (
-													<Badge key={tag} variant="secondary">{tag}</Badge>
-												))}
+										<div className="flex items-start gap-4">
+											<div className="flex-1 min-w-0">
+												<CardTitle className="text-xl">
+													{p.title}
+												</CardTitle>
+												<CardDescription>
+													{p.author}
+													{p.published_at && (
+														<>
+															{' '}•{' '}
+															{new Date(p.published_at).toLocaleDateString(locale)}
+														</>
+													)}
+												</CardDescription>
+												{p.tags && p.tags.length > 0 && (
+													<div className="mt-2 flex flex-wrap gap-2">
+														{p.tags.map((tag) => (
+															<Badge key={tag} variant="default">{tag}</Badge>
+														))}
+													</div>
+												)}
 											</div>
-										)}
+											{Array.isArray(p.images) && p.images[0] && (
+												<div className="flex-shrink-0 w-50 h-25 rounded-lg overflow-hidden border border-border bg-muted flex items-center justify-center">
+													<Image
+														src={p.images[0]}
+														alt={p.title}
+														width={500}
+														height={500}
+														priority={false}
+													/>
+												</div>
+											)}
+										</div>
 									</CardHeader>
 									<CardContent className="flex-1 flex flex-col">
 										<div className="text-sm leading-6 line-clamp-3">
 											<Markdown content={p.summary || ''} hideImages summaryMode />
 										</div>
-										<div className="mt-auto pt-3 flex justify-end">
-											<Button asChild variant="default">
+										<div className="flex gap-2 mt-2">
+											<Button
+												size="sm"
+												variant="outline"
+												className="flex items-center gap-1 text-primary"
+												asChild
+											>
 												<Link href={`/blog/${encodeURIComponent(p.post_id)}`}>
-													<BookOpen className="mr-2 h-4 w-4" />
-													{t('readArticle')}
+													{t('readArticle')} <ArrowRight size={14} />
 												</Link>
 											</Button>
 										</div>

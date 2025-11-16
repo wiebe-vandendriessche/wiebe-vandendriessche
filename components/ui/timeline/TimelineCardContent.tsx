@@ -26,26 +26,30 @@ const TimelineCardContent: React.FC<{
           <h3 className="text-lg font-bold">{item.title}</h3>
           <h4 className="text-sm opacity-80">{item.subtitle}</h4>
         </div>
-        {Array.isArray(item.logos) && item.logos.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center gap-2 mr-5">
-            {item.logos.map((logoUrl, idx) => (
-              <Image
-                key={idx}
-                src={logoUrl}
-                alt={`logo-${idx}`}
-                width={160}
-                height={80}
-                className="object-contain logo-darkmode max-w-[110px] w-full h-auto"
-              />
-            ))}
-          </div>
-        )}
+          {/* Render each logo as its own thumbnail box */}
+          {Array.isArray(item.logos) && item.logos.length > 0 && (
+            // ml-auto pushes the logos block to the right side of the header
+            <div className="ml-auto flex flex-col sm:flex-row items-end sm:items-center gap-2">
+              {item.logos.map((logoUrl, idx) => (
+                <div key={idx} className="w-full sm:w-40 h-20 rounded-lg overflow-hidden border border-border bg-muted flex items-center justify-center p-1">
+                  <Image
+                    src={logoUrl}
+                    alt={`${item.title} logo-${idx}`}
+                    width={500}
+                    height={500}
+                    priority={false}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
       </div>
       <p className="mt-2">{item.description}</p>
       {item.tags && item.tags.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {item.tags.map((tag: string, i: number) => (
-            <Badge key={i} variant="secondary" className="text-sm">{tag}</Badge>
+            <Badge key={i} variant="default" className="text-xs">{tag}</Badge>
           ))}
         </div>
       )}

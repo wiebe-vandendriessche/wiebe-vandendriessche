@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+// import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/lib/supabaseClient";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -92,8 +92,9 @@ export function CreateProjectDialog({ onCreated }: CreateProjectDialogProps) {
       toast.success("Created EN + NL project entries");
       if (onCreated) onCreated();
       setTimeout(() => { setOpen(false); form.reset(); }, 700);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to create project");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to create project';
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 

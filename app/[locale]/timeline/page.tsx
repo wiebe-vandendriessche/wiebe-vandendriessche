@@ -1,88 +1,120 @@
-"use client";
+import { supabase } from '@/lib/supabaseClient';
+import TimelineClient from '@/components/ui/timeline/TimelineClient';
+import type { TimelineElement } from '@/components/ui/timeline/TimelineCardContent';
 
-import React, { useState } from 'react';
-import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import TimelineSection from '@/components/ui/timeline/TimelineSection';
-import useTimelineData, { TimelineType } from '@/components/ui/timeline/useTimelineData';
-import '@/components/ui/timeline/VerticalTimeline.css';
-import '@/components/ui/timeline/VerticalTimelineElement.css';
-import { Briefcase, GraduationCap, Ellipsis } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
 
-// Component
-const TimelinePage = () => {
-  useEffect(() => {
-    console.log('TimelinePage rendered');
-  });
-  const [activeSection, setActiveSection] = useState<'all' | TimelineType>('all');
-  const { workExperience, education, hobbies } = useTimelineData();
-  const t = useTranslations();
+export const revalidate = 60;
 
-  const sectionMap = {
-    workExperience: {
-      data: workExperience,
-      icon: <Briefcase className="w-5 h-5" />,
-    },
-    education: {
-      data: education,
-      icon: <GraduationCap className="w-5 h-5" />,
-    },
-    hobbies: {
-      data: hobbies,
-      icon: <Ellipsis className="w-5 h-5" />,
-    },
+export default async function TimelinePage({ params }: PageProps) {
+  const { locale } = await params;
+
+  type Row = {
+    timelineid: string;
+    language: string;
+    categorie: string;
+    order?: number | null;
+    title: string;
+    location: string;
+    started: string | null;
+    finished: string | null;
+    description: string | null;
+    description_ext?: string | null;
+    image_ext?: string[] | null;
+    tags?: string[] | null;
+    logos?: string[] | null;
   };
 
-  // Tab label translation keys
-  const tabLabels: Record<string, string> = {
-    all: 'Timeline.allLabel',
-    workExperience: 'Timeline.workExperienceLabel',
-    education: 'Timeline.educationLabel',
-    hobbies: 'Timeline.hobbiesLabel',
+  let rows: Row[] = [];
+  try {
+    const { data, error } = await supabase
+      .from('timeline_elements')
+      .select('*')
+      .eq('language', locale)
+      .order('categorie', { ascending: true })
+      .order('order', { ascending: true, nullsFirst: false })
+      .order('timelineid', { ascending: true });
+    if (error) {
+      console.warn('Supabase fetch error timeline_elements:', error.message);
+    } else if (data) {
+      rows = data as Row[];
+    }
+  } catch (e) {
+    console.warn('Supabase fetch exception timeline_elements:', e);
+  }
+
+  const buildDate = (r: Row) => {
+    if (r.started && r.finished) {
+      if (r.started === r.finished) return r.started;
+      return `${r.started} – ${r.finished}`;
+    }
+    return r.started || r.finished || '';
   };
+
+  const catNormalize = (value: string) => value.replace(/[^a-zA-Z]/g, '').toLowerCase();
+  const catMap: Record<string, 'workExperience' | 'education' | 'hobbies' | undefined> = {
+    workexperience: 'workExperience',
+    workexp: 'workExperience',
+    education: 'education',
+    hobby: 'hobbies',
+    hobbies: 'hobbies',
+  };
+
+  type TimelineItem = TimelineElement & { timelineid: string };
+  const categorized = rows.reduce<Record<string, TimelineItem[]>>((acc, r) => {
+    const norm = catNormalize(r.categorie);
+    const key = catMap[norm];
+    if (!key) return acc;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push({
+      timelineid: r.timelineid,
+      order: typeof r.order === 'number' ? r.order : undefined,
+      date: buildDate(r),
+      title: r.title,
+      subtitle: r.location || '',
+      description: r.description || '',
+      description_ext: r.description_ext || undefined,
+      image_ext: Array.isArray(r.image_ext) ? r.image_ext : (typeof r.image_ext === 'string' && r.image_ext ? [r.image_ext] : []),
+      tags: r.tags || undefined,
+      logos: r.logos || undefined,
+    });
+    return acc;
+  }, {} as Record<string, TimelineItem[]>);
+
+  // Sort and remove timelineid/order from payload
+  const output = (['workExperience', 'education', 'hobbies'] as const).reduce(
+    (acc, cat) => {
+      const list = (categorized[cat] || []).slice();
+      list.sort((a, b) => {
+        const ao = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+        const bo = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+        if (ao !== bo) return ao - bo;
+        return (a.timelineid || '').localeCompare(b.timelineid || '');
+      });
+      acc[cat] = list.map((item): TimelineElement => ({
+        date: item.date,
+        title: item.title,
+        subtitle: item.subtitle,
+        description: item.description,
+        description_ext: item.description_ext,
+        image_ext: item.image_ext,
+        tags: item.tags,
+        logos: item.logos,
+        order: item.order,
+      }));
+      return acc;
+    },
+    { workExperience: [] as TimelineElement[], education: [] as TimelineElement[], hobbies: [] as TimelineElement[] }
+  );
 
   return (
-    <section className="relative w-full max-w-4xl mx-auto px-4 py-5 flex flex-col items-center">
-      <div className="foggy-gradient-bg absolute inset-0 -z-10 pointer-events-none" />
-      <div className="relative z-10 w-full flex flex-col items-center overflow-x-hidden">
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
-          {t('Timeline.title')}
-        </h1>
-        <Tabs
-          defaultValue="all"
-          value={activeSection}
-          onValueChange={(value) => setActiveSection(value as 'all' | TimelineType)}
-          className="w-full"
-        >
-          <div className="flex justify-center mb-6">
-            <TabsList className="gap-1 sm:gap-3">
-              {['all', ...Object.keys(sectionMap)].map((section) => (
-                <TabsTrigger key={section} value={section}>
-                  {t(tabLabels[section])}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-          <TabsContent value="all">
-            <TimelineSection type="workExperience" data={workExperience} icon={sectionMap.workExperience.icon} t={t} />
-            <TimelineSection type="education" data={education} icon={sectionMap.education.icon} t={t} />
-            <TimelineSection type="hobbies" data={hobbies} icon={sectionMap.hobbies.icon} t={t} />
-          </TabsContent>
-          {(Object.keys(sectionMap) as Array<keyof typeof sectionMap>).map((section) => (
-            <TabsContent key={section} value={section} className="animate-flyin">
-              <TimelineSection
-                type={section as TimelineType}
-                data={sectionMap[section].data}
-                icon={sectionMap[section].icon}
-                t={t}
-              />
-            </TabsContent>
-          ))}
-        </Tabs>
-      </div>
-    </section>
+    // Render client component with server-fetched data (keeps same behavior as projects page)
+    <TimelineClient
+      workExperience={output.workExperience}
+      education={output.education}
+      hobbies={output.hobbies}
+    />
   );
-};
-
-export default TimelinePage;
+}

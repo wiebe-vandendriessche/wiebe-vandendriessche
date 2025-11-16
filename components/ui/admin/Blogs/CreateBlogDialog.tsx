@@ -19,11 +19,11 @@ const langSectionSchema = z.object({
   content: z.string().min(1, "Required"),
   author: z.string().optional(),
   tags: z.string().optional(),
-  images: z.string().optional(),
 });
 
 const formSchema = z.object({
   postid: z.string().min(1, "Required"),
+  images: z.string().optional(),
   en: langSectionSchema,
   nl: langSectionSchema,
 });
@@ -39,8 +39,9 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       postid: "",
-      en: { title: "", summary: "", content: "", author: "", tags: "", images: "" },
-      nl: { title: "", summary: "", content: "", author: "", tags: "", images: "" },
+      images: "",
+      en: { title: "", summary: "", content: "", author: "", tags: "" },
+      nl: { title: "", summary: "", content: "", author: "", tags: "" },
     }
   });
 
@@ -56,10 +57,11 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
       const nowIso = new Date().toISOString();
       const pubAt = mode === 'publish' ? nowIso : null;
       const shared = {
-              post_id: values.postid,
-              status: mode === 'publish' ? 'published' : 'draft',
+        post_id: values.postid,
+        status: mode === 'publish' ? 'published' : 'draft',
         published_at: pubAt,
         updated_at: nowIso,
+        images: parseList(values.images),
       } as const;
       const buildLang = (lang: "en" | "nl", section: FormValues["en"]) => ({
         ...shared,
@@ -69,7 +71,6 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
         content: section.content,
         author: toNull(section.author) ?? 'Wiebe Vandendriessche',
         tags: parseList(section.tags),
-        images: parseList(section.images),
       });
       const rows = [buildLang("en", values.en), buildLang("nl", values.nl)];
       const { error } = await supabase.from("blog_posts").insert(rows);
@@ -77,8 +78,9 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
       toast.success(mode === 'publish' ? "Published EN + NL blog posts" : "Saved draft (EN + NL)");
       onCreated?.();
       setTimeout(() => { setOpen(false); form.reset(); }, 500);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to create blog posts");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to create blog posts";
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 
@@ -99,6 +101,16 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
                   <FormLabel>Post ID *</FormLabel>
                   <FormControl><Input placeholder="unique id" {...field} /></FormControl>
                   <FormMessage />
+                </FormItem>
+              )} />
+              <FormField name="images" control={form.control} render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Images (comma paths)</FormLabel>
+                  <FormControl><Input placeholder="/img1.jpg, /img2.jpg" {...field} /></FormControl>
+                  <FormMessage />
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Images listed here can be referenced in the markdown content. The first image will be used as the blog post banner.
+                  </div>
                 </FormItem>
               )} />
             </div>
@@ -138,16 +150,12 @@ export function CreateBlogDialog({ onCreated }: { onCreated?: () => void }) {
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <FormField name={`${lang}.images` as const} control={form.control} render={({ field }) => (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel>Images ({lang.toUpperCase()}) (comma paths)</FormLabel>
-                        <FormControl><Input placeholder="/img1.jpg, /img2.jpg" {...field} /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )} />
                     <FormField name={`${lang}.content` as const} control={form.control} render={({ field }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Content ({lang.toUpperCase()}) *</FormLabel>
+                        <div className="flex items-center gap-2">
+                          <FormLabel>Content ({lang.toUpperCase()}) *</FormLabel>
+                          <span className="text-xs text-muted-foreground">Tip: This field uses <b>Markdown</b>. To display an image, use: <code>![](/path/to/image.jpg)</code></span>
+                        </div>
                         <FormControl>
                           <textarea className="border bg-background rounded-md p-2 text-sm w-full min-h-[160px]" {...field} />
                         </FormControl>

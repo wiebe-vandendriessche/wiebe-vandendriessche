@@ -32,8 +32,9 @@ export function EditCategoryDialog({ categorieId, onUpdated, initialTab = 'en' }
         toast.error(error.message || 'Failed to load category');
         return;
       }
-      const en = (data as any[]).find(r => r.language === 'en') as CategoryRow | undefined;
-      const nl = (data as any[]).find(r => r.language === 'nl') as CategoryRow | undefined;
+  const rows = (data as CategoryRow[] | null) ?? [];
+  const en = rows.find(r => r.language === 'en');
+  const nl = rows.find(r => r.language === 'nl');
       setKey(categorieId);
       setEnName(en?.name || '');
       setNlName(nl?.name || '');
@@ -52,8 +53,8 @@ export function EditCategoryDialog({ categorieId, onUpdated, initialTab = 'en' }
         .select('language')
         .eq('project_category_id', categorieId);
       if (fetchErr) throw fetchErr;
-      const exByLang = new Set<string>();
-      for (const r of (existing as any[]) || []) exByLang.add(r.language);
+  const exByLang = new Set<string>();
+  for (const r of ((existing as Array<{ language: string }> | null) ?? [])) exByLang.add(r.language);
 
       // Prepare operations for EN
       if (enName.trim()) {
@@ -112,8 +113,9 @@ export function EditCategoryDialog({ categorieId, onUpdated, initialTab = 'en' }
   toast.success('Category saved');
       if (onUpdated) await onUpdated();
       setOpen(false);
-    } catch (e: any) {
-      toast.error(e.message || 'Save failed');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Save failed';
+      toast.error(msg);
     } finally { setSubmitting(false); }
   };
 

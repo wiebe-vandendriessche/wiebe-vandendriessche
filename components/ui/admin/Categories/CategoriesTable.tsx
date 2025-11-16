@@ -30,7 +30,7 @@ export function CategoriesTable() {
             toast.error("Failed to load categories");
             setLoading(false); return;
         }
-        setRows(((data as any) || []) as CategoryRow[]);
+    setRows(((data as CategoryRow[] | null) || []) as CategoryRow[]);
         setLoading(false);
     };
 
@@ -57,8 +57,9 @@ export function CategoriesTable() {
             if (delErr) throw delErr;
             toast.success("Category row deleted");
             await load();
-        } catch (e: any) {
-            toast.error(e.message || "Delete failed");
+        } catch (e) {
+            const msg = e instanceof Error ? e.message : "Delete failed";
+            toast.error(msg);
         } finally { setDeletingId(null); }
     };
 

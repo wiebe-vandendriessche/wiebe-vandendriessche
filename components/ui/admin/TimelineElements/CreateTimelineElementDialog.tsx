@@ -107,9 +107,10 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
             toast.success("Created EN + NL entries");
             if (onCreated) onCreated();
             setTimeout(() => { setOpen(false); form.reset(); }, 900);
-        } catch (e: any) {
-            setError(e.message || "Failed to create entries");
-            toast.error(e.message || "Failed to create entries");
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : 'Failed to create entries';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setSubmitting(false);
         }
@@ -153,6 +154,12 @@ export function CreateTimelineElementDialog({ onCreated }: CreateTimelineElement
                 ) : (
                     <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto p-2">
+                        {(error || success) && (
+                            <div className="md:col-span-2">
+                                {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2 mb-2">{error}</div>}
+                                {success && <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded p-2">{success}</div>}
+                            </div>
+                        )}
                         <div className="grid gap-4 md:grid-cols-2">
                 <FormField name="timelineid" control={form.control} render={({ field }) => (
                                 <FormItem>

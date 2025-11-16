@@ -6,14 +6,12 @@ import { Button } from "../button";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "../dialog";
 import TimelinePopupContent from "./TimelinePopupContent";
-import TimelineCardContent from "./TimelineCardContent";
-import { DialogDescription } from '@radix-ui/react-dialog';
+import TimelineCardContent, { TimelineElement } from "./TimelineCardContent";
 
 export interface VerticalTimelineElementProps {
     children?: React.ReactNode;
-    item?: any;
+    item?: TimelineElement;
     className?: string;
-    contentArrowStyle?: CSSProperties;
     contentStyle?: CSSProperties;
     date?: React.ReactNode;
     dateClassName?: string;
@@ -33,7 +31,6 @@ export interface VerticalTimelineElementProps {
 const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
     children = '',
     className = '',
-    contentArrowStyle = {},
     contentStyle = {},
     date = '',
     dateClassName = '',
@@ -53,10 +50,10 @@ const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
     const [open, setOpen] = React.useState(false);
     const { ref, inView } = useInView({ rootMargin: '0px 0px -40px 0px', triggerOnce: true });
     const showAnim = inView || visible;
-    let cardInitial = position === 'right' ? { opacity: 0, x: 100 } : { opacity: 0, x: -100 };
-    let cardAnimate = { opacity: 1, x: 0 };
-    let iconInitial = { opacity: 0, scale: 0.5 };
-    let iconAnimate = showAnim ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 };
+    const cardInitial = position === 'right' ? { opacity: 0, x: 100 } : { opacity: 0, x: -100 };
+    const cardAnimate = { opacity: 1, x: 0 } as const;
+    const iconInitial = { opacity: 0, scale: 0.5 } as const;
+    const iconAnimate = showAnim ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 };
     return (
         <div
             ref={ref}
@@ -99,7 +96,7 @@ const VerticalTimelineElement: React.FC<VerticalTimelineElementProps> = ({
                     ].filter(Boolean).join(' ')}
                 >
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2 font-bold">
+                        <CardTitle className="flex items-center gap-2 font-bold h-3 mt-2">
                             <Calendar size={16} className="mr-1" />
                             {date && (
                                 <span className={[dateClassName, 'vertical-timeline-element-date', 'opacity-70 text-sm'].filter(Boolean).join(' ')}>

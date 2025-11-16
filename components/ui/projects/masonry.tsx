@@ -16,10 +16,10 @@ const useMedia = (
   values: number[],
   defaultValue: number
 ): number => {
-  const get = () => {
+  const get = React.useCallback(() => {
     if (typeof window === "undefined") return defaultValue;
     return values[queries.findIndex((q) => window.matchMedia(q).matches)] ?? defaultValue;
-  };
+  }, [queries, values, defaultValue]);
 
   const [value, setValue] = useState<number>(get);
 
@@ -29,7 +29,7 @@ const useMedia = (
     const mediaQueries = queries.map((q) => window.matchMedia(q));
     mediaQueries.forEach((mq) => mq.addEventListener("change", handler));
     return () => mediaQueries.forEach((mq) => mq.removeEventListener("change", handler));
-  }, [queries]);
+  }, [queries, get]);
 
   return value;
 };
@@ -172,36 +172,7 @@ const Masonry: React.FC<MasonryProps> = ({
 
   const SLOW_DELAY_MS = 3000;
 
-  const getInitialPosition = (item: GridItem) => {
-    const containerRect = containerRef.current?.getBoundingClientRect();
-    if (!containerRect) return { x: item.x, y: item.y };
-
-    let direction = animateFrom;
-    if (animateFrom === "random") {
-      const dirs = ["top", "bottom", "left", "right"];
-      direction = dirs[
-        Math.floor(Math.random() * dirs.length)
-      ] as typeof animateFrom;
-    }
-
-    switch (direction) {
-      case "top":
-        return { x: item.x, y: -200 };
-      case "bottom":
-        return { x: item.x, y: window.innerHeight + 200 };
-      case "left":
-        return { x: -200, y: item.y };
-      case "right":
-        return { x: window.innerWidth + 200, y: item.y };
-      case "center":
-        return {
-          x: containerRect.width / 2 - item.w / 2,
-          y: containerRect.height / 2 - item.h / 2,
-        };
-      default:
-        return { x: item.x, y: item.y + 100 };
-    }
-  };
+  // removed unused getInitialPosition (wasn't referenced)
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -352,7 +323,7 @@ const Masonry: React.FC<MasonryProps> = ({
     });
 
     hasMounted.current = true;
-  }, [grid, stagger, animateFrom, blurToFocus, duration, ease, initialOffset]);
+  }, [grid, stagger, animateFrom, blurToFocus, duration, ease, initialOffset, containerRef]);
 
   const handleMouseEnter = (id: string, element: HTMLElement) => {
     if (scaleOnHover) {
@@ -397,7 +368,7 @@ const Masonry: React.FC<MasonryProps> = ({
       containerRef.current.style.height = `${target}px`;
     }
     previousHeight.current = target;
-  }, [gridHeight, animateContainerHeight]);
+    }, [gridHeight, animateContainerHeight, containerRef]);
 
   return (
     <div
@@ -420,7 +391,7 @@ const Masonry: React.FC<MasonryProps> = ({
                 (actuallyDimmed ? "pointer-events-none" : "cursor-pointer")
               }
               style={{ willChange: "transform, width, height, opacity" }}
-              onClick={(e) => {
+              onClick={() => {
                 if (actuallyDimmed) return;
                 if (onSelect) {
                   onSelect(item);
@@ -429,8 +400,8 @@ const Masonry: React.FC<MasonryProps> = ({
                   window.open(item.url, "_blank", "noopener");
                 }
               }}
-              onMouseEnter={(e) => { if (!actuallyDimmed) handleMouseEnter(item.id, e.currentTarget); }}
-              onMouseLeave={(e) => { if (!actuallyDimmed) handleMouseLeave(item.id, e.currentTarget); }}
+              onMouseEnter={(ev) => { if (!actuallyDimmed) handleMouseEnter(item.id, ev.currentTarget); }}
+              onMouseLeave={(ev) => { if (!actuallyDimmed) handleMouseLeave(item.id, ev.currentTarget); }}
             >
               <Card
                 className={

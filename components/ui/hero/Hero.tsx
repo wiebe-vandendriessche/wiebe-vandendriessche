@@ -1,7 +1,6 @@
 "use client"
 
-import React, { useRef, useState, useEffect, Suspense } from 'react'
-import * as THREE from 'three'
+import React, { useState, useEffect, Suspense } from 'react'
 import { Link } from '@/i18n/navigation'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { useProgress } from '@react-three/drei'
@@ -96,7 +95,7 @@ export default function HeroSection() {
   const [ambientIntensity, setAmbientIntensity] = useState(0.1);
   useEffect(() => {
     const getIntensity = () => {
-      return document.documentElement.classList.contains("dark") ? 0.1 : 0.7;
+      return document.documentElement.classList.contains("dark") ? 0.1 : 0.62;
     };
     setAmbientIntensity(getIntensity());
     const observer = new MutationObserver(() => {

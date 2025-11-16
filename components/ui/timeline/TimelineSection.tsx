@@ -1,8 +1,7 @@
 import React from "react";
-import TimelineCardContent from "./TimelineCardContent";
 import timelineStyles from "./timelineStyles";
 import { TimelineElement } from "./TimelineCardContent";
-import { TimelineType } from "./useTimelineData";
+import { TimelineType } from "./types";
 import VerticalTimeline from "./VerticalTimeline";
 import VerticalTimelineElement from "./VerticalTimelineElement";
 
@@ -16,7 +15,7 @@ const TimelineSection: React.FC<{
   type: TimelineType;
   data: TimelineElement[];
   icon: React.ReactElement;
-  t: any;
+  t: (key: string, values?: Record<string, string | number | Date>) => string;
 }> = ({ type, data, icon, t }) => {
   if (!data?.length) return null;
   const style = timelineStyles[type];
@@ -31,7 +30,6 @@ const TimelineSection: React.FC<{
           <VerticalTimelineElement
             key={index}
             contentStyle={style.cardStyle()}
-            contentArrowStyle={{ display: "none" }}
             iconStyle={style.iconStyle}
             date={item.date}
             icon={icon}

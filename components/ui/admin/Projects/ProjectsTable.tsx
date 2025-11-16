@@ -22,8 +22,8 @@ import {
   AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { Label } from "@/components/ui/label";
 import { CreateProjectDialog } from "@/components/ui/admin/Projects/CreateProjectDialog";
 import { EditProjectDialog } from "@/components/ui/admin/Projects/EditProjectDialog";
 
@@ -58,15 +58,15 @@ export function ProjectsTable() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase.from("projects").select("*");
-      if (!error && data) setProjects(data as any);
+  const { data, error } = await supabase.from("projects").select("*");
+  if (!error && data) setProjects((data as ProjectTableRow[]) ?? []);
       setLoading(false);
     })();
   }, []);
 
   const refresh = async () => {
-    const { data, error } = await supabase.from("projects").select("*");
-    if (!error && data) setProjects(data as any);
+  const { data, error } = await supabase.from("projects").select("*");
+  if (!error && data) setProjects((data as ProjectTableRow[]) ?? []);
   };
 
   const handleDelete = async (project_id: string, language: string) => {
@@ -107,7 +107,7 @@ export function ProjectsTable() {
       const isDeleting = deletingKeys.includes(key);
       return (
         <div className="flex gap-2 justify-end">
-          <EditProjectDialog project={row.original as any} onUpdated={refresh} />
+          <EditProjectDialog project={row.original} onUpdated={refresh} />
           <AlertDialog open={deleteDialogKey === key} onOpenChange={(open) => setDeleteDialogKey(open ? key : null)}>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm" disabled={isDeleting}>{isDeleting ? "Deleting..." : "Delete"}</Button>

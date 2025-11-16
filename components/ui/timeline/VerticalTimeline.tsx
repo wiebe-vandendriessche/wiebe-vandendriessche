@@ -30,6 +30,7 @@ const VerticalTimeline: React.FC<VerticalTimelineProps> = ({
         layout === '1-column' || layout === '1-column-left' ? 'vertical-timeline--one-column-left' : '',
         layout === '1-column-right' ? 'vertical-timeline--one-column-right' : '',
       ].filter(Boolean).join(' ')}
+      data-line-color={lineColor}
     >
       {children}
     </div>
