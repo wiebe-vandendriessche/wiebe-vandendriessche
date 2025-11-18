@@ -1,5 +1,14 @@
 # 💫 About Me:
-🔧 **Currently working on:** Cloud and edge, secure and trustworthy AI, Kubernetes automation, and AI supply chain hardening.<br>🤝 **Looking to collaborate on:** Security tooling for AI systems, CI/CD integrations for AI transparency, and confidential ML.<br>📚 **Currently learning:** WebAssembly in distributed systems, Confidential Computing, and emerging EU AI and cybersecurity regulations.<br>❓ **Ask me about:** Kubernetes, confidential computing, CI/CD, AI transparency and compliance, and secure edge deployments.<br>🎯 Fun fact: I enjoy producing music, am an audiophile, and love tinkering with home lab projects.
+- 🔧 **Currently working on:**  
+  Cloud and edge, secure and trustworthy AI, Kubernetes automation, and AI supply chain hardening.<br><br>
+- 🤝 **Looking to collaborate on:**  
+  Security tooling for AI systems, CI/CD integrations for AI transparency, and confidential ML.<br><br>
+- 📚 **Currently learning:**  
+  WebAssembly in distributed systems, Confidential Computing, and emerging EU AI and cybersecurity regulations.<br><br>
+- ❓ **Ask me about:**  
+  Kubernetes, confidential computing, CI/CD, AI transparency and compliance, and secure edge deployments.<br><br>
+- 🎯 **Fun fact:**  
+  I enjoy producing music, am an audiophile, and love tinkering with home lab projects.
 
 # 🌐 Socials:
 
@@ -121,4 +130,5 @@
 
 ---
 <!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
+
 
