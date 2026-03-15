@@ -1,0 +1,9 @@
+@font-face {
+    font-family: font;
+    src: url('/fonts/UGentPannoText-Medium.ttf');
+}
+
+html {
+    font-family: font;
+    font-size: 18px;
+}
