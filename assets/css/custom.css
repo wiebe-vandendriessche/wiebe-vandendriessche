@@ -7,3 +7,10 @@ html {
     font-family: font;
     font-size: 18px;
 }
+
+.max-w-prose {
+    max-width: 100%;
+    text-align: justify;
+    margin-left: auto;
+    margin-right: auto;
+}

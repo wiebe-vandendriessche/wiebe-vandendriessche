@@ -9,10 +9,10 @@ title = "Wiebe Vandendriessche"
   isoCode = "en"
   rtl = false
   dateFormat = "2 January 2006"
-  # logo = "img/logo.png"
+  # logo = "img/profile-cropped.jpg"
   # secondaryLogo = "img/secondary-logo.png"
   # description = "My awesome website"
-  copyright = "&copy; 2026 Wiebe Vandendriessche. All Rights Reserved."
+  # copyright = "&copy; 2026 Wiebe Vandendriessche. All Rights Reserved."
 
 [params.author]
   name = "Wiebe Vandendriessche"
@@ -23,10 +23,9 @@ title = "Wiebe Vandendriessche"
   bio = "Driving transparency, accountability, and trust across the AI supply chain, from data to deployed models."
   links = [
     { email = "mailto:wiebe.vandendriessche@ugent.be" },
-    { github = "https://github.com/username" },
-    { instagram = "https://instagram.com/username" },
-    { linkedin = "https://linkedin.com/in/username" },
-    { orcid = "https://orcid.org/userid" },
-    { researchgate = "https://www.researchgate.net/profile/username" },
-    { x-twitter = "https://twitter.com/username" },
+    { github = "https://github.com/wiebe-vandendriessche" },
+    { instagram = "https://instagram.com/wiebevandendriessche" },
+    { linkedin = "https://linkedin.com/in/wiebe-vandendriessche" },
+    { orcid = "https://orcid.org/0009-0001-6499-0205" },
+    { researchgate = "https://www.researchgate.net/profile/Wiebe-Vandendriessche" },
   ]

@@ -11,8 +11,8 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
-  name = "Home"
-  pageRef = "/"
+  name = "Over mij"
+  pageRef = "/me"
   weight = 1
 
 [[main]]
@@ -75,3 +75,9 @@
 #   name = "Categories"
 #   pageRef = "categories"
 #   weight = 20
+
+[[footer]]
+  name = "Blog RSS"
+  url = "/blog/index.xml"
+  weight = 20
+  pre = "rss"
