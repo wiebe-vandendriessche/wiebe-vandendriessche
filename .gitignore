@@ -1,0 +1,38 @@
+# Hugo output folders
+public/
+resources/
+resources/_gen/
+
+# Hugo build lock
+.hugo_build.lock
+
+# Local development environment
+.venv/
+
+# Node dependencies (if used)
+node_modules/
+
+# IDE / editor
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Logs
+*.log
+
+# Temporary files
+*~
+*.swp
+
+# Firebase (if used)
+scripts/serviceAccountKey.json
+scripts/node_modules/
+
+# Generated exports
+*.csv

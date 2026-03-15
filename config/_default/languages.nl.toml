@@ -1,0 +1,32 @@
+disabled = false
+languageCode = "nl"
+languageName = "Dutch"
+weight = 1
+title = "Wiebe Vandendriessche"
+
+[params]
+  displayName = "NL"
+  isoCode = "nl"
+  rtl = false
+  dateFormat = "2 January 2006"
+  # logo = "img/logo.png"
+  # secondaryLogo = "img/secondary-logo.png"
+  # description = "My awesome website"
+  copyright = "&copy; 2026 Wiebe Vandendriessche. Alle Rechten Voorbehouden."
+
+[params.author]
+  name = "Wiebe Vandendriessche"
+  email = "wiebe.vandendriessche@ugent.be"
+  image = "img/profile-cropped.jpg"
+  imageQuality = 96
+  headline = "PhD Onderzoeker @Ghent University, imec"
+  bio = "Driving transparency, accountability, and trust across the AI supply chain, from data to deployed models."
+  links = [
+    { email = "mailto:wiebe.vandendriessche@ugent.be" },
+    { github = "https://github.com/username" },
+    { instagram = "https://instagram.com/username" },
+    { linkedin = "https://linkedin.com/in/username" },
+    { orcid = "https://orcid.org/userid" },
+    { researchgate = "https://www.researchgate.net/profile/username" },
+    { x-twitter = "https://twitter.com/username" },
+  ]
