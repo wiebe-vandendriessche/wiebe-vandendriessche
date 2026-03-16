@@ -3,6 +3,7 @@ title: "Over mij"
 description: "blablibla"
 showDate: false
 showTableOfContents: false
+showHero: false
 ---
 Hey, ik ben Wiebe. Ik ben onlangs afgestudeerd als Ingenieur in de Informatietechnologie, en blijkbaar was dat nog niet genoeg uitdaging, dus ben ik meteen begonnen aan een doctoraat bij IDLab (Universiteit Gent, imec), waar ik onderzoek doe naar AI en de beveiliging van software supply chains. In de praktijk betekent dat dat ik mijn dagen doorbreng met nadenken over alle manieren waarop AI-systemen mis kunnen gaan nog vóór ze zelfs maar gedeployed worden, en daarna proberen mensen ervan te overtuigen dat ze zich daar iets van moeten aantrekken. Spoiler: het gaat goed (denk ik).
 

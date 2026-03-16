@@ -5,6 +5,7 @@ cascade:
   showReadingTime: false
   showAuthor: false
   showPagination: false
+  showTaxonomies: true
 view: "card"
 showCards: true
 orderByWeight: false

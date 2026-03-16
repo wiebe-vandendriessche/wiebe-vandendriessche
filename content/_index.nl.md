@@ -2,4 +2,4 @@
 title: "Welkom"
 description: "Persoonlijke website van Wiebe Vandendriessche."
 ---
-[Over mij]({{< relref "me" >}})
+[{{< icon "link" >}} Over mij]({{< relref "me" >}})
