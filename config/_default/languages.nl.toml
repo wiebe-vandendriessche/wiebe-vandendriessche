@@ -9,7 +9,7 @@ title = "Wiebe Vandendriessche"
   isoCode = "nl"
   rtl = false
   dateFormat = "2 January 2006"
-  # logo = "img/profile-cropped.jpg"
+  # logo = "img/profile/profile-cropped.jpg"
   # secondaryLogo = "img/secondary-logo.png"
   # description = "My awesome website"
   # copyright = "&copy; 2026 Wiebe Vandendriessche. Alle Rechten Voorbehouden."
@@ -17,7 +17,7 @@ title = "Wiebe Vandendriessche"
 [params.author]
   name = "Wiebe Vandendriessche"
   email = "wiebe.vandendriessche@ugent.be"
-  image = "img/profile-cropped.jpg"
+  image = "img/profile/profile-cropped.jpg"
   imageQuality = 96
   headline = "PhD Onderzoeker @Ghent University, imec"
   bio = "Driving transparency, accountability, and trust across the AI supply chain, from data to deployed models."
