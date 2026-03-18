@@ -139,7 +139,7 @@
     };
 
     const loader = new GLTFLoader();
-    loader.load('/models/avatar2export.glb', (gltf) => {
+    loader.load('{{ "models/avatar2export.glb" | relURL }}', (gltf) => {
       modelGroup = new THREE.Group();
       const model = gltf.scene;
       model.traverse((obj) => {
