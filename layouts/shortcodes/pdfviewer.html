@@ -1,0 +1,178 @@
+{{- $src := .Get "src" -}}
+{{- if not $src -}}
+  {{- errorf "pdfviewer shortcode requires src" -}}
+{{- end -}}
+{{- $viewerId := .Get "id" | default (printf "pdf-viewer-%d" .Ordinal) -}}
+{{- $height := .Get "height" | default "900" -}}
+{{- $startPage := .Get "start" | default "1" -}}
+{{- $title := .Get "title" | default "Paper PDF viewer" -}}
+{{- $fit := .Get "fit" | default "page" -}}
+{{- $initialZoom := .Get "zoom" | default "1" -}}
+
+<div class="pdf-viewer" id="{{ $viewerId }}" data-pdf-src="{{ $src }}" data-start-page="{{ $startPage }}" data-fit-mode="{{ $fit }}" data-initial-zoom="{{ $initialZoom }}" style="--pdf-viewer-height: {{ $height }}px;">
+  <div class="pdf-viewer-toolbar" role="group" aria-label="PDF controls">
+    <button type="button" data-action="prev" class="pdf-viewer-btn">Prev</button>
+    <span class="pdf-viewer-page" data-role="page-indicator">Page 1 / 1</span>
+    <button type="button" data-action="next" class="pdf-viewer-btn">Next</button>
+    <button type="button" data-action="zoom-out" class="pdf-viewer-btn">-</button>
+    <span class="pdf-viewer-zoom" data-role="zoom-indicator">100%</span>
+    <button type="button" data-action="zoom-in" class="pdf-viewer-btn">+</button>
+    <a class="pdf-viewer-link" href="{{ $src }}" target="_blank" rel="noopener">Open PDF</a>
+  </div>
+  <div class="pdf-viewer-canvas-wrap" role="region" aria-label="{{ $title }}">
+    <canvas class="pdf-viewer-canvas" data-role="canvas"></canvas>
+  </div>
+  <p class="pdf-viewer-fallback" data-role="status" hidden></p>
+</div>
+
+<script>
+(() => {
+  const root = document.getElementById('{{ $viewerId }}');
+  if (!root) return;
+
+  const statusEl = root.querySelector('[data-role="status"]');
+  const pageEl = root.querySelector('[data-role="page-indicator"]');
+  const zoomEl = root.querySelector('[data-role="zoom-indicator"]');
+  const canvas = root.querySelector('[data-role="canvas"]');
+  const ctx = canvas.getContext('2d');
+
+  const src = root.dataset.pdfSrc;
+  let pageNum = Math.max(1, Number.parseInt(root.dataset.startPage || '1', 10) || 1);
+  let pageCount = 1;
+  let zoom = Number.parseFloat(root.dataset.initialZoom || '1');
+  if (!Number.isFinite(zoom)) zoom = 1;
+  zoom = Math.min(2.5, Math.max(0.5, zoom));
+  let pdfDoc = null;
+  let rendering = false;
+  let queuedPage = null;
+
+  const clampPage = (page) => Math.min(Math.max(1, page), pageCount);
+  const updateMeta = () => {
+    pageEl.textContent = `Page ${pageNum} / ${pageCount}`;
+    zoomEl.textContent = `${Math.round(zoom * 100)}%`;
+  };
+
+  const renderPage = async (targetPage) => {
+    if (!pdfDoc) return;
+    const safePage = clampPage(targetPage);
+    if (rendering) {
+      queuedPage = safePage;
+      return;
+    }
+
+    rendering = true;
+    pageNum = safePage;
+    updateMeta();
+
+    try {
+      const page = await pdfDoc.getPage(pageNum);
+      const unscaled = page.getViewport({ scale: 1 });
+      const wrap = root.querySelector('.pdf-viewer-canvas-wrap');
+      const wrapWidth = Math.max(1, wrap.clientWidth - 2);
+      const wrapHeight = Math.max(1, wrap.clientHeight - 2);
+      const fitWidthScale = wrapWidth / unscaled.width;
+      const fitHeightScale = wrapHeight / unscaled.height;
+      const fitMode = (root.dataset.fitMode || 'page').toLowerCase();
+      const baseScale = fitMode === 'width' ? fitWidthScale : Math.min(fitWidthScale, fitHeightScale);
+      const viewport = page.getViewport({ scale: Math.max(0.1, baseScale * zoom) });
+
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+    } catch (err) {
+      statusEl.hidden = false;
+      statusEl.textContent = 'Could not render PDF page.';
+      console.error(err);
+    } finally {
+      rendering = false;
+      if (queuedPage !== null) {
+        const nextPage = queuedPage;
+        queuedPage = null;
+        renderPage(nextPage);
+      }
+    }
+  };
+
+  const bindControls = () => {
+    root.querySelector('[data-action="prev"]').addEventListener('click', () => {
+      renderPage(pageNum - 1);
+    });
+
+    root.querySelector('[data-action="next"]').addEventListener('click', () => {
+      renderPage(pageNum + 1);
+    });
+
+    root.querySelector('[data-action="zoom-in"]').addEventListener('click', () => {
+      zoom = Math.min(2.5, zoom + 0.1);
+      updateMeta();
+      renderPage(pageNum);
+    });
+
+    root.querySelector('[data-action="zoom-out"]').addEventListener('click', () => {
+      zoom = Math.max(0.5, zoom - 0.1);
+      updateMeta();
+      renderPage(pageNum);
+    });
+
+    window.addEventListener('resize', () => {
+      renderPage(pageNum);
+    });
+  };
+
+  const initPdf = () => {
+    if (!window.pdfjsLib) return false;
+
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    updateMeta();
+    bindControls();
+
+    window.pdfjsLib.getDocument(src).promise
+      .then((doc) => {
+        pdfDoc = doc;
+        pageCount = doc.numPages;
+        pageNum = clampPage(pageNum);
+        updateMeta();
+        return renderPage(pageNum);
+      })
+      .catch((err) => {
+        statusEl.hidden = false;
+        statusEl.innerHTML = 'Could not load PDF. <a href="{{ $src }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
+        console.error(err);
+      });
+
+    return true;
+  };
+
+  const ensurePdfJs = () => {
+    if (initPdf()) return;
+
+    const existing = document.querySelector('script[data-pdfjs="cdn"]');
+    if (existing) {
+      existing.addEventListener('load', initPdf, { once: true });
+      existing.addEventListener('error', () => {
+        statusEl.hidden = false;
+        statusEl.innerHTML = 'PDF preview unavailable. <a href="{{ $src }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
+      }, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    script.setAttribute('data-pdfjs', 'cdn');
+    script.crossOrigin = 'anonymous';
+    script.referrerPolicy = 'no-referrer';
+    script.onload = () => {
+      initPdf();
+    };
+    script.onerror = () => {
+      statusEl.hidden = false;
+      statusEl.innerHTML = 'PDF preview unavailable. <a href="{{ $src }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
+    };
+    document.head.appendChild(script);
+  };
+
+  ensurePdfJs();
+})();
+</script>

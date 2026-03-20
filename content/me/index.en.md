@@ -5,6 +5,8 @@ showDate: false
 showTableOfContents: false
 showHero: false
 ---
-Hi, I'm Wiebe. I recently graduated as an Engineer in Information Technology, and apparently that wasn't enough of a challenge, so I immediately dove into a PhD at IDLab (Ghent University, imec), where I research AI and software supply chain security. In practice, that means I spend my days thinking about all the ways AI systems can go wrong before they're even deployed, and then trying to convince people to care about it. Spoiler: it's going well (I think).
+Hi, I'm Wiebe. I recently graduated as an Engineer in Information Technology, and because that apparently wasn't challenging enough, I immediately started a PhD at IDLab (Ghent University, imec), in team DISCOVER. My research focuses on AI security in software supply chains. In practice, that means I spend my days thinking about all the ways AI systems can fail before they're even deployed, and then trying to convince people that they should actually care. Spoiler: it's going reasonably well, I think.
 
-When I'm not writing research papers or writting code, I'm probably tinkering with my self-hosted home server, which started as "just a few Docker containers" and has since become a personal infrastructure project I'm unreasonably proud of. I believe in building things yourself, understanding how they work, and occasionally breaking them at 11pm on a Tuesday to see what happens.
+As part of my PhD, I also contribute to the European project CRACY, which helps SMEs comply with the Cyber Resilience Act (CRA). On top of that, I design and supervise master thesis topics for students and occasionally help out with campus workshops.
+
+When I'm not writing papers or coding, I'm usually tinkering with my home server. What started as "just a few Docker containers" has turned into a personal infrastructure project that I'm unreasonably proud of. I believe in building things myself, understanding how they work, and occasionally breaking them at 11pm on a Tuesday just to see what happens.

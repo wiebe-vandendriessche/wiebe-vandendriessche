@@ -4,4 +4,4 @@ description: "Posts en notities."
 cascade:
   showReadingTime: false
 ---
-Deze sectie bevat blogberichten.
+Dingen die ik interessant, raar of grappig genoeg vind om er een blogpost over te schrijven.

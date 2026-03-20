@@ -5,6 +5,9 @@ showDate: false
 showTableOfContents: false
 showHero: false
 ---
-Hey, ik ben Wiebe. Ik ben onlangs afgestudeerd als Ingenieur in de Informatietechnologie, en blijkbaar was dat nog niet genoeg uitdaging, dus ben ik meteen begonnen aan een doctoraat bij IDLab (Universiteit Gent, imec), waar ik onderzoek doe naar AI en de beveiliging van software supply chains. In de praktijk betekent dat dat ik mijn dagen doorbreng met nadenken over alle manieren waarop AI-systemen mis kunnen gaan nog vóór ze zelfs maar gedeployed worden, en daarna proberen mensen ervan te overtuigen dat ze zich daar iets van moeten aantrekken. Spoiler: het gaat goed (denk ik).
 
-Wanneer ik geen papers schrijf of aan het programmeren ben, ben ik waarschijnlijk aan het prutsen met mijn homeserver, die begon als “gewoon een paar Docker-containers” en ondertussen is uitgegroeid tot een persoonlijk infrastructuurproject waar ik onterecht overdreven trots op ben. Ik geloof in dingen zelf bouwen, begrijpen hoe ze werken, en ze af en toe op dinsdag om 23u kapot maken om te zien wat er gebeurt.
+Hey, ik ben Wiebe. Net afgestudeerd als ingenieur in de informatietechnologie, en omdat dat blijkbaar niet uitdagend genoeg was, ben ik meteen begonnen aan een doctoraat bij IDLab (Universiteit Gent, imec), in team DISCOVER. Mijn onderzoek gaat over de beveiliging van AI in software supply chains. Concreet betekent dit dat ik mijn dagen doorbreng met nadenken over alle manieren waarop AI-systemen mis kunnen gaan nog vóór ze gedeployed worden, en daarna probeer mensen te overtuigen dat ze zich daar iets van moeten aantrekken. Spoiler: het gaat redelijk goed, denk ik.
+
+In het kader van mijn PhD werk ik ook mee aan het Europese project CRACY, dat KMO’s ondersteunt bij de Cyber Resilience Act (CRA). Daarnaast verzin en begeleid ik masterproefonderwerpen voor studenten en spring ik af en toe bij in werkcolleges op campus.
+
+Buiten de papers en de code om, ben ik meestal bezig met mijn homeserver. Wat ooit begon als “gewoon een paar Docker-containers” is uitgegroeid tot een persoonlijk infrastructuurproject waar ik onterecht trots op ben. Ik geloof in dingen zelf bouwen, begrijpen hoe ze werken, en ze af en toe op dinsdag om 23u opzettelijk kapot maken om te zien wat er gebeurt.

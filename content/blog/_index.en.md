@@ -4,4 +4,4 @@ description: "Posts and notes."
 cascade:
   showReadingTime: false
 ---
-This section contains blog posts.
+Things I found interesting, weird, or funny enough to actually write down.

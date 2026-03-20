@@ -14,4 +14,4 @@ cardView: true
 cardViewScreenWidth: false
 constrainItemsWidth: false
 ---
-Deze sectie bevat projectpagina's.
+Een verzameling projecten die te veel koffie en te weinig slaap hebben gekost.

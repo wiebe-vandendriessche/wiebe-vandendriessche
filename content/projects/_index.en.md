@@ -15,4 +15,4 @@ cardView: true
 cardViewScreenWidth: false
 constrainItemsWidth: false
 ---
-This section contains project pages.
+A collection of projects fueled by too much coffee and not enough sleep.
