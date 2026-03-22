@@ -26,7 +26,8 @@ let pointerY = 0;
 const config = {
   scale: 1.5,
   hoverScale: 1.06,
-  idleSpinSpeed: 0.005,
+  idleSpinSpeed: 0.7,
+  idleYawRange: Math.PI / 5,
   stopSpinOnHover: true,
   hoverAlignSpeed: 0.3,
   alignSnap: 0.012,
@@ -81,7 +82,6 @@ const pointer = new THREE.Vector2(2, 2);
 
 let modelGroup = null;
 let colliderMesh = null;
-let speed = config.idleSpinSpeed;
 let tiltYaw = 0;
 const baseScale = config.scale;
 let aligning = false;
@@ -179,39 +179,121 @@ const alignModelToCamera = () => {
   aligning = true;
 };
 
+const getCameraFacingYaw = () => {
+  if (!modelGroup) return 0;
+  const worldPos = new THREE.Vector3();
+  modelGroup.getWorldPosition(worldPos);
+  const dx = camera.position.x - worldPos.x;
+  const dz = camera.position.z - worldPos.z;
+  return Math.atan2(dx, dz) + config.facingOffset;
+};
+
 const setHovered = (nextHovered) => {
   hovered = nextHovered;
   document.body.style.cursor = hovered ? "pointer" : "";
 };
 
-const loader = new GLTFLoader();
-loader.load(modelUrl, (gltf) => {
-  modelGroup = new THREE.Group();
-  const model = gltf.scene;
-  model.traverse((obj) => {
-    if (obj.isMesh) {
-      obj.castShadow = true;
-      obj.receiveShadow = true;
+const ensureLoaderStyles = () => {
+  if (document.getElementById("threejs-hero-loader-style")) return;
+  const style = document.createElement("style");
+  style.id = "threejs-hero-loader-style";
+  style.textContent = `
+    @keyframes threejsHeroSpin {
+      to { transform: rotate(360deg); }
     }
-  });
+  `;
+  document.head.appendChild(style);
+};
 
-  modelGroup.add(model);
-  modelGroup.scale.set(baseScale, baseScale, baseScale);
-  scene.add(modelGroup);
+let loaderOverlay = null;
 
-  const box = new THREE.Box3().setFromObject(model);
-  const size = new THREE.Vector3();
-  const center = new THREE.Vector3();
-  box.getSize(size);
-  box.getCenter(center);
-  size.multiplyScalar(config.colliderMargin);
+const setLoaderVisible = (visible, failed = false) => {
+  if (visible) {
+    if (!loaderOverlay) {
+      ensureLoaderStyles();
+      if (getComputedStyle(root).position === "static") {
+        root.style.position = "relative";
+      }
 
-  const colliderGeom = new THREE.BoxGeometry(size.x, size.y, size.z);
-  const colliderMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false });
-  colliderMesh = new THREE.Mesh(colliderGeom, colliderMat);
-  colliderMesh.position.copy(center);
-  modelGroup.add(colliderMesh);
-});
+      loaderOverlay = document.createElement("div");
+      loaderOverlay.style.position = "absolute";
+      loaderOverlay.style.inset = "0";
+      loaderOverlay.style.display = "grid";
+      loaderOverlay.style.placeItems = "center";
+      loaderOverlay.style.pointerEvents = "none";
+      loaderOverlay.style.zIndex = "3";
+
+      const spinner = document.createElement("div");
+      spinner.style.width = "34px";
+      spinner.style.height = "34px";
+      spinner.style.borderRadius = "9999px";
+      spinner.style.border = "3px solid rgba(148, 163, 184, 0.3)";
+      spinner.style.borderTopColor = "rgba(59, 130, 246, 0.95)";
+      spinner.style.animation = "threejsHeroSpin 0.8s linear infinite";
+      loaderOverlay.appendChild(spinner);
+
+      root.appendChild(loaderOverlay);
+    }
+    loaderOverlay.style.opacity = "1";
+    loaderOverlay.style.visibility = "visible";
+    return;
+  }
+
+  if (!loaderOverlay) return;
+  if (failed) {
+    loaderOverlay.remove();
+    loaderOverlay = null;
+    return;
+  }
+
+  loaderOverlay.style.opacity = "0";
+  loaderOverlay.style.transition = "opacity 180ms ease";
+  window.setTimeout(() => {
+    if (!loaderOverlay) return;
+    loaderOverlay.remove();
+    loaderOverlay = null;
+  }, 220);
+};
+
+setLoaderVisible(true);
+
+const loader = new GLTFLoader();
+loader.load(
+  modelUrl,
+  (gltf) => {
+    modelGroup = new THREE.Group();
+    const model = gltf.scene;
+    model.traverse((obj) => {
+      if (obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    });
+
+    modelGroup.add(model);
+    modelGroup.scale.set(baseScale, baseScale, baseScale);
+    scene.add(modelGroup);
+
+    const box = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    size.multiplyScalar(config.colliderMargin);
+
+    const colliderGeom = new THREE.BoxGeometry(size.x, size.y, size.z);
+    const colliderMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false });
+    colliderMesh = new THREE.Mesh(colliderGeom, colliderMat);
+    colliderMesh.position.copy(center);
+    modelGroup.add(colliderMesh);
+    setLoaderVisible(false);
+  },
+  undefined,
+  (error) => {
+    console.error("threejs-hero.js: failed to load model", error);
+    setLoaderVisible(false, true);
+  }
+);
 
 renderer.domElement.addEventListener("pointermove", (event) => {
   updatePointerFromEvent(event);
@@ -279,7 +361,6 @@ const animate = () => {
     }
 
     let baseYaw = modelGroup.rotation.y;
-    let targetSpeed = config.idleSpinSpeed;
 
     if (hovered) {
       if (aligning) {
@@ -292,15 +373,14 @@ const animate = () => {
         } else {
           baseYaw += step;
         }
-        targetSpeed = 0;
       } else {
         const focusYaw = (lastAlignedYaw || baseYaw) + pointerX * config.hoverYawRange;
         baseYaw += (focusYaw - baseYaw) * 0.18;
-        targetSpeed = config.stopSpinOnHover ? 0 : config.idleSpinSpeed;
       }
     } else {
-      speed += (targetSpeed - speed) * config.dampSpeed;
-      baseYaw += speed;
+      const idleCenterYaw = getCameraFacingYaw();
+      const idleTargetYaw = idleCenterYaw + Math.sin(shimmerTime * config.idleSpinSpeed) * config.idleYawRange;
+      baseYaw += (idleTargetYaw - baseYaw) * 0.08;
     }
 
     const canTilt = hovered && !aligning;
