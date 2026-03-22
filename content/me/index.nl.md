@@ -1,11 +1,13 @@
 ---
 title: "Over mij"
-description: "blablibla"
+description: "Algemene informatie over mezelf"
 showDate: false
 showTableOfContents: false
-showHero: false
+showHero: true
+heroStyle: "background"
+layoutBackgroundBlur: false
+layoutBackgroundHeaderSpace: false 
 ---
-
 Hey, ik ben Wiebe. Net afgestudeerd als ingenieur in de informatietechnologie, en omdat dat blijkbaar niet uitdagend genoeg was, ben ik meteen begonnen aan een doctoraat bij IDLab (Universiteit Gent, imec), in team DISCOVER. Mijn onderzoek gaat over de beveiliging van AI in software supply chains. Concreet betekent dit dat ik mijn dagen doorbreng met nadenken over alle manieren waarop AI-systemen mis kunnen gaan nog vóór ze gedeployed worden, en daarna probeer mensen te overtuigen dat ze zich daar iets van moeten aantrekken. Spoiler: het gaat redelijk goed, denk ik.
 
 In het kader van mijn PhD werk ik ook mee aan het Europese project CRACY, dat KMO’s ondersteunt bij de Cyber Resilience Act (CRA). Daarnaast verzin en begeleid ik masterproefonderwerpen voor studenten en spring ik af en toe bij in werkcolleges op campus.

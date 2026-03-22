@@ -1,12 +1,11 @@
 {{ define "main" }}
   <section class="relative pb-4 md:pb-8 select-none">
-    <div class="mx-auto w-full max-w-7xl px-6">
+    <div class="mx-auto w-full max-w-7xl">
       <div id="threejs-hero" class="relative w-full" style="height: 400px;">
         <div id="threejs-canvas" class="absolute inset-0"></div>
       </div>
     </div>
   </section>
-
   <script type="importmap">
     {
       "imports": {
@@ -14,256 +13,16 @@
       }
     }
   </script>
-
-  <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/loaders/GLTFLoader.js';
-
-    const container = document.getElementById('threejs-canvas');
-    const root = document.getElementById('threejs-hero');
-
-    if (!container || !root) {
-      throw new Error('Three.js hero elements are missing.');
-    }
-
-    let hovered = false;
-    let pointerX = 0;
-    let pointerY = 0;
-
-    const config = {
-      scale: 1.5,
-      hoverScale: 1.06,
-      idleSpinSpeed: 0.01,
-      stopSpinOnHover: true,
-      hoverAlignSpeed: 0.3,
-      alignSnap: 0.012,
-      hoverTilt: 0.22,
-      hoverTiltY: 0.08,
-      hoverYawRange: Math.PI / 6,
-      facingOffset: Math.PI,
-      colliderMargin: 1.28,
-      dampSpeed: 0.12,
-      dampTilt: 0.18,
-      dampScale: 0.12,
-    };
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, root.clientWidth / root.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(root.clientWidth, root.clientHeight);
-    container.appendChild(renderer.domElement);
-    renderer.domElement.style.touchAction = 'none';
-
-    const accentAmbient = new THREE.AmbientLight(0xffffff, 0.28);
-    scene.add(accentAmbient);
-
-    const whiteAmbient = new THREE.AmbientLight(0xffffff, 0.72);
-    scene.add(whiteAmbient);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.05);
-    directionalLight.position.set(0, 5, -5);
-    scene.add(directionalLight);
-
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2(2, 2);
-
-    let modelGroup = null;
-    let colliderMesh = null;
-    let speed = config.idleSpinSpeed;
-    let tiltYaw = 0;
-    const baseScale = config.scale;
-    let aligning = false;
-    let targetYaw = 0;
-    let lastAlignedYaw = 0;
-
-    const getCssVarTriplet = (name, fallback) => {
-      const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      const parts = raw.split(',').map((v) => Number.parseFloat(v.trim()));
-      if (parts.length === 3 && parts.every((n) => Number.isFinite(n))) {
-        return parts;
-      }
-      return fallback;
-    };
-
-    const colorFromCssVar = (name, fallback) => {
-      const [r, g, b] = getCssVarTriplet(name, fallback);
-      return new THREE.Color(r / 255, g / 255, b / 255);
-    };
-
-    const normalizeAngle = (a) => {
-      let angle = (a + Math.PI) % (Math.PI * 2);
-      if (angle < 0) angle += Math.PI * 2;
-      return angle - Math.PI;
-    };
-
-    const syncAmbient = () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      const accentColor = new THREE.Color('#ff7a00');
-      const neutralColor = colorFromCssVar('--color-neutral-200', [229, 231, 235]);
-
-      accentAmbient.color.copy(accentColor);
-      directionalLight.color.copy(neutralColor);
-      whiteAmbient.color.copy(neutralColor);
-
-      accentAmbient.intensity = isDark ? 0.05 : 0.05;
-      whiteAmbient.intensity = isDark ? 0.45 : 0.80;
-      directionalLight.intensity = isDark ? 0.95 : 0.95;
-      renderer.toneMappingExposure = isDark ? 1.0 : 1.05;
-    };
-
-    const updatePointerFromEvent = (event) => {
-      const rect = renderer.domElement.getBoundingClientRect();
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      pointerX = pointer.x;
-      pointerY = pointer.y;
-    };
-
-    const alignModelToCamera = () => {
-      if (!modelGroup) return;
-      const worldPos = new THREE.Vector3();
-      modelGroup.getWorldPosition(worldPos);
-      const dx = camera.position.x - worldPos.x;
-      const dz = camera.position.z - worldPos.z;
-      targetYaw = Math.atan2(dx, dz) + config.facingOffset;
-      aligning = true;
-    };
-
-    const setHovered = (nextHovered) => {
-      hovered = nextHovered;
-      document.body.style.cursor = hovered ? 'pointer' : '';
-    };
-
-    const loader = new GLTFLoader();
-    loader.load('{{ "models/avatar2export.glb" | relURL }}', (gltf) => {
-      modelGroup = new THREE.Group();
-      const model = gltf.scene;
-      model.traverse((obj) => {
-        if (obj.isMesh) {
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-        }
-      });
-
-      modelGroup.add(model);
-      modelGroup.scale.set(baseScale, baseScale, baseScale);
-      scene.add(modelGroup);
-
-      const box = new THREE.Box3().setFromObject(model);
-      const size = new THREE.Vector3();
-      const center = new THREE.Vector3();
-      box.getSize(size);
-      box.getCenter(center);
-      size.multiplyScalar(config.colliderMargin);
-
-      const colliderGeom = new THREE.BoxGeometry(size.x, size.y, size.z);
-      const colliderMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false });
-      colliderMesh = new THREE.Mesh(colliderGeom, colliderMat);
-      colliderMesh.position.copy(center);
-      modelGroup.add(colliderMesh);
-    });
-
-    renderer.domElement.addEventListener('pointermove', (event) => {
-      updatePointerFromEvent(event);
-    });
-
-    renderer.domElement.addEventListener('pointerleave', () => {
-      pointer.set(2, 2);
-      pointerX = 0;
-      pointerY = 0;
-      setHovered(false);
-      aligning = false;
-    });
-
-    renderer.domElement.addEventListener('pointerdown', (event) => {
-      updatePointerFromEvent(event);
-      if (!colliderMesh) return;
-      raycaster.setFromCamera(pointer, camera);
-      const hits = raycaster.intersectObject(colliderMesh, false);
-      if (hits.length > 0) {
-        setHovered(true);
-        alignModelToCamera();
-      }
-    });
-
-    const themeObserver = new MutationObserver(() => {
-      syncAmbient();
-    });
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    syncAmbient();
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      if (modelGroup && colliderMesh) {
-        raycaster.setFromCamera(pointer, camera);
-        const hits = raycaster.intersectObject(colliderMesh, false);
-        if (hits.length > 0) {
-          if (!hovered) {
-            setHovered(true);
-            alignModelToCamera();
-          }
-        } else if (hovered) {
-          setHovered(false);
-          aligning = false;
-        }
-
-        let baseYaw = modelGroup.rotation.y;
-        let targetSpeed = config.idleSpinSpeed;
-
-        if (hovered) {
-          if (aligning) {
-            const delta = normalizeAngle(targetYaw - baseYaw);
-            const step = delta * config.hoverAlignSpeed;
-            if (Math.abs(delta) < config.alignSnap) {
-              baseYaw = targetYaw;
-              aligning = false;
-              lastAlignedYaw = baseYaw;
-            } else {
-              baseYaw += step;
-            }
-            targetSpeed = 0;
-          } else {
-            const focusYaw = (lastAlignedYaw || baseYaw) + pointerX * config.hoverYawRange;
-            baseYaw += (focusYaw - baseYaw) * 0.18;
-            targetSpeed = config.stopSpinOnHover ? 0 : config.idleSpinSpeed;
-          }
-        } else {
-          speed += (targetSpeed - speed) * config.dampSpeed;
-          baseYaw += speed;
-        }
-
-        const canTilt = hovered && !aligning;
-        const targetTiltX = canTilt ? pointerY * config.hoverTilt : 0;
-        const targetTiltZ = canTilt ? -pointerX * config.hoverTilt : 0;
-        const targetTiltYaw = canTilt ? pointerX * config.hoverTiltY : 0;
-        tiltYaw += (targetTiltYaw - tiltYaw) * config.dampTilt;
-        modelGroup.rotation.x += (targetTiltX - modelGroup.rotation.x) * config.dampTilt;
-        modelGroup.rotation.z += (targetTiltZ - modelGroup.rotation.z) * config.dampTilt;
-        modelGroup.rotation.y = baseYaw + tiltYaw;
-
-        const targetScale = hovered ? baseScale * config.hoverScale : baseScale;
-        const currentScale = modelGroup.scale.x;
-        const newScale = currentScale + (targetScale - currentScale) * config.dampScale;
-        modelGroup.scale.set(newScale, newScale, newScale);
-      }
-
-      camera.lookAt(0, camera.position.y, 0);
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    camera.position.set(-2, -0.3, -6);
-    window.addEventListener('resize', () => {
-      renderer.setSize(root.clientWidth, root.clientHeight);
-      camera.aspect = root.clientWidth / root.clientHeight;
-      camera.updateProjectionMatrix();
-    });
-  </script>
+  {{ $threejsHero := resources.Get "js/threejs-hero.js" }}
+  {{ $threejsHero = $threejsHero | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    type="module"
+    src="{{ $threejsHero.RelPermalink }}"
+    integrity="{{ $threejsHero.Data.Integrity }}"
+    data-threejs-hero
+    data-container-id="threejs-canvas"
+    data-root-id="threejs-hero"
+    data-model-url="{{ "models/avatar2export.glb" | relURL }}"></script>
 
   {{ $partial := print "home/" .Site.Params.homepage.layout ".html" }}
   {{ if templates.Exists ( printf "partials/%s" $partial ) }}

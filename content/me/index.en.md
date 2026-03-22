@@ -1,9 +1,12 @@
 ---
 title: "About me"
-description: "blablibla"
+description: "General information about me"
 showDate: false
 showTableOfContents: false
-showHero: false
+showHero: true
+heroStyle: "background"
+layoutBackgroundBlur: false
+layoutBackgroundHeaderSpace: false 
 ---
 Hi, I'm Wiebe. I recently graduated as an Engineer in Information Technology, and because that apparently wasn't challenging enough, I immediately started a PhD at IDLab (Ghent University, imec), in team DISCOVER. My research focuses on AI security in software supply chains. In practice, that means I spend my days thinking about all the ways AI systems can fail before they're even deployed, and then trying to convince people that they should actually care. Spoiler: it's going reasonably well, I think.
 
