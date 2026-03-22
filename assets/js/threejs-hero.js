@@ -26,8 +26,7 @@ let pointerY = 0;
 const config = {
   scale: 1.5,
   hoverScale: 1.06,
-  idleSpinSpeed: 0.7,
-  idleYawRange: Math.PI / 5,
+  idleSpinSpeed: 0.005,
   stopSpinOnHover: true,
   hoverAlignSpeed: 0.3,
   alignSnap: 0.012,
@@ -82,11 +81,13 @@ const pointer = new THREE.Vector2(2, 2);
 
 let modelGroup = null;
 let colliderMesh = null;
+let speed = config.idleSpinSpeed;
 let tiltYaw = 0;
 const baseScale = config.scale;
 let aligning = false;
 let targetYaw = 0;
 let lastAlignedYaw = 0;
+
 const baseLightIntensity = {
   ambient: 0.2,
   hemi: 0.3,
@@ -134,9 +135,9 @@ const syncAmbient = () => {
   const neutralHigh = colorFromCssVar(isDark ? "--color-neutral-100" : "--color-neutral-200", isDark ? [245, 245, 245] : [229, 231, 235]);
   const neutralLow = colorFromCssVar(isDark ? "--color-neutral-900" : "--color-neutral-700", isDark ? [23, 23, 23] : [64, 64, 64]);
 
-  const ambientNeutralMix = isDark ? 0.24 : 0.34;
+  const ambientNeutralMix = isDark ? 0.24 : 0.45;
   const hemiNeutralMix = isDark ? 0.28 : 0.4;
-  const keyNeutralMix = isDark ? 0.16 : 0.24;
+  const keyNeutralMix = isDark ? 0.16 : 0.16;
   const rimNeutralMix = isDark ? 0.22 : 0.32;
 
   ambientLight.color.copy(colorLerp(keyColor, neutralHigh, ambientNeutralMix));
@@ -176,15 +177,6 @@ const alignModelToCamera = () => {
   const dz = camera.position.z - worldPos.z;
   targetYaw = Math.atan2(dx, dz) + config.facingOffset;
   aligning = true;
-};
-
-const getCameraFacingYaw = () => {
-  if (!modelGroup) return 0;
-  const worldPos = new THREE.Vector3();
-  modelGroup.getWorldPosition(worldPos);
-  const dx = camera.position.x - worldPos.x;
-  const dz = camera.position.z - worldPos.z;
-  return Math.atan2(dx, dz) + config.facingOffset;
 };
 
 const setHovered = (nextHovered) => {
@@ -287,6 +279,8 @@ const animate = () => {
     }
 
     let baseYaw = modelGroup.rotation.y;
+    let targetSpeed = config.idleSpinSpeed;
+
     if (hovered) {
       if (aligning) {
         const delta = normalizeAngle(targetYaw - baseYaw);
@@ -298,14 +292,15 @@ const animate = () => {
         } else {
           baseYaw += step;
         }
+        targetSpeed = 0;
       } else {
         const focusYaw = (lastAlignedYaw || baseYaw) + pointerX * config.hoverYawRange;
         baseYaw += (focusYaw - baseYaw) * 0.18;
+        targetSpeed = config.stopSpinOnHover ? 0 : config.idleSpinSpeed;
       }
     } else {
-      const idleCenterYaw = getCameraFacingYaw();
-      const idleTargetYaw = idleCenterYaw + Math.sin(shimmerTime * config.idleSpinSpeed) * config.idleYawRange;
-      baseYaw += (idleTargetYaw - baseYaw) * 0.08;
+      speed += (targetSpeed - speed) * config.dampSpeed;
+      baseYaw += speed;
     }
 
     const canTilt = hovered && !aligning;
