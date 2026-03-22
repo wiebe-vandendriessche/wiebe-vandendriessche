@@ -247,7 +247,7 @@ const options = {
   iterationsPoisson: 32,
   dt: 0.014,
   BFECC: true,
-  resolution: 0.5,
+  resolution: 0.4,
   resolutionMobile: 0.42,
   resolutionMinDim: 256,
   resolutionMaxDim: 2048,
@@ -986,14 +986,13 @@ class Output {
     const dark = root.classList.contains("dark");
     const colors = dark
       ? [
-          cssColorHex("--color-primary-300", [147, 197, 253]),
-          cssColorHex("--color-primary-400", [96, 165, 250]),
-          cssColorHex("--color-primary-500", [59, 130, 246]),
+          cssColorHex("--color-primary-200", [147, 197, 253]),
+          cssColorHex("--color-primary-300", [96, 165, 250]),
+          cssColorHex("--color-primary-400", [59, 130, 246]),
         ]
       : [
-          cssColorHex("--color-primary-200", [191, 219, 254]),
-          cssColorHex("--color-primary-300", [147, 197, 253]),
-          cssColorHex("--color-primary-400", [96, 165, 250]),
+          cssColorHex("--color-primary-100", [191, 219, 254]),
+          cssColorHex("--color-primary-100", [147, 197, 253]),
         ];
 
     const tex = makePaletteTexture(colors);
