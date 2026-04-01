@@ -821,9 +821,31 @@ class Simulation {
     this.init();
   }
 
-  getFloatType() {
-    const isIOS = /(iPad|iPhone|iPod)/i.test(navigator.userAgent);
-    return isIOS ? THREE.HalfFloatType : THREE.FloatType;
+  getTextureType() {
+    const renderer = this.common.renderer;
+    const isWebGL2 = !!(renderer && renderer.capabilities && renderer.capabilities.isWebGL2);
+    const exts = renderer ? renderer.extensions : null;
+    const hasFloatRT = !!(exts && (exts.has("EXT_color_buffer_float") || exts.has("WEBGL_color_buffer_float")));
+    const hasHalfFloatRT = !!(exts && exts.has("EXT_color_buffer_half_float"));
+
+    if (isWebGL2 || hasFloatRT) return THREE.FloatType;
+    if (hasHalfFloatRT) return THREE.HalfFloatType;
+    return THREE.UnsignedByteType;
+  }
+
+  getTextureFilter(type) {
+    const renderer = this.common.renderer;
+    const isWebGL2 = !!(renderer && renderer.capabilities && renderer.capabilities.isWebGL2);
+    const exts = renderer ? renderer.extensions : null;
+    if (!exts || isWebGL2 || type === THREE.UnsignedByteType) return THREE.LinearFilter;
+
+    if (type === THREE.FloatType) {
+      return exts.has("OES_texture_float_linear") ? THREE.LinearFilter : THREE.NearestFilter;
+    }
+    if (type === THREE.HalfFloatType) {
+      return exts.has("OES_texture_half_float_linear") ? THREE.LinearFilter : THREE.NearestFilter;
+    }
+    return THREE.LinearFilter;
   }
 
   calcSize() {
@@ -842,13 +864,14 @@ class Simulation {
   }
 
   createAllFBO() {
-    const type = this.getFloatType();
+    const type = this.getTextureType();
+    const filter = this.getTextureFilter(type);
     const opts = {
       type,
       depthBuffer: false,
       stencilBuffer: false,
-      minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter,
+      minFilter: filter,
+      magFilter: filter,
       wrapS: THREE.ClampToEdgeWrapping,
       wrapT: THREE.ClampToEdgeWrapping,
     };
