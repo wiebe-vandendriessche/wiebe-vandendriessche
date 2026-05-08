@@ -87,6 +87,7 @@ const baseScale = config.scale;
 let aligning = false;
 let targetYaw = 0;
 let lastAlignedYaw = 0;
+let keyLightTargetPos = new THREE.Vector3(1.8, 2.0, -2.4);
 
 const baseLightIntensity = {
   ambient: 0.2,
@@ -127,18 +128,18 @@ const colorLerp = (from, to, t) => {
 
 const syncAmbient = () => {
   const isDark = document.documentElement.classList.contains("dark");
-  const etherHigh = colorFromCssVar("--color-primary-300", [147, 197, 253]);
-  const etherMid = colorFromCssVar("--color-primary-400", [96, 165, 250]);
-  const etherDeep = colorFromCssVar("--color-primary-500", [59, 130, 246]);
+  const etherHigh = colorFromCssVar("--color-primary-300", isDark ? [147, 197, 253] : [255, 190, 80]);
+  const etherMid = colorFromCssVar("--color-primary-400", isDark ? [96, 165, 250] : [255, 150, 30]);
+  const etherDeep = colorFromCssVar("--color-primary-500", isDark ? [59, 130, 246] : [255, 110, 20]);
   const keyColor = isDark ? colorLerp(etherHigh, etherMid, 0.1) : colorLerp(etherHigh, etherMid, 0.24);
   const rimColor = isDark ? colorLerp(etherHigh, etherMid, 0.06) : colorLerp(etherHigh, etherMid, 0.14);
-  const neutralHigh = colorFromCssVar(isDark ? "--color-neutral-100" : "--color-neutral-200", isDark ? [245, 245, 245] : [229, 231, 235]);
+  const neutralHigh = colorFromCssVar(isDark ? "--color-neutral-100" : "--color-neutral-200", isDark ? [245, 245, 245] : [250, 240, 230]);
   const neutralLow = colorFromCssVar(isDark ? "--color-neutral-900" : "--color-neutral-700", isDark ? [23, 23, 23] : [64, 64, 64]);
 
-  const ambientNeutralMix = isDark ? 0.24 : 0.45;
-  const hemiNeutralMix = isDark ? 0.28 : 0.4;
-  const keyNeutralMix = isDark ? 0.16 : 0.16;
-  const rimNeutralMix = isDark ? 0.22 : 0.32;
+  const ambientNeutralMix = isDark ? 0.24 : 0.28;
+  const hemiNeutralMix = isDark ? 0.28 : 0.32;
+  const keyNeutralMix = isDark ? 0.16 : 0.2;
+  const rimNeutralMix = isDark ? 0.22 : 0.26;
 
   ambientLight.color.copy(colorLerp(keyColor, neutralHigh, ambientNeutralMix));
   hemisphereLight.color.copy(colorLerp(keyColor, neutralHigh, hemiNeutralMix));
@@ -147,11 +148,11 @@ const syncAmbient = () => {
   etherRimLight.color.copy(colorLerp(rimColor, neutralHigh, rimNeutralMix));
   mainWhitePointLight.color.copy(neutralHigh);
 
-  baseLightIntensity.ambient = isDark ? 0.14 : 0.5;
-  baseLightIntensity.hemi = isDark ? 0.2 : 0.14;
-  baseLightIntensity.key = (isDark ? 1.0 : 0.8) * etherLightConfig.keyBoost;
-  baseLightIntensity.rim = (isDark ? 0.82 : 0.58) * etherLightConfig.rimBoost;
-  baseLightIntensity.whitePoint = isDark ? 0.34 : 0.35;
+  baseLightIntensity.ambient = isDark ? 0.14 : 0.6;
+  baseLightIntensity.hemi = isDark ? 0.2 : 0.18;
+  baseLightIntensity.key = (isDark ? 1.0 : 0.95) * etherLightConfig.keyBoost;
+  baseLightIntensity.rim = (isDark ? 0.82 : 0.7) * etherLightConfig.rimBoost;
+  baseLightIntensity.whitePoint = isDark ? 0.34 : 0.4;
 
   ambientLight.intensity = baseLightIntensity.ambient;
   hemisphereLight.intensity = baseLightIntensity.hemi;
@@ -333,11 +334,12 @@ const animate = () => {
   const shimmerC = 1.0 - etherLightConfig.shimmerDepth * 0.55 + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.65 + 0.65);
 
   // Slight orbit motion makes the model feel lit by moving ether currents.
-  etherKeyLight.position.set(
-    1.85 + Math.sin(shimmerTime * 0.85) * 0.8 + pointerX * 0.55,
-    1.95 + Math.cos(shimmerTime * 1.2) * 0.22 - pointerY * 0.2,
-    -2.35 + Math.cos(shimmerTime * 0.7) * 0.6
+  keyLightTargetPos.set(
+    2.0 + pointerX * 1.2,
+    1.9 - pointerY * 0.4,
+    -2.4
   );
+  etherKeyLight.position.lerp(keyLightTargetPos, 0.12);
   etherRimLight.position.set(
     -2.35 + Math.sin(shimmerTime * 0.66 + 2.2) * 0.25,
     1.1 + Math.cos(shimmerTime * 1.32 + 0.4) * 0.2,
