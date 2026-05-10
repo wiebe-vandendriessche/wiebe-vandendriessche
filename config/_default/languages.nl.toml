@@ -1,6 +1,6 @@
 disabled = false
-languageCode = "nl"
-languageName = "Dutch"
+locale = "nl"
+label = "Dutch"
 weight = 2
 title = "Wiebe Vandendriessche"
 

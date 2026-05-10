@@ -14,7 +14,6 @@ if (!canvas) {
 }
 
 const root = document.documentElement;
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function clamp(v, lo, hi) {
   return Math.min(hi, Math.max(lo, v));
@@ -1118,7 +1117,7 @@ class LiquidEtherManager {
   }
 
   start() {
-    if (this.running || reducedMotion.matches) return;
+    if (this.running) return;
     this.running = true;
     this.loop();
   }
@@ -1156,8 +1155,3 @@ const observer = new MutationObserver(() => {
   manager.refreshTheme();
 });
 observer.observe(root, { attributes: true, attributeFilter: ["class"] });
-
-reducedMotion.addEventListener("change", () => {
-  if (reducedMotion.matches) manager.pause();
-  else manager.start();
-});
