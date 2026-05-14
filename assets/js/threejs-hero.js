@@ -39,6 +39,7 @@ const config = {
   dampSpeed: 0.12,
   dampTilt: 0.18,
   dampScale: 0.12,
+  hoverWidthFraction: 0.5,
 };
 
 const etherLightConfig = {
@@ -310,13 +311,6 @@ renderer.domElement.addEventListener("pointerleave", () => {
 
 renderer.domElement.addEventListener("pointerdown", (event) => {
   updatePointerFromEvent(event);
-  if (!colliderMesh) return;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObject(colliderMesh, false);
-  if (hits.length > 0) {
-    setHovered(true);
-    alignModelToCamera();
-  }
 });
 
 const themeObserver = new MutationObserver(() => {
@@ -349,10 +343,10 @@ const animate = () => {
   etherKeyLight.intensity = baseLightIntensity.key * shimmerA;
   etherRimLight.intensity = baseLightIntensity.rim * shimmerC;
 
-  if (modelGroup && colliderMesh) {
-    raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObject(colliderMesh, false);
-    if (hits.length > 0) {
+  if (modelGroup) {
+    const effectiveWidthFraction = root.clientWidth < 640 ? 1 : config.hoverWidthFraction;
+    const onCanvas = Math.abs(pointer.x) <= effectiveWidthFraction && Math.abs(pointer.y) <= 1;
+    if (onCanvas) {
       if (!hovered) {
         setHovered(true);
         alignModelToCamera();
