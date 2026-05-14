@@ -146,6 +146,24 @@ html.dark .research-meta span {
     color: rgb(var(--color-neutral-200));
 }
 
+ol.border-s-2 > li > div > div:first-child {
+    width: 2rem !important;
+    min-width: 2rem !important;
+    height: 2rem !important;
+    flex-shrink: 0;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: translateX(-1px);
+}
+
+ol.border-s-2 > li > div > div:first-child svg {
+    width: 1rem;
+    height: 1rem;
+    display: block;
+    flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
     .pdf-viewer-canvas-wrap {
         height: min(72vh, var(--pdf-viewer-height, 900px));
