@@ -2,6 +2,8 @@
 {{- if not $src -}}
   {{- errorf "pdfviewer shortcode requires src" -}}
 {{- end -}}
+{{- $isExternal := or (hasPrefix $src "http://") (hasPrefix $src "https://") (hasPrefix $src "//") -}}
+{{- $pdfURL := cond $isExternal $src ($src | relURL) -}}
 {{- $viewerId := .Get "id" | default (printf "pdf-viewer-%d" .Ordinal) -}}
 {{- $height := .Get "height" | default "900" -}}
 {{- $startPage := .Get "start" | default "1" -}}
@@ -9,7 +11,7 @@
 {{- $fit := .Get "fit" | default "page" -}}
 {{- $initialZoom := .Get "zoom" | default "1" -}}
 
-<div class="pdf-viewer" id="{{ $viewerId }}" data-pdf-src="{{ $src }}" data-start-page="{{ $startPage }}" data-fit-mode="{{ $fit }}" data-initial-zoom="{{ $initialZoom }}" style="--pdf-viewer-height: {{ $height }}px;">
+<div class="pdf-viewer" id="{{ $viewerId }}" data-pdf-src="{{ $pdfURL }}" data-start-page="{{ $startPage }}" data-fit-mode="{{ $fit }}" data-initial-zoom="{{ $initialZoom }}" style="--pdf-viewer-height: {{ $height }}px;">
   <div class="pdf-viewer-toolbar" role="group" aria-label="PDF controls">
     <button type="button" data-action="prev" class="pdf-viewer-btn">Prev</button>
     <span class="pdf-viewer-page" data-role="page-indicator">Page 1 / 1</span>
@@ -17,7 +19,7 @@
     <button type="button" data-action="zoom-out" class="pdf-viewer-btn">-</button>
     <span class="pdf-viewer-zoom" data-role="zoom-indicator">100%</span>
     <button type="button" data-action="zoom-in" class="pdf-viewer-btn">+</button>
-    <a class="pdf-viewer-link" href="{{ $src }}" target="_blank" rel="noopener">Open PDF</a>
+    <a class="pdf-viewer-link" href="{{ $pdfURL }}" target="_blank" rel="noopener">Open PDF</a>
   </div>
   <div class="pdf-viewer-canvas-wrap" role="region" aria-label="{{ $title }}">
     <canvas class="pdf-viewer-canvas" data-role="canvas"></canvas>
@@ -138,7 +140,7 @@
       })
       .catch((err) => {
         statusEl.hidden = false;
-        statusEl.innerHTML = 'Could not load PDF. <a href="{{ $src }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
+        statusEl.innerHTML = 'Could not load PDF. <a href="{{ $pdfURL }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
         console.error(err);
       });
 
@@ -153,7 +155,7 @@
       existing.addEventListener('load', initPdf, { once: true });
       existing.addEventListener('error', () => {
         statusEl.hidden = false;
-        statusEl.innerHTML = 'PDF preview unavailable. <a href="{{ $src }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
+        statusEl.innerHTML = 'PDF preview unavailable. <a href="{{ $pdfURL }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
       }, { once: true });
       return;
     }
@@ -168,7 +170,7 @@
     };
     script.onerror = () => {
       statusEl.hidden = false;
-      statusEl.innerHTML = 'PDF preview unavailable. <a href="{{ $src }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
+      statusEl.innerHTML = 'PDF preview unavailable. <a href="{{ $pdfURL }}" target="_blank" rel="noopener">Open PDF in a new tab</a>.';
     };
     document.head.appendChild(script);
   };

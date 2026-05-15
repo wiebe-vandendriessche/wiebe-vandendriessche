@@ -3,7 +3,7 @@ title: "Vaardigheden"
 description: "Vaardigheden en competenties."
 weight: 2
 showDate: false
-showTableOfContents: false
+showTableOfContents: true
 showHero: true
 heroStyle: "background"
 layoutBackgroundBlur: true
