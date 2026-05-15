@@ -3,7 +3,7 @@ title: "Hobby's"
 description: "Persoonlijke hobby's en interesses."
 weight: 3
 showDate: false
-showTableOfContents: false
+showTableOfContents: true
 showHero: true
 heroStyle: "background"
 layoutBackgroundBlur: true

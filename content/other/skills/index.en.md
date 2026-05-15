@@ -3,7 +3,7 @@ title: "Skills"
 description: "Skills and competencies."
 weight: 2
 showDate: false
-showTableOfContents: false
+showTableOfContents: true
 showHero: true
 heroStyle: "background"
 layoutBackgroundBlur: true
