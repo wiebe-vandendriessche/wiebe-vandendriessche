@@ -3,7 +3,8 @@
   {{- errorf "pdfviewer shortcode requires src" -}}
 {{- end -}}
 {{- $isExternal := or (hasPrefix $src "http://") (hasPrefix $src "https://") (hasPrefix $src "//") -}}
-{{- $pdfURL := cond $isExternal $src ($src | absURL) -}}
+{{- $normalizedSrc := strings.TrimPrefix "/" $src -}}
+{{- $pdfURL := cond $isExternal $src (printf "%s/%s" (strings.TrimSuffix "/" site.BaseURL) $normalizedSrc) -}}
 {{- $viewerId := .Get "id" | default (printf "pdf-viewer-%d" .Ordinal) -}}
 {{- $height := .Get "height" | default "900" -}}
 {{- $startPage := .Get "start" | default "1" -}}
