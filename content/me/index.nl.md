@@ -4,7 +4,7 @@ description: "Algemene informatie over mezelf"
 showDate: false
 showTableOfContents: false
 showHero: true
-heroStyle: "background"
+heroStyle: "liquid-ether"
 layoutBackgroundBlur: false
 layoutBackgroundHeaderSpace: false 
 ---

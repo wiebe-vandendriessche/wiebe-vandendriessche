@@ -96,10 +96,10 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   externalLinkForceNewTab = true # disable to allow external links in the same tab (defaults to true)
 
 [list]
-  showHero = false
-  # heroStyle = "background" # valid options: basic, big, background, thumbAndBackground
-  layoutBackgroundBlur = true # only used when heroStyle equals background or thumbAndBackground
-  layoutBackgroundHeaderSpace = true # only used when heroStyle equals background
+  showHero = true
+  heroStyle = "liquid-ether"
+  layoutBackgroundBlur = false
+  layoutBackgroundHeaderSpace = false
   showBreadcrumbs = true
   showSummary = true
   showViews = false

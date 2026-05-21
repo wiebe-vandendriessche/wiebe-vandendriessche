@@ -4,7 +4,7 @@ description: "General information about me"
 showDate: false
 showTableOfContents: false
 showHero: true
-heroStyle: "background"
+heroStyle: "liquid-ether"
 layoutBackgroundBlur: false
 layoutBackgroundHeaderSpace: false 
 ---
