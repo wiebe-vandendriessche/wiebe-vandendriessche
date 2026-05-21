@@ -10,9 +10,6 @@ cascade:
 showCards: true
 orderByWeight: true
 groupByYear: false
-cardView: true
-cardViewScreenWidth: false
-constrainItemsWidth: false
+cardView: false
 showReadingTime: false
 ---
-Additional information is grouped here.

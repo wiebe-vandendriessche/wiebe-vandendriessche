@@ -12,7 +12,7 @@ layoutBackgroundHeaderSpace: true
 
 {{< timeline >}}
 
-{{< timelineItem icon="google-scholar" header="Doctoraat" badge="2021 - Heden" subheader="Doctoraat in Industriële wetenschappen: Informatica aan IDLab, UGent, imec" >}}
+{{< timelineItem icon="google-scholar" header="Doctoraat" badge="2025 - Heden" subheader="Doctoraat in Industriële wetenschappen: Informatica aan IDLab, UGent, imec" >}}
 Momenteel bezig met een doctoraat gericht op geavanceerde onderwerpen binnen informatie- en informatietechnologie, gecombineerd met academisch onderzoek, onderwijsassistentie, wetenschappelijk schrijven, begeleiding en deelname aan internationale conferenties en onderzoeksprojecten.
 {{< /timelineItem >}}
 
@@ -20,8 +20,8 @@ Momenteel bezig met een doctoraat gericht op geavanceerde onderwerpen binnen inf
 Mastertitel in Industriële wetenschappen: Informatica aan de Universiteit Gent.
 {{< /timelineItem >}}
 
-{{< timelineItem icon="pencil" header="ASO Wetenschappen" badge="2017 - 2021" subheader="Wiskunde aan Prizma Campus College Izegem" >}}
-Secundair onderwijs richting Wetenschappen met Wiskunde aan Prizma Campus College Izegem.
+{{< timelineItem icon="pencil" header="ASO Wetenschappen" badge="2017 - 2021" subheader="Wetenschappen en wiskunde aan Prizma Campus College Izegem" >}}
+Secundair onderwijs richting wetenschappen en wiskunde aan Prizma Campus College Izegem.
 {{< /timelineItem >}}
 
 {{< timelineItem icon="heart" header="Hoger Redder" badge="2020" subheader="Vlaamse Trainers School / RedFed" >}}
