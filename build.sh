@@ -83,7 +83,19 @@ main() {
 
   # Build the site
   echo "Building the site..."
-  hugo build --gc --minify --baseURL "https://${VERCEL_PROJECT_PRODUCTION_URL}"
+
+  base_url="https://wiebevandendriessche.tech"
+  if [[ "${VERCEL_ENV:-}" == "production" ]]; then
+    base_url="https://${VERCEL_PROJECT_PRODUCTION_URL}"
+  elif [[ "${VERCEL_GIT_COMMIT_REF:-}" == "dev" ]]; then
+    base_url="https://preview.wiebevandendriessche.tech"
+  elif [[ -n "${VERCEL_BRANCH_URL:-}" ]]; then
+    base_url="https://${VERCEL_BRANCH_URL}"
+  elif [[ -n "${VERCEL_URL:-}" ]]; then
+    base_url="https://${VERCEL_URL}"
+  fi
+
+  hugo build --gc --minify --baseURL "${base_url}"
 }
 
 main "$@"
