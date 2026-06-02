@@ -10,3 +10,13 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
 ></script>
+
+{{ if hugo.IsProduction }}
+<script type="module">
+    import { inject as injectAnalytics } from 'https://unpkg.com/@vercel/analytics@latest/dist/index.mjs';
+    import { injectSpeedInsights } from 'https://unpkg.com/@vercel/speed-insights@latest/dist/index.mjs';
+
+    injectAnalytics();
+    injectSpeedInsights();
+</script>
+{{ end }}
