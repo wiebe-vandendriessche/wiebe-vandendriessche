@@ -13,8 +13,8 @@
 
 {{ if hugo.IsProduction }}
 <script type="module">
-    import { inject as injectAnalytics } from 'https://unpkg.com/@vercel/analytics@latest/dist/index.mjs';
-    import { injectSpeedInsights } from 'https://unpkg.com/@vercel/speed-insights@latest/dist/index.mjs';
+    import { inject as injectAnalytics } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1.4.1/dist/index.mjs';
+    import { injectSpeedInsights } from 'https://cdn.jsdelivr.net/npm/@vercel/speed-insights@2.0.0/dist/index.mjs';
 
     injectAnalytics();
     injectSpeedInsights();
