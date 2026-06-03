@@ -15,10 +15,6 @@ if (!canvas) {
 
 const root = document.documentElement;
 
-function clamp(v, lo, hi) {
-  return Math.min(hi, Math.max(lo, v));
-}
-
 function parseCssTriplet(name, fallback) {
   const raw = getComputedStyle(root).getPropertyValue(name).trim();
   if (!raw) return fallback;
@@ -313,13 +309,10 @@ class CommonClass {
 
 class MouseClass {
   constructor() {
-    this.mouseMoved = false;
     this.coords = new THREE.Vector2();
     this.coordsOld = new THREE.Vector2();
     this.diff = new THREE.Vector2();
-    this.timer = null;
     this.container = null;
-    this.isHoverInside = false;
     this.hasUserControl = false;
     this.isAutoActive = false;
     this.autoIntensity = 2;
@@ -330,43 +323,37 @@ class MouseClass {
     this.takeoverTo = new THREE.Vector2();
     this.onInteract = null;
     this.onMouseMove = this.handleMouseMove.bind(this);
-    this.onTouchMove = this.handleTouchMove.bind(this);
-    this.onTouchStart = this.handleTouchStart.bind(this);
-    this.onTouchEnd = this.handleTouchEnd.bind(this);
+    this.onTouch = this.handleTouch.bind(this);
   }
 
   init(container) {
     this.container = container;
     window.addEventListener("mousemove", this.onMouseMove, { passive: true });
-    window.addEventListener("touchstart", this.onTouchStart, { passive: true });
-    window.addEventListener("touchmove", this.onTouchMove, { passive: true });
-    window.addEventListener("touchend", this.onTouchEnd);
+    window.addEventListener("touchstart", this.onTouch, { passive: true });
+    window.addEventListener("touchmove", this.onTouch, { passive: true });
   }
 
   dispose() {
     window.removeEventListener("mousemove", this.onMouseMove);
-    window.removeEventListener("touchstart", this.onTouchStart);
-    window.removeEventListener("touchmove", this.onTouchMove);
-    window.removeEventListener("touchend", this.onTouchEnd);
+    window.removeEventListener("touchstart", this.onTouch);
+    window.removeEventListener("touchmove", this.onTouch);
   }
 
   setCoords(x, y) {
     if (!this.container) return;
-    if (this.timer) window.clearTimeout(this.timer);
     const rect = this.container.getBoundingClientRect();
     const nx = (x - rect.left) / rect.width;
     const ny = (y - rect.top) / rect.height;
     this.coords.set(nx * 2 - 1, -(ny * 2 - 1));
-    this.isHoverInside = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
-    this.mouseMoved = true;
-    this.timer = window.setTimeout(() => {
-      this.mouseMoved = false;
-    }, 100);
   }
 
   setNormalized(nx, ny) {
     this.coords.set(nx, ny);
-    this.mouseMoved = true;
+  }
+
+  updateFromClient(x, y) {
+    this.setCoords(x, y);
+    this.hasUserControl = true;
   }
 
   handleMouseMove(event) {
@@ -378,7 +365,6 @@ class MouseClass {
       event.clientY >= rect.top &&
       event.clientY <= rect.bottom;
     if (!inside) {
-      this.isHoverInside = false;
       return;
     }
 
@@ -392,30 +378,16 @@ class MouseClass {
       this.hasUserControl = true;
       this.isAutoActive = false;
     } else {
-      this.setCoords(event.clientX, event.clientY);
-      this.hasUserControl = true;
+      this.updateFromClient(event.clientX, event.clientY);
     }
     if (this.onInteract) this.onInteract();
   }
 
-  handleTouchStart(event) {
+  handleTouch(event) {
     if (!event.touches || event.touches.length !== 1 || !this.container) return;
     const t = event.touches[0];
-    this.setCoords(t.pageX, t.pageY);
-    this.hasUserControl = true;
+    this.updateFromClient(t.pageX, t.pageY);
     if (this.onInteract) this.onInteract();
-  }
-
-  handleTouchMove(event) {
-    if (!event.touches || event.touches.length !== 1 || !this.container) return;
-    const t = event.touches[0];
-    this.setCoords(t.pageX, t.pageY);
-    this.hasUserControl = true;
-    if (this.onInteract) this.onInteract();
-  }
-
-  handleTouchEnd() {
-    this.isHoverInside = false;
   }
 
   update() {

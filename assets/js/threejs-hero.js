@@ -19,16 +19,17 @@ if (!container || !root) {
   throw new Error("threejs-hero.js: required DOM nodes are missing");
 }
 
-let hovered = false;
+let dragging = false;
+let pointerDown = false;
 let pointerX = 0;
 let pointerY = 0;
+let modelHovered = false;
 
 const config = {
   scale: 1.5,
   hoverScale: 1.06,
   idleSpinSpeed: 0.7,
   idleYawRange: Math.PI / 5,
-  stopSpinOnHover: true,
   hoverAlignSpeed: 0.3,
   alignSnap: 0.012,
   hoverTilt: 0.22,
@@ -36,10 +37,8 @@ const config = {
   hoverYawRange: Math.PI / 6,
   facingOffset: Math.PI,
   colliderMargin: 1.28,
-  dampSpeed: 0.12,
   dampTilt: 0.18,
   dampScale: 0.12,
-  hoverWidthFraction: 0.5,
 };
 
 const etherLightConfig = {
@@ -171,17 +170,13 @@ const updatePointerFromEvent = (event) => {
   pointerY = pointer.y;
 };
 
-const alignModelToCamera = () => {
-  if (!modelGroup) return;
-  const worldPos = new THREE.Vector3();
-  modelGroup.getWorldPosition(worldPos);
-  const dx = camera.position.x - worldPos.x;
-  const dz = camera.position.z - worldPos.z;
-  targetYaw = Math.atan2(dx, dz) + config.facingOffset;
-  aligning = true;
+const raycastModel = () => {
+  if (!modelGroup || !colliderMesh) return false;
+  raycaster.setFromCamera(pointer, camera);
+  return raycaster.intersectObject(colliderMesh, true).length > 0;
 };
 
-const getCameraFacingYaw = () => {
+const getModelFacingYaw = () => {
   if (!modelGroup) return 0;
   const worldPos = new THREE.Vector3();
   modelGroup.getWorldPosition(worldPos);
@@ -190,9 +185,22 @@ const getCameraFacingYaw = () => {
   return Math.atan2(dx, dz) + config.facingOffset;
 };
 
+const alignModelToCamera = () => {
+  if (!modelGroup) return;
+  targetYaw = getModelFacingYaw();
+  aligning = true;
+};
+
 const setHovered = (nextHovered) => {
-  hovered = nextHovered;
-  document.body.style.cursor = hovered ? "pointer" : "";
+  document.body.style.cursor = dragging ? "grabbing" : nextHovered ? "pointer" : "";
+};
+
+const resetInteractionState = () => {
+  pointerDown = false;
+  dragging = false;
+  aligning = false;
+  modelHovered = false;
+  setHovered(false);
 };
 
 const ensureLoaderStyles = () => {
@@ -299,18 +307,48 @@ loader.load(
 
 renderer.domElement.addEventListener("pointermove", (event) => {
   updatePointerFromEvent(event);
+  modelHovered = raycastModel();
+  if (!pointerDown && !dragging) {
+    setHovered(modelHovered);
+  }
+  if (pointerDown && !dragging && modelHovered) {
+    dragging = true;
+    setHovered(true);
+    alignModelToCamera();
+  }
+  if (dragging) {
+    setHovered(true);
+    if (!modelHovered) {
+      resetInteractionState();
+    }
+  }
 });
 
 renderer.domElement.addEventListener("pointerleave", () => {
   pointer.set(2, 2);
   pointerX = 0;
   pointerY = 0;
-  setHovered(false);
-  aligning = false;
+  resetInteractionState();
 });
 
 renderer.domElement.addEventListener("pointerdown", (event) => {
   updatePointerFromEvent(event);
+  pointerDown = true;
+  modelHovered = raycastModel();
+  dragging = modelHovered;
+  setHovered(modelHovered);
+  if (dragging) {
+    setHovered(true);
+    alignModelToCamera();
+  }
+});
+
+window.addEventListener("pointerup", () => {
+  resetInteractionState();
+});
+
+window.addEventListener("pointercancel", () => {
+  resetInteractionState();
 });
 
 const themeObserver = new MutationObserver(() => {
@@ -326,11 +364,13 @@ const animate = () => {
   const shimmerTime = performance.now() * 0.001;
   const shimmerA = 1.0 - etherLightConfig.shimmerDepth * 0.5 + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.25);
   const shimmerC = 1.0 - etherLightConfig.shimmerDepth * 0.55 + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.65 + 0.65);
+  const lightPointerX = pointerX;
+  const lightPointerY = pointerY;
 
   // Slight orbit motion makes the model feel lit by moving ether currents.
   keyLightTargetPos.set(
-    2.0 + pointerX * 1.2,
-    1.9 - pointerY * 0.4,
+    2.0 + lightPointerX * 1.2,
+    1.9 - lightPointerY * 0.4,
     -2.4
   );
   etherKeyLight.position.lerp(keyLightTargetPos, 0.12);
@@ -344,21 +384,20 @@ const animate = () => {
   etherRimLight.intensity = baseLightIntensity.rim * shimmerC;
 
   if (modelGroup) {
-    const effectiveWidthFraction = root.clientWidth < 640 ? 1 : config.hoverWidthFraction;
-    const onCanvas = Math.abs(pointer.x) <= effectiveWidthFraction && Math.abs(pointer.y) <= 1;
-    if (onCanvas) {
-      if (!hovered) {
-        setHovered(true);
-        alignModelToCamera();
+    modelHovered = raycastModel();
+
+    if (!dragging) {
+      setHovered(modelHovered);
+      if (!modelHovered) {
+        aligning = false;
       }
-    } else if (hovered) {
-      setHovered(false);
-      aligning = false;
+    } else if (!modelHovered) {
+      resetInteractionState();
     }
 
     let baseYaw = modelGroup.rotation.y;
 
-    if (hovered) {
+    if (dragging) {
       if (aligning) {
         const delta = normalizeAngle(targetYaw - baseYaw);
         const step = delta * config.hoverAlignSpeed;
@@ -374,12 +413,12 @@ const animate = () => {
         baseYaw += (focusYaw - baseYaw) * 0.18;
       }
     } else {
-      const idleCenterYaw = getCameraFacingYaw();
+      const idleCenterYaw = getModelFacingYaw();
       const idleTargetYaw = idleCenterYaw + Math.sin(shimmerTime * config.idleSpinSpeed) * config.idleYawRange;
       baseYaw += (idleTargetYaw - baseYaw) * 0.08;
     }
 
-    const canTilt = hovered && !aligning;
+    const canTilt = dragging && !aligning;
     const targetTiltX = canTilt ? pointerY * config.hoverTilt : 0;
     const targetTiltZ = canTilt ? -pointerX * config.hoverTilt : 0;
     const targetTiltYaw = canTilt ? pointerX * config.hoverTiltY : 0;
@@ -388,7 +427,7 @@ const animate = () => {
     modelGroup.rotation.z += (targetTiltZ - modelGroup.rotation.z) * config.dampTilt;
     modelGroup.rotation.y = baseYaw + tiltYaw;
 
-    const targetScale = hovered ? baseScale * config.hoverScale : baseScale;
+    const targetScale = dragging ? baseScale * config.hoverScale : baseScale;
     const currentScale = modelGroup.scale.x;
     const newScale = currentScale + (targetScale - currentScale) * config.dampScale;
     modelGroup.scale.set(newScale, newScale, newScale);
@@ -397,7 +436,6 @@ const animate = () => {
   camera.lookAt(0, camera.position.y, 0);
   renderer.render(scene, camera);
 };
-animate();
 
 camera.position.set(-2, -0.3, -6);
 window.addEventListener("resize", () => {
@@ -405,3 +443,5 @@ window.addEventListener("resize", () => {
   camera.aspect = root.clientWidth / root.clientHeight;
   camera.updateProjectionMatrix();
 });
+
+animate();
