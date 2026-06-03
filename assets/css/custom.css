@@ -146,6 +146,16 @@ html.dark .research-meta span {
     color: rgb(var(--color-neutral-200));
 }
 
+#threejs-hero {
+    height: 400px;
+}
+
+@media (max-width: 480px) {
+    #threejs-hero {
+        height: 250px !important;
+    }
+}
+
 ol.border-s-2 > li > div > div:first-child {
     width: 2rem !important;
     min-width: 2rem !important;
