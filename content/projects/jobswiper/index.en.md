@@ -1,20 +1,13 @@
 ---
 title: "JobSwiper"
-date: 2024-01-01
+date: 2024-12-20
 description: "Tinder-style job matching microservices application with an API gateway, JWT auth, ElasticSearch recommendations, and a SAGA pattern for distributed transactions."
 tags: ["python", "javascript", "java", "microservices", "docker", "elasticsearch", "rabbitmq"]
 ---
 
 {{< github repo="wiebe-vandendriessche/jobswiper" showThumbnail=false >}}
 
-JobSwiper is a Tinder-like job matching platform implemented as a microservices architecture orchestrated with Docker Compose. Job seekers and recruiters can swipe on each other's profiles; a mutual swipe creates a match.
+This project is a microservices-based job matching platform built as part of the System Design course in my master’s program. It simulates a scalable recruitment system with services for authentication, profile management, job management, matching, and recommendations. The architecture uses [Docker Compose](https://docs.docker.com/compose/) for orchestration, with an API Gateway built in [FastAPI](https://fastapi.tiangolo.com/) and asynchronous communication via [RabbitMQ](https://www.rabbitmq.com/). The recommendation engine uses [Elasticsearch](https://www.elastic.co/elasticsearch/) to compute job matching. Distributed workflows are coordinated using a [Saga](https://microservices.io/patterns/data/saga.html) pattern to ensure consistency across services in multi-step operations such as job creation and payment flows. 
 
-The system consists of six services:
-- **API Gateway** (FastAPI): acts as a reverse proxy, load-balanced threefold behind Nginx, with per-instance Redis caching, retry strategies with exponential backoff, and a circuit breaker.
-- **JWT Auth Service**: handles user registration, login, and token verification.
-- **Profile Management**: CRUD operations for job seeker and recruiter profiles, backed by MySQL.
-- **Job Management**: CRUD operations for job postings with publisher events to the recommendation service.
-- **Matching Service**: processes swipe actions from RabbitMQ and identifies mutual matches.
-- **Recommendation Service** (Java/ElasticSearch): consumes profile and job updates, runs ElasticSearch queries to find best matches, and stores results in MySQL.
 
-Notable patterns: SAGA for distributed transactions, circuit breaker + retry for fault tolerance, event-driven communication via RabbitMQ.
+

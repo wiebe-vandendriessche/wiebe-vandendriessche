@@ -1,20 +1,10 @@
 ---
 title: "JobSwiper"
-date: 2024-01-01
+date: 2024-12-20
 description: "Tinder-stijl job matching applicatie met microservices, een API gateway, JWT-authenticatie, ElasticSearch-aanbevelingen en een SAGA-patroon voor gedistribueerde transacties."
 tags: ["python", "javascript", "java", "microservices", "docker", "elasticsearch", "rabbitmq"]
 ---
 
 {{< github repo="wiebe-vandendriessche/jobswiper" showThumbnail=false >}}
 
-JobSwiper is een Tinder-achtig jobmatchingplatform geïmplementeerd als een microservicesarchitectuur, georchestreerd met Docker Compose. Werkzoekenden en recruiters kunnen op elkaars profielen swipen; een wederzijdse swipe levert een match op.
-
-Het systeem bestaat uit zes services:
-- **API Gateway** (FastAPI): fungeert als reverse proxy, drievoudig load-balanced achter Nginx, met per-instantie Redis-caching, retry-strategieën met exponentiële backoff en een circuit breaker.
-- **JWT Auth Service**: beheert gebruikersregistratie, login en tokenverificatie.
-- **Profielbeheer**: CRUD-operaties voor profielen van werkzoekenden en recruiters, ondersteund door MySQL.
-- **Jobenbeheer**: CRUD-operaties voor vacatures met publisher-events naar de aanbevelingsservice.
-- **Matchingservice**: verwerkt swipe-acties via RabbitMQ en identificeert wederzijdse matches.
-- **Aanbevelingsservice** (Java/ElasticSearch): verwerkt profiel- en jobupdates, voert ElasticSearch-queries uit om de beste matches te vinden en slaat resultaten op in MySQL.
-
-Opmerkelijke patronen: SAGA voor gedistribueerde transacties, circuit breaker + retry voor fouttolerantie, event-gedreven communicatie via RabbitMQ.
+Dit project is een microservices-gebaseerd job matching platform ontwikkeld als onderdeel van het System Design vak tijdens mijn master. Het simuleert een schaalbaar recruitment systeem met services voor authenticatie, profielbeheer, jobbeheer, matching en aanbevelingen. De architectuur draait op [Docker Compose](https://docs.docker.com/compose/), met een API Gateway gebouwd in [FastAPI](https://fastapi.tiangolo.com/) en asynchrone communicatie via [RabbitMQ](https://www.rabbitmq.com/). De recommendation service gebruikt [Elasticsearch](https://www.elastic.co/elasticsearch/) om job matches te berekenen. Gedistribueerde workflows worden gecoördineerd via een [Saga](https://microservices.io/patterns/data/saga.html) pattern om consistentie te garanderen bij multi-step processen zoals job creatie en betalingsflows.

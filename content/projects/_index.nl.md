@@ -4,15 +4,14 @@ description: "Overzicht van huidige projecten."
 cascade:
   showReadingTime: false
   showAuthor: false
-  showPagination: false
+  showPagination: true
   showTaxonomies: true
   showHero: true
+  heroStyle: basic
 view: "card"
 showCards: true
 orderByWeight: false
-groupByYear: false
-cardView: true
-cardViewScreenWidth: false
-constrainItemsWidth: false
+groupByYear: true
+cardView: false
 ---
 Een verzameling projecten die te veel koffie en te weinig slaap hebben gekost.

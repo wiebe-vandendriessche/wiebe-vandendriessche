@@ -4,15 +4,14 @@ description: "Overview of current projects."
 cascade:
   showReadingTime: false
   showAuthor: false
-  showPagination: false
+  showPagination: true
   showTaxonomies: true
   showHero: true
+  heroStyle: basic
 view: "card"
 showCards: true
 orderByWeight: false
-groupByYear: false
-cardView: true
-cardViewScreenWidth: false
-constrainItemsWidth: false
+groupByYear: true
+cardView: false
 ---
 A collection of projects fueled by too much coffee and not enough sleep.

@@ -1,6 +1,6 @@
 ---
 title: "AIBoMGen Kubeflow Integration"
-date: 2024-11-01
+date: 2025-11-04
 description: "A proof-of-concept that extracts ML Metadata (MLMD) from Kubeflow pipelines and generates CycloneDX AIBOMs with full lineage and an interactive BOM viewer."
 tags: ["python", "kubeflow", "mlmd", "aibom", "cyclonedx", "docker", "react", "vite"]
 draft: false
@@ -8,22 +8,8 @@ draft: false
 
 {{< github repo="idlab-discover/AIBoMGen" showThumbnail=false >}}
 
-AIBoMGen Kubeflow Integration (v2, branch `aibomgen-v2/main`) is a proof-of-concept for the next-generation AIBoMGen system. It reads pipeline and artifact metadata from an [ML Metadata (MLMD)](https://github.com/google/ml-metadata) store—as populated by Kubeflow—and generates per-model and per-dataset CycloneDX BOM files (modelboms and databoms), together with an interactive graph-based viewer.
+Proof-of-concept system on the `aibomgen-v2/main` branch for the next-generation AIBoMGen platform. It integrates with [Kubeflow](https://www.kubeflow.org/) via an [ML Metadata (MLMD)](https://github.com/google/ml-metadata) store and extracts full pipeline lineage to generate [CycloneDX](https://cyclonedx.org/) AI Bills of Materials (AIBOMs).
 
-## What it does
+The system generates per-model and per-dataset BOMs, including lineage-aware relationships using BOM-Link URNs and explicit model–dataset dependencies via external references. It also provides an interactive graph-based viewer to explore pipelines, models, datasets, and their relationships.
 
-- Connects to an MLMD store (SQLite or MySQL) and extracts models, datasets, lineage, and multi-pipeline relationships.
-- Generates CycloneDX 1.6 JSON files under `output/cyclonedx/`, one per model and one per dataset.
-- Captures lineage between model versions via BOM-Link URNs and model–dataset relationships via `externalReferences`.
-- Provides raw extracted metadata snapshots in `output/extracted_mlmd*.json`.
-- Ships an interactive viewer (Vite + React + vis-network) to visualize the generated BOMs as a graph, inspect CycloneDX JSON per node, and navigate lineage relationships.
-
-## Architecture
-
-The stack is composed of three services orchestrated via Docker Compose:
-
-- **MLMD Populator**: Simulates Kubeflow pipeline runs and populates the MLMD store from scenario YAML files. Supports SQLite (default) and MySQL backends.
-- **MLMD App**: The core BOM generator—connects to the same MLMD store, extracts metadata, and writes CycloneDX files. Designed for integration into a real Kubeflow environment.
-- **Viewer**: A Vite + React frontend that reads from `output/cyclonedx/` and renders an interactive lineage graph.
-
-> **Disclaimer**: Full Kubeflow integration, tamper resistance, and verifiability are planned for future work. This is a research proof of concept.
+The architecture consists of a [Kubeflow](https://www.kubeflow.org/)-style MLMD stack with a simulator for pipeline execution, a BOM generation service, and a web-based visualization layer. This work is part of PhD research into end-to-end AI lifecycle traceability and supply chain transparency, conducted as part of the [CRACY Project](https://cra-cy.eu/).

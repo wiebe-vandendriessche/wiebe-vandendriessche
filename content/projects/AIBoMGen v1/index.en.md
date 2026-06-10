@@ -1,22 +1,15 @@
 ---
 title: "AIBoMGen v1"
-date: 2024-09-01
+date: 2025-05-28
 description: "A proof-of-concept platform that generates CycloneDX AIBOMs during distributed AI model training, with a Next.js frontend and a Python backend."
-tags: ["python", "typescript", "nextjs", "aibom", "cyclonedx", "distributed-training", "docker"]
+tags: ["python", "typescript", "nextjs", "aibom", "cyclonedx", "distributed-training", "docker", "master thesis"]
 draft: false
 ---
 
 {{< github repo="idlab-discover/AIBoMGen" showThumbnail=false >}}
 
-AIBoMGen v1 is the original AIBoMGen platform (`v1.0-stable`), a proof-of-concept system that generates AI Bills of Materials (AIBOMs) during the training of AI models. It was developed at [IDLab – DISCOVER, Ghent University – imec](https://idlab.ugent.be/research-teams/discover) as part of the CRACY project, co-funded by the European Union's Digital Europe Programme.
+Original AIBoMGen platform (v1.0-stable), developed as part of my master thesis at Ghent University within the [CRACY Project](https://cra-cy.eu/).
 
-## Components
+It generates [CycloneDX](https://cyclonedx.org/) AI Bills of Materials directly during AI model training, capturing metadata such as training configuration, model artifacts, and dataset usage at the point of creation. The system consists of a Python backend for distributed training orchestration and AIBOM generation, and a [Next.js](https://nextjs.org/) frontend for monitoring and interaction.
 
-- **AIBoMGen Platform**: The backend system responsible for orchestrating distributed AI training jobs and generating CycloneDX AIBOM files as models are trained. Built in Python.
-- **AIBoMGen Frontend**: A Next.js web application that provides a user interface for managing and monitoring the AIBoMGen platform.
-
-## Context
-
-This version captures AIBOM metadata at training time—at the point where model provenance, training data, and configuration are most readily available. It serves as a research baseline for evaluating what information can and should be captured in an AIBOM across the AI lifecycle.
-
-Experimental sub-branches under `aibomgen-v1/...` preserve earlier design iterations. For the next-generation system integrated with Kubeflow ML Metadata, see AIBoMGen Kubeflow Integration (v2).
+This version focuses on in-training capture of model provenance, serving as an early research baseline for understanding what metadata can be reliably extracted during model development. It forms the foundation for later extensions that move toward full lifecycle tracking via [ML Metadata (MLMD)](https://github.com/google/ml-metadata) and [Kubeflow](https://www.kubeflow.org/) integration.
