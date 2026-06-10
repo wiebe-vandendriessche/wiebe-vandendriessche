@@ -1,16 +1,14 @@
 ---
 title: "Cardiovascular Visualization"
-date: 2025-04-01
+date: 2025-05-03
 description: "Browser-gebaseerde 3D-visualisatie van cardiovasculaire data met VTK.js, inclusief virtuele endoscopie, doorsnede-weergaven en MIP-slicing."
 tags: ["javascript", "vtk", "medical", "visualization", "3d"]
 ---
 
 {{< github repo="wiebe-vandendriessche/cardiovascular-visualization" showThumbnail=false >}}
 
-Een browser-gebaseerde 3D-visualisatietool voor cardiovasculaire datasets, gebouwd met VTK.js en Vite. Het project implementeert verschillende vasculaire visualisatietechnieken:
+Project voor het vak Computer Graphics in mijn master, in samenwerking met Walter Di Sabatino. Het doel was het visualiseren van cardiovasculaire data in de browser met [VTK.js](https://kitware.github.io/vtk-js/).
 
-- **Virtuele endoscopie**: navigeer door een vaatboom met toetsenbordcontroles en takkeuzefunctionaliteit bij vertakkingen.
-- **Doorsnede-weergaven**: doorloop de skeletgraph en inspecteer loodrechte doorsneden.
-- **Maximum Intensity Projection (MIP) slicing**: exporteer MIP-slices in alle drie de assen voor verdere analyse.
+Het project implementeert verschillende 3D visualisatietechnieken zoals virtual endoscopy, cross-sections en maximum intensity projection (MIP). Gebruikers kunnen interactief door bloedvaten navigeren, takken volgen en data in real-time verkennen.
 
-De applicatie laadt `.vti`-segmentatie- en skeletbestanden en rendert deze interactief in de browser, wat het nuttig maakt voor medisch onderzoek en onderwijs.
+De applicatie is gebouwd met [VTK.js](https://kitware.github.io/vtk-js/) en [Vite](https://vitejs.dev/) en draait volledig in de browser, waardoor complexe medische datasets op een interactieve manier kunnen worden onderzocht en geanalyseerd.

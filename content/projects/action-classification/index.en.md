@@ -7,4 +7,6 @@ tags: ["machine-learning", "python", "jupyter", "classification"]
 
 {{< github repo="wiebe-vandendriessche/action-classification" showThumbnail=false >}}
 
-A machine learning project focused on classifying human actions from video or sensor data. The work is structured across two sprints and implemented in Jupyter Notebooks, covering data exploration, model training, and evaluation.
+Machine learning project developed during my master’s course on Machine Learning. The goal was to classify human actions from video data recorded from students performing predefined activities.
+
+The project covers both classical machine learning techniques and introductory deep learning methods. It includes full implementation in Jupyter Notebooks, with data exploration, feature engineering, model training using multiple approaches, and systematic evaluation and comparison of results.
