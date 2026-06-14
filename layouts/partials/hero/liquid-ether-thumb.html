@@ -75,21 +75,4 @@
   </div>
 {{ end }}
 
-<div class="fixed inset-x-0 top-0 h-[1000px] single_hero_background nozoom">
-  {{ partial "liquid-ether-canvas.html" (dict "class" "absolute inset-0 w-full h-full") }}
-</div>
-
-{{ if $shouldBlur | default false }}
-  <div
-    id="background-blur"
-    class="fixed opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-xl bg-neutral-100/75 dark:bg-neutral-800/60"></div>
-  {{ $backgroundBlur := resources.Get "js/background-blur.js" }}
-  {{ $backgroundBlur = $backgroundBlur | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script
-    type="text/javascript"
-    src="{{ $backgroundBlur.RelPermalink }}"
-    integrity="{{ $backgroundBlur.Data.Integrity }}"
-    data-blur-id="background-blur"></script>
-{{ end }}
-
-{{ partial "liquid-ether-script.html" (dict "context" . "canvasId" "liquid-ether-canvas") }}
+{{ partial "liquid-ether-bg.html" (dict "context" . "blur" $shouldBlur) }}
