@@ -7,7 +7,8 @@ cascade:
   showPagination: true
   showTaxonomies: true
   showHero: true
-  heroStyle: basic
+  heroStyle: liquid-ether-thumb
+  layoutBackgroundBlur:	true
 view: "card"
 showCards: true
 orderByWeight: false

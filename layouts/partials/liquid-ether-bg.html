@@ -1,0 +1,33 @@
+{{/*
+  Renders the fixed liquid-ether background, an optional blur overlay, and the liquid-ether script.
+
+  Parameters:
+    context       the page context (required)
+    wrapperClass  CSS class(es) for the outer fixed div
+                 (default: "fixed inset-x-0 top-0 h-[1000px] single_hero_background nozoom")
+    canvasClass   CSS class(es) for the canvas element
+                 (default: "absolute inset-0 w-full h-full")
+    blur          bool, whether to render the backdrop-blur overlay (default: false)
+*/}}
+{{ $ctx := .context }}
+{{ $wrapperClass := .wrapperClass | default "fixed inset-x-0 top-0 h-[1000px] single_hero_background nozoom" }}
+{{ $canvasClass := .canvasClass | default "absolute inset-0 w-full h-full" }}
+
+<div class="{{ $wrapperClass }}">
+  {{ partial "liquid-ether-canvas.html" (dict "class" $canvasClass) }}
+</div>
+
+{{ if .blur }}
+  <div
+    id="background-blur"
+    class="fixed opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-xl bg-neutral-100/75 dark:bg-neutral-800/60"></div>
+  {{ $backgroundBlur := resources.Get "js/background-blur.js" }}
+  {{ $backgroundBlur = $backgroundBlur | resources.Minify | resources.Fingerprint ($ctx.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    type="text/javascript"
+    src="{{ $backgroundBlur.RelPermalink }}"
+    integrity="{{ $backgroundBlur.Data.Integrity }}"
+    data-blur-id="background-blur"></script>
+{{ end }}
+
+{{ partial "liquid-ether-script.html" (dict "context" $ctx "canvasId" "liquid-ether-canvas") }}
