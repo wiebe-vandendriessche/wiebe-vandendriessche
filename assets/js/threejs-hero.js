@@ -318,9 +318,6 @@ renderer.domElement.addEventListener("pointermove", (event) => {
   }
   if (dragging) {
     setHovered(true);
-    if (!modelHovered) {
-      resetInteractionState();
-    }
   }
 });
 
@@ -391,8 +388,6 @@ const animate = () => {
       if (!modelHovered) {
         aligning = false;
       }
-    } else if (!modelHovered) {
-      resetInteractionState();
     }
 
     let baseYaw = modelGroup.rotation.y;
