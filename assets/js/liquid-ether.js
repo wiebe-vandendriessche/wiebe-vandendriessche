@@ -386,7 +386,7 @@ class MouseClass {
   handleTouch(event) {
     if (!event.touches || event.touches.length !== 1 || !this.container) return;
     const t = event.touches[0];
-    this.updateFromClient(t.pageX, t.pageY);
+    this.updateFromClient(t.clientX, t.clientY);
     if (this.onInteract) this.onInteract();
   }
 
