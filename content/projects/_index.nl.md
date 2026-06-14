@@ -8,6 +8,7 @@ cascade:
   showTaxonomies: true
   showHero: true
   heroStyle: liquid-ether-thumb
+  layoutBackgroundBlur:	true
 view: "card"
 showCards: true
 orderByWeight: false

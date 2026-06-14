@@ -9,11 +9,30 @@
   <div id="hero" class="h-[150px] md:h-[200px]"></div>
 {{ end }}
 
+{{ $scope := .Scratch.Get "scope" }}
+{{ $shouldBlur := $.Params.layoutBackgroundBlur | default (or
+  (and ($.Site.Params.article.layoutBackgroundBlur | default true) (eq $scope "single"))
+  (and ($.Site.Params.list.layoutBackgroundBlur | default true) (eq $scope "list"))
+  (and ($.Site.Params.taxonomy.layoutBackgroundBlur | default true) (eq $scope "terms"))
+  (and ($.Site.Params.term.layoutBackgroundBlur | default true) (eq $scope "term"))
+  )
+}}
+
 <div class="fixed inset-x-0 top-0 h-[1000px] single_hero_background nozoom">
   {{ partial "liquid-ether-canvas.html" (dict "class" "absolute inset-0 w-full h-full") }}
-  <div
-    class="absolute inset-0 bg-gradient-to-t from-neutral dark:from-neutral-800 to-transparent mix-blend-normal"></div>
-  <div
-    class="absolute inset-0 opacity-60 bg-gradient-to-t from-neutral dark:from-neutral-800 to-neutral-100 dark:to-neutral-800 mix-blend-normal"></div>
 </div>
+
+{{ if $shouldBlur | default false }}
+  <div
+    id="background-blur"
+    class="fixed opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-xl bg-neutral-100/75 dark:bg-neutral-800/60"></div>
+  {{ $backgroundBlur := resources.Get "js/background-blur.js" }}
+  {{ $backgroundBlur = $backgroundBlur | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  <script
+    type="text/javascript"
+    src="{{ $backgroundBlur.RelPermalink }}"
+    integrity="{{ $backgroundBlur.Data.Integrity }}"
+    data-blur-id="background-blur"></script>
+{{ end }}
+
 {{ partial "liquid-ether-script.html" (dict "context" . "canvasId" "liquid-ether-canvas") }}
