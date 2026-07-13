@@ -64,7 +64,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
 
 [article]
   showDate = true
-  showViews = false
+  showViews = true
   showLikes = false
   showDateOnlyInArticle = false
   showDateUpdated = false
@@ -148,13 +148,13 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   cardViewScreenWidth = false
 
 [firebase]
-  # apiKey = "XXXXXX"
-  # authDomain = "XXXXXX"
-  # projectId = "XXXXXX"
-  # storageBucket = "XXXXXX"
-  # messagingSenderId = "XXXXXX"
-  # appId = "XXXXXX"
-  # measurementId = "XXXXXX"
+  apiKey = "AIzaSyBEQwUZ81aXXhkD-w1vRfSrSqb1jwpZFb0"
+  authDomain = "wiebe-vandendriessche.firebaseapp.com"
+  projectId = "wiebe-vandendriessche"
+  storageBucket = "wiebe-vandendriessche.firebasestorage.app"
+  messagingSenderId = "131661077180"
+  appId = "1:131661077180:web:bf7c74b50765243e284eb9"
+  measurementId = "G-GESCHG5DS2"
 
 [fathomAnalytics]
   # site = "ABC12345"
