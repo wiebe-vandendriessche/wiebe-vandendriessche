@@ -81,3 +81,8 @@
   url = "/blog/index.xml"
   weight = 20
   pre = "rss"
+
+[[footer]]
+  name = "Privacybeleid"
+  pageRef = "privacy-policy"
+  weight = 30
