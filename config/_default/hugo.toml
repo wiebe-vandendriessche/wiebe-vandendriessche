@@ -3,7 +3,7 @@
 # https://blowfish.page/docs/getting-started/
 
 theme = "blowfish" # UNCOMMENT THIS LINE
-# baseURL = "https://wiebevandendriessche.tech/"
+baseURL = "https://wiebevandendriessche.tech/"
 defaultContentLanguage = "en"
 
 # pluralizeListTitles = "true" # hugo function useful for non-english languages, find out more in  https://gohugo.io/getting-started/configuration/#pluralizelisttitles
@@ -16,7 +16,7 @@ buildFuture = false
 
 enableEmoji = true
 
-googleAnalytics = "G-GESCHG5DS2"
+# googleAnalytics = "G-XXXXX"
 
 [pagination]
   pagerSize = 100
