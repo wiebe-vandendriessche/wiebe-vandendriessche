@@ -133,7 +133,6 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   cardView = false
 
 [term]
-
   showHero = true
   heroStyle = "liquid-ether" # valid options: basic, big, background, thumbAndBackground
   layoutBackgroundBlur = true
@@ -191,3 +190,4 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
 
 [advertisement]
   # adsense = ""
+  
