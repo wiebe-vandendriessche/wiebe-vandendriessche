@@ -3,6 +3,8 @@ title: "Over mij"
 description: "Algemene informatie over mezelf"
 showDate: false
 showTableOfContents: false
+showViews: false
+showLikes: false
 ---
 Hey, ik ben Wiebe. Net afgestudeerd als ingenieur in de informatietechnologie, en ondertussen gestart aan een doctoraat bij [IDLab](https://idlab.ugent.be/home) ([Universiteit Gent](https://www.ugent.be/), [imec](https://www.imec.be)), binnen team [DISCOVER](https://idlab.ugent.be/research-teams/discover). Mijn onderzoek gaat over de beveiliging van AI in software supply chains. Concreet betekent dit dat ik mijn dagen doorbreng met nadenken over alle manieren waarop AI-systemen mis kunnen gaan nog vóór ze gedeployed worden, en daarna probeer mensen te overtuigen dat ze zich daar iets van moeten aantrekken.
 
