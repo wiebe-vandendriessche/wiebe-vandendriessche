@@ -18,9 +18,6 @@ const updateControls = (enabled) => {
     button.setAttribute("aria-pressed", String(enabled));
     button.setAttribute("aria-label", label);
     button.setAttribute("title", label);
-    button.querySelectorAll("[data-interactive-effects-icon]").forEach((icon) => {
-      icon.classList.toggle("hidden", icon.dataset.interactiveEffectsIcon !== (enabled ? "enabled" : "disabled"));
-    });
   });
 };
 
