@@ -56,9 +56,9 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(root.clientWidth, root.clientHeight);
+renderer.domElement.classList.add("threejs-hero-canvas");
+renderer.domElement.classList.toggle("threejs-hero-canvas--disabled", !interactionEnabled);
 container.appendChild(renderer.domElement);
-renderer.domElement.style.touchAction = interactionEnabled ? "none" : "auto";
-renderer.domElement.style.pointerEvents = interactionEnabled ? "auto" : "none";
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.22);
 scene.add(ambientLight);
@@ -194,7 +194,8 @@ const alignModelToCamera = () => {
 };
 
 const setHovered = (nextHovered) => {
-  document.body.style.cursor = interactionEnabled ? (dragging ? "grabbing" : nextHovered ? "pointer" : "") : "";
+  document.body.classList.toggle("threejs-hero-dragging", interactionEnabled && dragging);
+  document.body.classList.toggle("threejs-hero-hovering", interactionEnabled && !dragging && nextHovered);
 };
 
 const resetInteractionState = () => {
@@ -213,55 +214,26 @@ const handleInteractionChange = (event) => {
     pointerY = 0;
     resetInteractionState();
   }
-  renderer.domElement.style.touchAction = interactionEnabled ? "none" : "auto";
-  renderer.domElement.style.pointerEvents = interactionEnabled ? "auto" : "none";
+  renderer.domElement.classList.toggle("threejs-hero-canvas--disabled", !interactionEnabled);
 };
 
 window.addEventListener("interactive-effects-change", handleInteractionChange);
-
-const ensureLoaderStyles = () => {
-  if (document.getElementById("threejs-hero-loader-style")) return;
-  const style = document.createElement("style");
-  style.id = "threejs-hero-loader-style";
-  style.textContent = `
-    @keyframes threejsHeroSpin {
-      to { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
-};
 
 let loaderOverlay = null;
 
 const setLoaderVisible = (visible, failed = false) => {
   if (visible) {
     if (!loaderOverlay) {
-      ensureLoaderStyles();
-      if (getComputedStyle(root).position === "static") {
-        root.style.position = "relative";
-      }
-
       loaderOverlay = document.createElement("div");
-      loaderOverlay.style.position = "absolute";
-      loaderOverlay.style.inset = "0";
-      loaderOverlay.style.display = "grid";
-      loaderOverlay.style.placeItems = "center";
-      loaderOverlay.style.pointerEvents = "none";
-      loaderOverlay.style.zIndex = "3";
+      loaderOverlay.className = "threejs-hero-loader";
 
       const spinner = document.createElement("div");
-      spinner.style.width = "34px";
-      spinner.style.height = "34px";
-      spinner.style.borderRadius = "9999px";
-      spinner.style.border = "3px solid rgba(148, 163, 184, 0.3)";
-      spinner.style.borderTopColor = "rgba(59, 130, 246, 0.95)";
-      spinner.style.animation = "threejsHeroSpin 0.8s linear infinite";
+      spinner.className = "threejs-hero-loader-spinner";
       loaderOverlay.appendChild(spinner);
 
       root.appendChild(loaderOverlay);
     }
-    loaderOverlay.style.opacity = "1";
-    loaderOverlay.style.visibility = "visible";
+    loaderOverlay.classList.remove("threejs-hero-loader--hidden");
     return;
   }
 
@@ -272,8 +244,7 @@ const setLoaderVisible = (visible, failed = false) => {
     return;
   }
 
-  loaderOverlay.style.opacity = "0";
-  loaderOverlay.style.transition = "opacity 180ms ease";
+  loaderOverlay.classList.add("threejs-hero-loader--hidden");
   window.setTimeout(() => {
     if (!loaderOverlay) return;
     loaderOverlay.remove();

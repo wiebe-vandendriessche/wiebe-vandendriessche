@@ -1,18 +1,12 @@
 {{ define "main" }}
   <section class="relative pb-4 md:pb-8 select-none">
     <div class="mx-auto w-full max-w-7xl">
-      <div id="threejs-hero" class="relative w-full" style="height: 400px;">
+      <div id="threejs-hero" class="relative w-full">
         <div id="threejs-canvas" class="absolute inset-0"></div>
       </div>
     </div>
   </section>
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js"
-      }
-    }
-  </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js"}}</script>
   {{ $threejsHero := resources.Get "js/threejs-hero.js" }}
   {{ $threejsHero = $threejsHero | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
   <script
