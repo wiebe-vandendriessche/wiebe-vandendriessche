@@ -5,6 +5,13 @@
 }
 </style>
 
+{{ $interactiveEffects := resources.Get "js/interactive-effects.js" }}
+{{ $interactiveEffects = $interactiveEffects | resources.Minify | resources.Fingerprint (.Params.fingerprintAlgorithm | default "sha512") }}
+<script
+    type="text/javascript"
+    src="{{ $interactiveEffects.RelPermalink }}"
+    integrity="{{ $interactiveEffects.Data.Integrity }}"></script>
+
 <script
     src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
     crossorigin="anonymous"

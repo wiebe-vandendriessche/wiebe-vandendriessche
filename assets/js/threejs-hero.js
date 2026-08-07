@@ -24,6 +24,7 @@ let pointerDown = false;
 let pointerX = 0;
 let pointerY = 0;
 let modelHovered = false;
+let interactionEnabled = document.documentElement.dataset.interactiveEffects !== "off";
 
 const config = {
   scale: 1.5,
@@ -56,7 +57,8 @@ renderer.toneMappingExposure = 1.0;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(root.clientWidth, root.clientHeight);
 container.appendChild(renderer.domElement);
-renderer.domElement.style.touchAction = "none";
+renderer.domElement.style.touchAction = interactionEnabled ? "none" : "auto";
+renderer.domElement.style.pointerEvents = interactionEnabled ? "auto" : "none";
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.22);
 scene.add(ambientLight);
@@ -171,7 +173,7 @@ const updatePointerFromEvent = (event) => {
 };
 
 const raycastModel = () => {
-  if (!modelGroup || !colliderMesh) return false;
+  if (!interactionEnabled || !modelGroup || !colliderMesh) return false;
   raycaster.setFromCamera(pointer, camera);
   return raycaster.intersectObject(colliderMesh, true).length > 0;
 };
@@ -192,7 +194,7 @@ const alignModelToCamera = () => {
 };
 
 const setHovered = (nextHovered) => {
-  document.body.style.cursor = dragging ? "grabbing" : nextHovered ? "pointer" : "";
+  document.body.style.cursor = interactionEnabled ? (dragging ? "grabbing" : nextHovered ? "pointer" : "") : "";
 };
 
 const resetInteractionState = () => {
@@ -202,6 +204,20 @@ const resetInteractionState = () => {
   modelHovered = false;
   setHovered(false);
 };
+
+const handleInteractionChange = (event) => {
+  interactionEnabled = event.detail?.enabled !== false;
+  if (!interactionEnabled) {
+    pointer.set(2, 2);
+    pointerX = 0;
+    pointerY = 0;
+    resetInteractionState();
+  }
+  renderer.domElement.style.touchAction = interactionEnabled ? "none" : "auto";
+  renderer.domElement.style.pointerEvents = interactionEnabled ? "auto" : "none";
+};
+
+window.addEventListener("interactive-effects-change", handleInteractionChange);
 
 const ensureLoaderStyles = () => {
   if (document.getElementById("threejs-hero-loader-style")) return;
@@ -306,6 +322,7 @@ loader.load(
 );
 
 renderer.domElement.addEventListener("pointermove", (event) => {
+  if (!interactionEnabled) return;
   updatePointerFromEvent(event);
   modelHovered = raycastModel();
   if (!pointerDown && !dragging) {
@@ -329,6 +346,7 @@ renderer.domElement.addEventListener("pointerleave", () => {
 });
 
 renderer.domElement.addEventListener("pointerdown", (event) => {
+  if (!interactionEnabled) return;
   updatePointerFromEvent(event);
   pointerDown = true;
   modelHovered = raycastModel();
@@ -381,7 +399,7 @@ const animate = () => {
   etherRimLight.intensity = baseLightIntensity.rim * shimmerC;
 
   if (modelGroup) {
-    modelHovered = raycastModel();
+    modelHovered = interactionEnabled && raycastModel();
 
     if (!dragging) {
       setHovered(modelHovered);
@@ -413,7 +431,7 @@ const animate = () => {
       baseYaw += (idleTargetYaw - baseYaw) * 0.08;
     }
 
-    const canTilt = dragging && !aligning;
+    const canTilt = interactionEnabled && dragging && !aligning;
     const targetTiltX = canTilt ? pointerY * config.hoverTilt : 0;
     const targetTiltZ = canTilt ? -pointerX * config.hoverTilt : 0;
     const targetTiltYaw = canTilt ? pointerX * config.hoverTiltY : 0;
