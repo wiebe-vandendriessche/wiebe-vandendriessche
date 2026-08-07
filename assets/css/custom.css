@@ -174,6 +174,14 @@ ol.border-s-2 > li > div > div:first-child svg {
     flex-shrink: 0;
 }
 
+html[data-interactive-effects="on"] [data-interactive-effects-icon="enabled"] {
+    display: inline;
+}
+
+html[data-interactive-effects="on"] [data-interactive-effects-icon="disabled"] {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .pdf-viewer-canvas-wrap {
         height: min(72vh, var(--pdf-viewer-height, 900px));

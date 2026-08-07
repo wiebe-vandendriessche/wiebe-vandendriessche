@@ -1073,8 +1073,16 @@ class LiquidEtherManager {
   }
 
   resize() {
+    const previousWidth = this.common.width;
+    const previousPixelRatio = this.common.pixelRatio;
     this.common.resize();
-    if (this.output) this.output.resize();
+
+    const widthChanged = this.common.width !== previousWidth;
+    const pixelRatioChanged = this.common.pixelRatio !== previousPixelRatio;
+    const isMobileViewport = Math.min(window.innerWidth, window.innerHeight) < 768;
+    if (this.output && (!isMobileViewport || widthChanged || pixelRatioChanged)) {
+      this.output.resize();
+    }
   }
 
   handleInteractionChange(event) {
