@@ -239,9 +239,9 @@ const options = {
   isViscous: false,
   viscous: 30,
   iterationsViscous: 32,
-  iterationsPoisson: 32,
+  iterationsPoisson: 12,
   dt: 0.014,
-  BFECC: true,
+  BFECC: false,
   resolution: 0.4,
   resolutionMobile: 0.42,
   resolutionMinDim: 256,
@@ -272,7 +272,6 @@ class CommonClass {
   init(container, existingCanvas) {
     this.container = container;
     this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
-    this.resize();
     this.renderer = new THREE.WebGLRenderer({
       canvas: existingCanvas,
       antialias: false,
@@ -282,17 +281,22 @@ class CommonClass {
     this.renderer.autoClear = false;
     this.renderer.setClearColor(new THREE.Color(0x000000), 0);
     this.renderer.setPixelRatio(this.pixelRatio);
-    this.renderer.setSize(this.width, this.height, false);
     const el = this.renderer.domElement;
     el.style.width = "100%";
     el.style.height = "100%";
     el.style.display = "block";
+    this.resize();
     this.clock = new THREE.Clock();
     this.clock.start();
   }
 
   resize() {
     if (!this.container) return;
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
+    if (pixelRatio !== this.pixelRatio) {
+      this.pixelRatio = pixelRatio;
+      if (this.renderer) this.renderer.setPixelRatio(pixelRatio);
+    }
     const rect = this.container.getBoundingClientRect();
     this.width = Math.max(1, Math.floor(rect.width));
     this.height = Math.max(1, Math.floor(rect.height));
@@ -313,6 +317,7 @@ class MouseClass {
     this.coordsOld = new THREE.Vector2();
     this.diff = new THREE.Vector2();
     this.container = null;
+    this.interactive = root.dataset.interactiveEffects !== "off";
     this.hasUserControl = false;
     this.isAutoActive = false;
     this.autoIntensity = 2;
@@ -331,6 +336,16 @@ class MouseClass {
     window.addEventListener("mousemove", this.onMouseMove, { passive: true });
     window.addEventListener("touchstart", this.onTouch, { passive: true });
     window.addEventListener("touchmove", this.onTouch, { passive: true });
+  }
+
+  setInteractive(enabled) {
+    this.interactive = enabled;
+    if (!enabled) {
+      this.hasUserControl = false;
+      this.takeoverActive = false;
+      this.diff.set(0, 0);
+      this.coordsOld.copy(this.coords);
+    }
   }
 
   dispose() {
@@ -352,12 +367,13 @@ class MouseClass {
   }
 
   updateFromClient(x, y) {
+    if (!this.interactive) return;
     this.setCoords(x, y);
     this.hasUserControl = true;
   }
 
   handleMouseMove(event) {
-    if (!this.container) return;
+    if (!this.interactive || !this.container) return;
     const rect = this.container.getBoundingClientRect();
     const inside =
       event.clientX >= rect.left &&
@@ -384,7 +400,7 @@ class MouseClass {
   }
 
   handleTouch(event) {
-    if (!event.touches || event.touches.length !== 1 || !this.container) return;
+    if (!this.interactive || !event.touches || event.touches.length !== 1 || !this.container) return;
     const t = event.touches[0];
     this.updateFromClient(t.clientX, t.clientY);
     if (this.onInteract) this.onInteract();
@@ -1014,6 +1030,7 @@ class LiquidEtherManager {
 
     this.onResize = this.resize.bind(this);
     this.onVisibility = this.handleVisibility.bind(this);
+    this.onInteractionChange = this.handleInteractionChange.bind(this);
     this.loop = this.loop.bind(this);
 
     this.common.init(container, canvasEl);
@@ -1052,11 +1069,21 @@ class LiquidEtherManager {
 
     window.addEventListener("resize", this.onResize);
     document.addEventListener("visibilitychange", this.onVisibility);
+    window.addEventListener("interactive-effects-change", this.onInteractionChange);
   }
 
   resize() {
     this.common.resize();
     if (this.output) this.output.resize();
+  }
+
+  handleInteractionChange(event) {
+    const enabled = event.detail?.enabled !== false;
+    this.mouse.setInteractive(enabled);
+    if (!enabled) {
+      if (this.autoDriver) this.autoDriver.forceStop();
+      this.lastUserInteraction = performance.now() - options.autoResumeDelay;
+    }
   }
 
   handleVisibility() {
@@ -1110,6 +1137,7 @@ class LiquidEtherManager {
     this.pause();
     window.removeEventListener("resize", this.onResize);
     document.removeEventListener("visibilitychange", this.onVisibility);
+    window.removeEventListener("interactive-effects-change", this.onInteractionChange);
     this.mouse.dispose();
     if (this.output) this.output.dispose();
     if (this.common.renderer) this.common.renderer.dispose();
