@@ -5,4 +5,4 @@ showLikes: false
 cascade:
   showLikes: true
 ---
-Dingen die ik interessant, raar of grappig genoeg vind om er een blogpost over te schrijven.
+Dingen die ik interessant genoeg vind om over te schrijven.

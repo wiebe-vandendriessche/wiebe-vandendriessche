@@ -5,4 +5,4 @@ showLikes: false
 cascade:
   showLikes: true
 ---
-Things I found interesting, weird, or funny enough to actually write down.
+Things I found interesting enough to actually write down.
