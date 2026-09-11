@@ -18,7 +18,7 @@ enableStyledScrollbar = true
 replyByEmail = false
 
 # mainSections = ["section1", "section2"]
-# robots = ""
+robots = "index, follow"
 
 disableImageOptimization = false
 disableImageOptimizationMD = false
@@ -31,9 +31,9 @@ defaultBackgroundImage = "img/background/igent-tower.jpg" # used as default for 
 hotlinkFeatureImage = false
 # imagePosition = "50% 50%"
 
-# highlightCurrentMenuArea = true
-# smartTOC = true
-# smartTOCHideUnfocusedChildren = true
+highlightCurrentMenuArea = true
+smartTOC = true
+smartTOCHideUnfocusedChildren = true
 
 fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384", "sha256"
 
@@ -185,7 +185,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   # fediverse = ""
 
 [rssnext]
-  feedId = "wiebe-vandendriessche-blog"
+  feedId = "wiebe-vandendriessche"
   userId = "wiebe-vandendriessche"
 
 [advertisement]
