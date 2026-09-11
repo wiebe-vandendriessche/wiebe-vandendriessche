@@ -1,4 +1,4 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js";
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.0/+esm";
 
 const scriptEl =
   document.currentScript ||
@@ -286,8 +286,7 @@ class CommonClass {
     el.style.height = "100%";
     el.style.display = "block";
     this.resize();
-    this.clock = new THREE.Clock();
-    this.clock.start();
+    this.clock = new THREE.Timer();
   }
 
   resize() {
@@ -306,6 +305,7 @@ class CommonClass {
 
   update() {
     if (!this.clock) return;
+    this.clock.update();
     this.delta = this.clock.getDelta();
     this.time += this.delta;
   }
@@ -808,11 +808,6 @@ class Simulation {
     this.init();
   }
 
-  getFloatType() {
-    const isIOS = /(iPad|iPhone|iPod)/i.test(navigator.userAgent);
-    return isIOS ? THREE.HalfFloatType : THREE.FloatType;
-  }
-
   calcSize() {
     const dpr = this.common.pixelRatio || 1;
     const baseW = this.options.resolution * this.common.width * dpr;
@@ -829,9 +824,13 @@ class Simulation {
   }
 
   createAllFBO() {
-    const type = this.getFloatType();
+    // RGBA16F rather than RGBA32F: the ExternalForce pass blends additively into
+    // vel_1, and blending into a 32-bit float target needs the optional
+    // EXT_float_blend extension (implicitly enabled in WebGL2, which Firefox
+    // warns about, and absent on some Android GPUs). Blending into 16F is
+    // guaranteed, and halving the bandwidth across these targets is free speed.
     const opts = {
-      type,
+      type: THREE.HalfFloatType,
       depthBuffer: false,
       stencilBuffer: false,
       minFilter: THREE.LinearFilter,

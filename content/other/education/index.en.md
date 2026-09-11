@@ -5,9 +5,6 @@ weight: 1
 showDate: false
 showTableOfContents: false
 showHero: true
-heroStyle: "background"
-layoutBackgroundBlur: true
-layoutBackgroundHeaderSpace: true 
 ---
 
 {{< timeline >}}

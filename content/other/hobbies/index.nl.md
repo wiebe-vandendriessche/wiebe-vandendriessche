@@ -5,9 +5,6 @@ weight: 3
 showDate: false
 showTableOfContents: true
 showHero: true
-heroStyle: "background"
-layoutBackgroundBlur: true
-layoutBackgroundHeaderSpace: true 
 ---
 
 ## Creatief

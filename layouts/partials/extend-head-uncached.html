@@ -1,11 +1,19 @@
 {{ if .Page.HasShortcode "pdfviewer" }}
+  {{/* pdf.js 4+ ships only as an ES module. The first tag's fetch is SRI-checked;
+    the second statically imports the same URL (module map dedupes, no re-fetch)
+    just to expose it as window.pdfjsLib for the classic pdf-viewer.js script. */}}
   {{ $pdfViewer := resources.Get "js/pdf-viewer.js" }}
   {{ $pdfViewer = $pdfViewer | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
   <script
+    type="module"
     defer
-    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
-    integrity="sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ=="
+    src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.624/pdf.min.mjs"
+    integrity="sha512-lBBnWLE+AK5c3yqrl4rxsd5Ku0LS02jDApZDsH70IlVxuGL8xwQGbz/I132Xoo2k3tP664zj6Qys/VMNO5vexg=="
     crossorigin="anonymous"
     referrerpolicy="no-referrer"></script>
+  <script type="module" defer>
+    import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.624/pdf.min.mjs";
+    window.pdfjsLib = pdfjsLib;
+  </script>
   <script defer src="{{ $pdfViewer.RelPermalink }}" integrity="{{ $pdfViewer.Data.Integrity }}"></script>
 {{ end }}

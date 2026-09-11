@@ -5,9 +5,6 @@ weight: 2
 showDate: false
 showTableOfContents: true
 showHero: true
-heroStyle: "background"
-layoutBackgroundBlur: true
-layoutBackgroundHeaderSpace: true 
 ---
 
 ## Community & Academische Betrokkenheid

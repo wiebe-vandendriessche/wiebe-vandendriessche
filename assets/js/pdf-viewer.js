@@ -1,4 +1,4 @@
-const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.624/pdf.worker.min.mjs";
 
 const createFallbackLink = (url) => {
   const link = document.createElement("a");
@@ -123,7 +123,7 @@ const initializeViewer = (root) => {
   });
 
   updateMeta();
-  window.pdfjsLib.getDocument(src).promise
+  window.pdfjsLib.getDocument({ url: src }).promise
     .then((document) => {
       pdfDoc = document;
       pageCount = document.numPages;
