@@ -6,9 +6,7 @@
       </div>
     </div>
   </section>
-  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js"}}</script>
-  {{ $threejsHero := resources.Get "js/threejs-hero.js" }}
-  {{ $threejsHero = $threejsHero | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  {{ $threejsHero := resources.Get "js/threejs-hero.js" | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
   <script
     type="module"
     src="{{ $threejsHero.RelPermalink }}"

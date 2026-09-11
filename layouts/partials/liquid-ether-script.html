@@ -2,8 +2,7 @@
   Loads liquid-ether.js bound to a canvas element.
   Usage: partial "liquid-ether-script.html" (dict "context" . "canvasId" "liquid-ether-canvas")
 */}}
-{{ $liquidEther := resources.Get "js/liquid-ether.js" }}
-{{ $liquidEther = $liquidEther | resources.Minify | resources.Fingerprint (.context.Site.Params.fingerprintAlgorithm | default "sha512") }}
+{{ $liquidEther := resources.Get "js/liquid-ether.js" | resources.Minify | resources.Fingerprint (.context.Site.Params.fingerprintAlgorithm | default "sha512") }}
 <script
   type="module"
   src="{{ $liquidEther.RelPermalink }}"
