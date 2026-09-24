@@ -178,6 +178,13 @@ body.threejs-hero-dragging {
     cursor: grabbing;
 }
 
+/* The drag continues outside the canvas, so keep the grab cursor and stop the
+   pointer from selecting text or hovering links while the model is being steered. */
+body.threejs-hero-dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
+}
+
 .threejs-hero-loader {
     position: absolute;
     inset: 0;

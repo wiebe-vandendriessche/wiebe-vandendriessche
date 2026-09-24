@@ -23,6 +23,7 @@ let dragging = false;
 let pointerDown = false;
 let pointerX = 0;
 let pointerY = 0;
+let activePointerId = null;
 let modelHovered = false;
 let interactionEnabled = document.documentElement.dataset.interactiveEffects !== "off";
 
@@ -40,6 +41,7 @@ const config = {
   colliderMargin: 1.28,
   dampTilt: 0.18,
   dampScale: 0.12,
+  dragReach: 1.75,
 };
 
 const etherLightConfig = {
@@ -164,12 +166,21 @@ const syncAmbient = () => {
   renderer.toneMappingExposure = isDark ? 1.0 : 1.03;
 };
 
+// Inside the canvas this is the identity, so hover feel is unchanged. Outside it keeps
+// responding with diminishing returns instead of running away or pinning to the edge.
+const softLimit = (value) => {
+  const magnitude = Math.abs(value);
+  if (magnitude <= 1) return value;
+  const reach = config.dragReach;
+  return Math.sign(value) * (1 + (reach - 1) * (1 - Math.exp(-(magnitude - 1))));
+};
+
 const updatePointerFromEvent = (event) => {
   const rect = renderer.domElement.getBoundingClientRect();
   pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  pointerX = pointer.x;
-  pointerY = pointer.y;
+  pointerX = softLimit(pointer.x);
+  pointerY = softLimit(pointer.y);
 };
 
 const raycastModel = () => {
@@ -198,7 +209,17 @@ const setHovered = (nextHovered) => {
   document.body.classList.toggle("threejs-hero-hovering", interactionEnabled && !dragging && nextHovered);
 };
 
+const releaseActivePointer = () => {
+  if (activePointerId === null) return;
+  const id = activePointerId;
+  activePointerId = null;
+  if (renderer.domElement.hasPointerCapture?.(id)) {
+    renderer.domElement.releasePointerCapture(id);
+  }
+};
+
 const resetInteractionState = () => {
+  releaseActivePointer();
   pointerDown = false;
   dragging = false;
   aligning = false;
@@ -294,22 +315,24 @@ loader.load(
 
 renderer.domElement.addEventListener("pointermove", (event) => {
   if (!interactionEnabled) return;
+  if (activePointerId !== null && event.pointerId !== activePointerId) return;
   updatePointerFromEvent(event);
-  modelHovered = raycastModel();
-  if (!pointerDown && !dragging) {
-    setHovered(modelHovered);
-  }
-  if (pointerDown && !dragging && modelHovered) {
-    dragging = true;
-    setHovered(true);
-    alignModelToCamera();
-  }
+
   if (dragging) {
+    // Pointer is captured, so it may be well outside the canvas; keep steering the model.
     setHovered(true);
+    return;
+  }
+
+  modelHovered = raycastModel();
+  if (!pointerDown) {
+    setHovered(modelHovered);
   }
 });
 
-renderer.domElement.addEventListener("pointerleave", () => {
+renderer.domElement.addEventListener("pointerleave", (event) => {
+  // While dragging the pointer is captured and is allowed to roam the whole page.
+  if (dragging || (activePointerId !== null && event.pointerId === activePointerId)) return;
   pointer.set(2, 2);
   pointerX = 0;
   pointerY = 0;
@@ -324,7 +347,14 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
   dragging = modelHovered;
   setHovered(modelHovered);
   if (dragging) {
-    setHovered(true);
+    // Capture routes every later move/up to the canvas, even outside its bounds.
+    activePointerId = event.pointerId;
+    try {
+      renderer.domElement.setPointerCapture(event.pointerId);
+    } catch (error) {
+      activePointerId = null;
+    }
+    event.preventDefault();
     alignModelToCamera();
   }
 });
@@ -334,6 +364,10 @@ window.addEventListener("pointerup", () => {
 });
 
 window.addEventListener("pointercancel", () => {
+  resetInteractionState();
+});
+
+window.addEventListener("blur", () => {
   resetInteractionState();
 });
 
@@ -370,7 +404,7 @@ const animate = () => {
   etherRimLight.intensity = baseLightIntensity.rim * shimmerC;
 
   if (modelGroup) {
-    modelHovered = interactionEnabled && raycastModel();
+    modelHovered = interactionEnabled && !dragging && raycastModel();
 
     if (!dragging) {
       setHovered(modelHovered);
