@@ -1,31 +1,11 @@
 {{ define "main" }}
   <section class="relative pb-4 md:pb-8 select-none">
     <div class="mx-auto w-full max-w-7xl">
-      <div id="threejs-hero" class="relative w-full">
-        <div id="threejs-canvas" class="absolute inset-0"></div>
-      </div>
+      {{/* The avatar is drawn into the ether's canvas (home.js); this empty box
+           only reserves its space and receives the pointer for hover and drag. */}}
+      <div id="threejs-hero" class="relative w-full"></div>
     </div>
   </section>
-  {{/* js.Build bundles three.js + GLTFLoader from node_modules: one three instance
-       (the old CDN GLTFLoader inlined a second copy), no third-party script origin,
-       and an SRI hash that covers every byte the browser runs. No resources.Minify --
-       esbuild already minified. */}}
-  {{ $heroOpts := dict
-    "targetPath" "js/threejs-hero.js"
-    "format" "esm"
-    "target" "es2020"
-    "minify" true
-    "sourceMap" (cond hugo.IsServer "inline" "")
-  }}
-  {{ $threejsHero := resources.Get "js/threejs-hero.js" | js.Build $heroOpts | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script
-    type="module"
-    src="{{ $threejsHero.RelPermalink }}"
-    integrity="{{ $threejsHero.Data.Integrity }}"
-    data-threejs-hero
-    data-container-id="threejs-canvas"
-    data-root-id="threejs-hero"
-    data-model-url="{{ (resources.Get "models/avatar2export.opt.glb").RelPermalink }}"></script>
 
   {{ $partial := print "home/" .Site.Params.homepage.layout ".html" }}
   {{ if templates.Exists ( printf "partials/%s" $partial ) }}

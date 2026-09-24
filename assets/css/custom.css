@@ -160,14 +160,20 @@ html.dark .research-meta span {
     position: relative;
 }
 
-.threejs-hero-canvas {
-    pointer-events: auto;
-    touch-action: none;
+/* The ether's canvas fills the viewport behind the page. On the homepage the avatar
+   is drawn into it too, inside #threejs-hero's box, which only takes the pointer. */
+#liquid-ether-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-.threejs-hero-canvas--disabled {
-    pointer-events: none;
-    touch-action: auto;
+/* Only claim touch gestures over the model while interactive effects are on;
+   otherwise scrolling over the hero works as normal. */
+html[data-interactive-effects="on"] #threejs-hero {
+    touch-action: none;
 }
 
 body.threejs-hero-hovering {
@@ -185,30 +191,19 @@ body.threejs-hero-dragging * {
     user-select: none !important;
 }
 
-.threejs-hero-loader {
+#threejs-hero[data-loading]::after {
+    content: "";
     position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 180ms ease, visibility 180ms ease;
-}
-
-.threejs-hero-loader--hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.threejs-hero-loader-spinner {
+    top: 50%;
+    left: 50%;
     width: 34px;
     height: 34px;
+    margin: -17px 0 0 -17px;
     border: 3px solid rgba(148, 163, 184, 0.3);
     border-top-color: rgba(59, 130, 246, 0.95);
     border-radius: 9999px;
     animation: threejs-hero-spin 0.8s linear infinite;
+    pointer-events: none;
 }
 
 @keyframes threejs-hero-spin {
@@ -221,6 +216,13 @@ body.threejs-hero-dragging * {
     #threejs-hero {
         height: 250px !important;
     }
+}
+
+/* Zen mode only freezes the liquid ether; the page itself stays exactly as in normal
+   mode. The theme's zen-mode.css hides the author box with !important, so this
+   restores its normal display with the same weight (custom.css loads after it). */
+body.zen-mode-enable .author {
+    display: flex !important;
 }
 
 ol.border-s-2 > li > div > div:first-child {

@@ -94,7 +94,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showAuthorsBadges = false
   showWordCount = false
   # sharingLinks = [ "linkedin", "twitter", "bluesky", "mastodon", "reddit", "pinterest", "facebook", "email", "whatsapp", "telegram", "line"]
-  showZenMode = false
+  showZenMode = true
   externalLinkForceNewTab = true # disable to allow external links in the same tab (defaults to true)
 
 [list]

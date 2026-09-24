@@ -1,22 +1,29 @@
 {{/*
-  Loads liquid-ether.js bound to a canvas element.
+  Loads the ether bound to a canvas element. On the homepage this is home.js, which
+  also draws the avatar into the same canvas; elsewhere ether.js.
   Usage: partial "liquid-ether-script.html" (dict "context" . "canvasId" "liquid-ether-canvas")
 
-  Built with js.Build (esbuild), which bundles three.js from node_modules so that
-  no third-party script origin is needed and the SRI hash covers every byte the
-  browser executes. Do not add resources.Minify: esbuild already minified.
+  Built with js.Build (esbuild), which bundles three.js from node_modules so that no
+  third-party script origin is needed and the SRI hash covers every byte the browser
+  runs. Each entry is one self-contained bundle: a code-split chunk could not carry
+  SRI. Do not add resources.Minify: esbuild already minified.
 */}}
+{{ $home := .context.IsHome }}
+{{ $entry := cond $home "js/home.js" "js/ether.js" }}
 {{ $opts := dict
-  "targetPath" "js/liquid-ether.js"
+  "targetPath" $entry
   "format" "esm"
   "target" "es2020"
   "minify" true
   "sourceMap" (cond hugo.IsServer "inline" "")
 }}
-{{ $liquidEther := resources.Get "js/liquid-ether.js" | js.Build $opts | resources.Fingerprint (.context.Site.Params.fingerprintAlgorithm | default "sha512") }}
+{{ $js := resources.Get $entry | js.Build $opts | resources.Fingerprint (.context.Site.Params.fingerprintAlgorithm | default "sha512") }}
 <script
   type="module"
-  src="{{ $liquidEther.RelPermalink }}"
-  integrity="{{ $liquidEther.Data.Integrity }}"
+  src="{{ $js.RelPermalink }}"
+  integrity="{{ $js.Data.Integrity }}"
   data-liquid-ether
-  data-canvas-id="{{ .canvasId }}"></script>
+  data-canvas-id="{{ .canvasId }}"
+  {{- if $home }}
+  data-model-url="{{ (resources.Get "models/avatar2export.opt.glb").RelPermalink }}"
+  {{- end }}></script>
