@@ -1,21 +1,23 @@
 @font-face {
-    font-family: font;
-    src: url("../fonts/UGentPannoText-Medium.ttf") format("truetype");
+    font-family: Inter;
+    src: url("../fonts/Inter-Variable.ttf") format("truetype-variations");
     font-display: swap;
     font-weight: 100 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Inter;
+    src: url("../fonts/Inter-Italic-Variable.ttf") format("truetype-variations");
+    font-display: swap;
+    font-weight: 100 900;
+    font-style: italic;
 }
 
 html {
-    font-family: font;
-    font-size: 18px;
+    font-family: Inter, sans-serif;
 }
 
-.max-w-prose {
-    max-width: 100%;
-    text-align: justify;
-    margin-left: auto;
-    margin-right: auto;
-}
 
 .pdf-viewer {
     margin-top: 1.5rem;
