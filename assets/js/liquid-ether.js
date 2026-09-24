@@ -1,13 +1,14 @@
+// Namespace import: esbuild elides it and tree-shakes three, but ONLY while `THREE`
+// is never used as a value. Never pass it to a function, spread it, or index it
+// dynamically -- any of those ships all of three.js.
 import * as THREE from "three";
+import { readScriptConfig } from "./lib/script-config.js";
+import { observeClass } from "./lib/class-state.js";
+import { onThemeChange } from "./lib/theme.js";
+import { onEffectsChange } from "./lib/effects.js";
+import { createRenderLoop } from "./lib/render-loop.js";
 
-const scriptEl =
-  document.currentScript ||
-  document.querySelector("script[type='module'][data-liquid-ether]");
-if (!scriptEl) {
-  throw new Error("liquid-ether.js: script tag not found");
-}
-
-const canvasId = scriptEl.dataset.canvasId || "liquid-ether-canvas";
+const canvasId = readScriptConfig("data-liquid-ether").canvasId || "liquid-ether-canvas";
 const canvas = document.getElementById(canvasId);
 if (!canvas) {
   throw new Error("liquid-ether.js: canvas not found");
@@ -63,7 +64,6 @@ function makePaletteTexture(stops) {
 const shaders = {
   faceVert: `
 attribute vec3 position;
-uniform vec2 px;
 uniform vec2 boundarySpace;
 varying vec2 uv;
 precision highp float;
@@ -72,20 +72,6 @@ void main(){
   vec2 scale = 1.0 - boundarySpace * 2.0;
   pos.xy = pos.xy * scale;
   uv = vec2(0.5) + pos.xy * 0.5;
-  gl_Position = vec4(pos, 1.0);
-}
-`,
-  lineVert: `
-attribute vec3 position;
-uniform vec2 px;
-precision highp float;
-varying vec2 uv;
-void main(){
-  vec3 pos = position;
-  uv = 0.5 + pos.xy * 0.5;
-  vec2 n = sign(pos.xy);
-  pos.xy = abs(pos.xy) - px * 1.0;
-  pos.xy *= n;
   gl_Position = vec4(pos, 1.0);
 }
 `,
@@ -107,30 +93,15 @@ void main(){
 precision highp float;
 uniform sampler2D velocity;
 uniform float dt;
-uniform bool isBFECC;
 uniform vec2 fboSize;
 uniform vec2 px;
 varying vec2 uv;
 void main(){
   vec2 ratio = max(fboSize.x, fboSize.y) / fboSize;
-  if(isBFECC == false){
-    vec2 vel = texture2D(velocity, uv).xy;
-    vec2 uv2 = uv - vel * dt * ratio;
-    vec2 newVel = texture2D(velocity, uv2).xy;
-    gl_FragColor = vec4(newVel, 0.0, 0.0);
-  } else {
-    vec2 spot_new = uv;
-    vec2 vel_old = texture2D(velocity, uv).xy;
-    vec2 spot_old = spot_new - vel_old * dt * ratio;
-    vec2 vel_new1 = texture2D(velocity, spot_old).xy;
-    vec2 spot_new2 = spot_old + vel_new1 * dt * ratio;
-    vec2 error = spot_new2 - spot_new;
-    vec2 spot_new3 = spot_new - error / 2.0;
-    vec2 vel_2 = texture2D(velocity, spot_new3).xy;
-    vec2 spot_old2 = spot_new3 - vel_2 * dt * ratio;
-    vec2 newVel2 = texture2D(velocity, spot_old2).xy;
-    gl_FragColor = vec4(newVel2, 0.0, 0.0);
-  }
+  vec2 vel = texture2D(velocity, uv).xy;
+  vec2 uv2 = uv - vel * dt * ratio;
+  vec2 newVel = texture2D(velocity, uv2).xy;
+  gl_FragColor = vec4(newVel, 0.0, 0.0);
 }
 `,
   colorFrag: `
@@ -166,9 +137,6 @@ void main(){
   externalForceFrag: `
 precision highp float;
 uniform vec2 force;
-uniform vec2 center;
-uniform vec2 scale;
-uniform vec2 px;
 varying vec2 vUv;
 void main(){
   vec2 circle = (vUv - 0.5) * 2.0;
@@ -212,41 +180,22 @@ void main(){
   gl_FragColor = vec4(v, 0.0, 1.0);
 }
 `,
-  viscousFrag: `
-precision highp float;
-uniform sampler2D velocity;
-uniform sampler2D velocity_new;
-uniform float v;
-uniform vec2 px;
-uniform float dt;
-varying vec2 uv;
-void main(){
-  vec2 old = texture2D(velocity, uv).xy;
-  vec2 new0 = texture2D(velocity_new, uv + vec2(px.x * 2.0, 0.0)).xy;
-  vec2 new1 = texture2D(velocity_new, uv - vec2(px.x * 2.0, 0.0)).xy;
-  vec2 new2 = texture2D(velocity_new, uv + vec2(0.0, px.y * 2.0)).xy;
-  vec2 new3 = texture2D(velocity_new, uv - vec2(0.0, px.y * 2.0)).xy;
-  vec2 newv = 4.0 * old + v * dt * (new0 + new1 + new2 + new3);
-  newv /= 4.0 * (1.0 + v * dt);
-  gl_FragColor = vec4(newv, 0.0, 0.0);
-}
-`,
 };
+
+let effectsStillOn = true;
+
+const MOBILE_BREAKPOINT_PX = 768;
+const DPR_CAP = 1.25;
 
 const options = {
   mouseForce: 20,
   cursorSize: 100,
-  isViscous: false,
-  viscous: 30,
-  iterationsViscous: 32,
   iterationsPoisson: 12,
   dt: 0.014,
-  BFECC: false,
   resolution: 0.4,
   resolutionMobile: 0.42,
   resolutionMinDim: 256,
   resolutionMaxDim: 2048,
-  isBounce: false,
   autoDemo: true,
   autoSpeed: 0.5,
   autoIntensity: 2.2,
@@ -262,16 +211,14 @@ class CommonClass {
     this.height = 0;
     this.aspect = 1;
     this.pixelRatio = 1;
-    this.time = 0;
-    this.delta = 0;
     this.container = null;
     this.renderer = null;
-    this.clock = null;
+    this.stage = null;
   }
 
   init(container, existingCanvas) {
     this.container = container;
-    this.pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
+    this.pixelRatio = Math.min(window.devicePixelRatio || 1, DPR_CAP);
     this.renderer = new THREE.WebGLRenderer({
       canvas: existingCanvas,
       antialias: false,
@@ -279,6 +226,7 @@ class CommonClass {
       powerPreference: "high-performance",
     });
     this.renderer.autoClear = false;
+    this.renderer.sortObjects = false;
     this.renderer.setClearColor(new THREE.Color(0x000000), 0);
     this.renderer.setPixelRatio(this.pixelRatio);
     const el = this.renderer.domElement;
@@ -286,12 +234,12 @@ class CommonClass {
     el.style.height = "100%";
     el.style.display = "block";
     this.resize();
-    this.clock = new THREE.Timer();
+    this.stage = new Stage(this);
   }
 
   resize() {
     if (!this.container) return;
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, DPR_CAP);
     if (pixelRatio !== this.pixelRatio) {
       this.pixelRatio = pixelRatio;
       if (this.renderer) this.renderer.setPixelRatio(pixelRatio);
@@ -303,12 +251,6 @@ class CommonClass {
     if (this.renderer) this.renderer.setSize(this.width, this.height, false);
   }
 
-  update() {
-    if (!this.clock) return;
-    this.clock.update();
-    this.delta = this.clock.getDelta();
-    this.time += this.delta;
-  }
 }
 
 class MouseClass {
@@ -317,7 +259,7 @@ class MouseClass {
     this.coordsOld = new THREE.Vector2();
     this.diff = new THREE.Vector2();
     this.container = null;
-    this.interactive = root.dataset.interactiveEffects !== "off";
+    this.interactive = true; // corrected synchronously by onEffectsChange
     this.hasUserControl = false;
     this.isAutoActive = false;
     this.autoIntensity = 2;
@@ -497,34 +439,52 @@ class AutoDriver {
   }
 }
 
+// One scene, one camera, one quad, shared by every pass. Passes differ only in
+// material and output target, so six Scene/Camera/PlaneGeometry triples were six
+// copies of the same thing plus six render-list rebuilds per frame.
+class Stage {
+  constructor(common) {
+    this.common = common;
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.Camera();
+    this.geometry = new THREE.PlaneGeometry(2, 2);
+    this.mesh = new THREE.Mesh(this.geometry, null);
+    this.mesh.frustumCulled = false;
+    this.scene.add(this.mesh);
+    // Nothing here ever moves, so skip the per-frame matrix walk entirely.
+    this.scene.matrixWorldAutoUpdate = false;
+    this.camera.matrixWorldAutoUpdate = false;
+    this.mesh.updateMatrixWorld();
+    this.scene.updateMatrixWorld();
+    this.camera.updateMatrixWorld();
+  }
+
+  // `target` of null means the canvas. We do NOT unbind afterwards: the next pass
+  // binds its own target, so the old setRenderTarget(null) after every pass was
+  // doubling the framebuffer binds for nothing.
+  draw(material, target) {
+    const renderer = this.common.renderer;
+    if (!renderer || !material) return;
+    this.mesh.material = material;
+    renderer.setRenderTarget(target || null);
+    renderer.render(this.scene, this.camera);
+  }
+}
+
 class ShaderPass {
   constructor(common, props) {
     this.common = common;
     this.props = props || {};
     this.uniforms = this.props.material ? this.props.material.uniforms : null;
-    this.scene = null;
-    this.camera = null;
     this.material = null;
-    this.geometry = null;
-    this.plane = null;
   }
 
   init() {
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.Camera();
-    if (this.uniforms) {
-      this.material = new THREE.RawShaderMaterial(this.props.material);
-      this.geometry = new THREE.PlaneGeometry(2, 2);
-      this.plane = new THREE.Mesh(this.geometry, this.material);
-      this.scene.add(this.plane);
-    }
+    if (this.uniforms) this.material = new THREE.RawShaderMaterial(this.props.material);
   }
 
   update() {
-    if (!this.common.renderer || !this.scene || !this.camera) return;
-    this.common.renderer.setRenderTarget(this.props.output || null);
-    this.common.renderer.render(this.scene, this.camera);
-    this.common.renderer.setRenderTarget(null);
+    this.common.stage.draw(this.material, this.props.output);
   }
 }
 
@@ -540,40 +500,17 @@ class Advection extends ShaderPass {
           fboSize: { value: simProps.fboSize },
           velocity: { value: simProps.src.texture },
           dt: { value: simProps.dt },
-          isBFECC: { value: true },
         },
       },
       output: simProps.dst,
     });
-    this.line = null;
     this.init();
-  }
-
-  init() {
-    super.init();
-    const boundaryG = new THREE.BufferGeometry();
-    boundaryG.setAttribute(
-      "position",
-      new THREE.BufferAttribute(
-        new Float32Array([-1, -1, 0, -1, 1, 0, -1, 1, 0, 1, 1, 0, 1, 1, 0, 1, -1, 0, 1, -1, 0, -1, -1, 0]),
-        3
-      )
-    );
-    const boundaryM = new THREE.RawShaderMaterial({
-      vertexShader: shaders.lineVert,
-      fragmentShader: shaders.advectionFrag,
-      uniforms: this.uniforms,
-    });
-    this.line = new THREE.LineSegments(boundaryG, boundaryM);
-    this.scene.add(this.line);
   }
 
   update(opts) {
     if (!this.uniforms) return;
     const p = opts || {};
     if (typeof p.dt === "number") this.uniforms.dt.value = p.dt;
-    if (typeof p.isBounce === "boolean") this.line.visible = p.isBounce;
-    if (typeof p.BFECC === "boolean") this.uniforms.isBFECC.value = p.BFECC;
     super.update();
   }
 }
@@ -582,8 +519,10 @@ class ExternalForce extends ShaderPass {
   constructor(common, simProps, mouse) {
     super(common, { output: simProps.dst });
     this.mouseState = mouse;
-    this.mouse = null;
-    super.init();
+    // Its own scene: a small additively-blended disc placed at the cursor, not the
+    // shared fullscreen quad.
+    this.scene = new THREE.Scene();
+    this.scene.matrixWorldAutoUpdate = false;
     const mouseG = new THREE.PlaneGeometry(1, 1);
     const mouseM = new THREE.RawShaderMaterial({
       vertexShader: shaders.mouseVert,
@@ -598,73 +537,37 @@ class ExternalForce extends ShaderPass {
       },
     });
     this.mouse = new THREE.Mesh(mouseG, mouseM);
+    this.mouse.frustumCulled = false;
     this.scene.add(this.mouse);
+    this.mouse.updateMatrixWorld();
+    this.scene.updateMatrixWorld();
+
+    // Constant for a given sim size; recomputed only in calcSize via setCellScale.
+    this.clampX = 0;
+    this.clampY = 0;
   }
 
-  update(props) {
-    const p = props || {};
-    const forceX = (this.mouseState.diff.x / 2) * (p.mouseForce || 0);
-    const forceY = (this.mouseState.diff.y / 2) * (p.mouseForce || 0);
-    const cellScale = p.cellScale || new THREE.Vector2(1, 1);
-    const cursorSize = p.cursorSize || 0;
+  // cursorSize and cellScale only change on resize, so the clamp bounds and the
+  // `scale` uniform belong here rather than in the frame loop.
+  setCellScale(cellScale, cursorSize) {
+    this.clampX = 1 - cursorSize * cellScale.x - cellScale.x * 2;
+    this.clampY = 1 - cursorSize * cellScale.y - cellScale.y * 2;
+    this.mouse.material.uniforms.scale.value.set(cursorSize, cursorSize);
+  }
 
-    const cursorSizeX = cursorSize * cellScale.x;
-    const cursorSizeY = cursorSize * cellScale.y;
-    const centerX = Math.min(Math.max(this.mouseState.coords.x, -1 + cursorSizeX + cellScale.x * 2), 1 - cursorSizeX - cellScale.x * 2);
-    const centerY = Math.min(Math.max(this.mouseState.coords.y, -1 + cursorSizeY + cellScale.y * 2), 1 - cursorSizeY - cellScale.y * 2);
-
+  update(mouseForce) {
     const uniforms = this.mouse.material.uniforms;
-    uniforms.force.value.set(forceX, forceY);
-    uniforms.center.value.set(centerX, centerY);
-    uniforms.scale.value.set(cursorSize, cursorSize);
-    super.update();
-  }
-}
-
-class Viscous extends ShaderPass {
-  constructor(common, simProps) {
-    super(common, {
-      material: {
-        vertexShader: shaders.faceVert,
-        fragmentShader: shaders.viscousFrag,
-        uniforms: {
-          boundarySpace: { value: simProps.boundarySpace },
-          velocity: { value: simProps.src.texture },
-          velocity_new: { value: simProps.dstAux.texture },
-          v: { value: simProps.viscous },
-          px: { value: simProps.cellScale },
-          dt: { value: simProps.dt },
-        },
-      },
-      output: simProps.dst,
-      output0: simProps.dstAux,
-      output1: simProps.dst,
-    });
-    this.init();
-  }
-
-  update(opts) {
-    if (!this.uniforms) return null;
-    const p = opts || {};
-    if (typeof p.viscous === "number") this.uniforms.v.value = p.viscous;
-
-    let fboIn = null;
-    let fboOut = null;
-    const iter = p.iterations || 0;
-    for (let i = 0; i < iter; i += 1) {
-      if (i % 2 === 0) {
-        fboIn = this.props.output0;
-        fboOut = this.props.output1;
-      } else {
-        fboIn = this.props.output1;
-        fboOut = this.props.output0;
-      }
-      this.uniforms.velocity_new.value = fboIn.texture;
-      this.props.output = fboOut;
-      if (typeof p.dt === "number") this.uniforms.dt.value = p.dt;
-      super.update();
-    }
-    return fboOut;
+    uniforms.force.value.set(
+      (this.mouseState.diff.x / 2) * mouseForce,
+      (this.mouseState.diff.y / 2) * mouseForce
+    );
+    uniforms.center.value.set(
+      Math.min(Math.max(this.mouseState.coords.x, -this.clampX), this.clampX),
+      Math.min(Math.max(this.mouseState.coords.y, -this.clampY), this.clampY)
+    );
+    const renderer = this.common.renderer;
+    renderer.setRenderTarget(this.props.output);
+    renderer.render(this.scene, this.common.stage.camera);
   }
 }
 
@@ -686,12 +589,8 @@ class Divergence extends ShaderPass {
     this.init();
   }
 
-  update(opts) {
-    if (this.uniforms && opts && opts.vel) {
-      this.uniforms.velocity.value = opts.vel.texture;
-    }
-    super.update();
-  }
+  // velocity is always fbos.vel_1 and render-target textures survive setSize, so
+  // the uniform set in the constructor stays correct for the page lifetime.
 }
 
 class Poisson extends ShaderPass {
@@ -708,29 +607,24 @@ class Poisson extends ShaderPass {
         },
       },
       output: simProps.dst,
-      output0: simProps.dstAux,
-      output1: simProps.dst,
     });
+    // The only true ping-pong in the sim. `read` is never cleared between frames,
+    // which is deliberate: each frame warm-starts Jacobi from the previous frame's
+    // converged pressure field. An even iteration count leaves the result in `read`.
+    this.read = simProps.dstAux;
+    this.write = simProps.dst;
     this.init();
   }
 
-  update(opts) {
-    let pIn = null;
-    let pOut = null;
-    const iter = (opts && opts.iterations) || 0;
-    for (let i = 0; i < iter; i += 1) {
-      if (i % 2 === 0) {
-        pIn = this.props.output0;
-        pOut = this.props.output1;
-      } else {
-        pIn = this.props.output1;
-        pOut = this.props.output0;
-      }
-      if (this.uniforms && pIn) this.uniforms.pressure.value = pIn.texture;
-      this.props.output = pOut;
-      super.update();
+  update(iterations) {
+    for (let i = 0; i < iterations; i += 1) {
+      this.uniforms.pressure.value = this.read.texture;
+      this.common.stage.draw(this.material, this.write);
+      const swap = this.read;
+      this.read = this.write;
+      this.write = swap;
     }
-    return pOut;
+    return this.read;
   }
 }
 
@@ -753,11 +647,9 @@ class Pressure extends ShaderPass {
     this.init();
   }
 
-  update(opts) {
-    if (this.uniforms && opts && opts.vel && opts.pressure) {
-      this.uniforms.velocity.value = opts.vel.texture;
-      this.uniforms.pressure.value = opts.pressure.texture;
-    }
+  // velocity is constant; pressure alternates with the Poisson ping-pong parity.
+  update(pressure) {
+    this.uniforms.pressure.value = pressure.texture;
     super.update();
   }
 }
@@ -766,29 +658,11 @@ class Simulation {
   constructor(common, mouse, opts) {
     this.common = common;
     this.mouse = mouse;
-    this.options = Object.assign(
-      {
-        iterations_poisson: 32,
-        iterations_viscous: 32,
-        mouse_force: 20,
-        resolution: 0.5,
-        resolutionMaxDim: 2048,
-        resolutionMinDim: 256,
-        cursor_size: 100,
-        viscous: 30,
-        isBounce: false,
-        dt: 0.014,
-        isViscous: false,
-        BFECC: true,
-      },
-      opts || {}
-    );
+    this.options = opts;
 
     this.fbos = {
       vel_0: null,
       vel_1: null,
-      vel_viscous0: null,
-      vel_viscous1: null,
       div: null,
       pressure_0: null,
       pressure_1: null,
@@ -800,7 +674,6 @@ class Simulation {
 
     this.advection = null;
     this.externalForce = null;
-    this.viscous = null;
     this.divergence = null;
     this.poisson = null;
     this.pressure = null;
@@ -812,15 +685,17 @@ class Simulation {
     const dpr = this.common.pixelRatio || 1;
     const baseW = this.options.resolution * this.common.width * dpr;
     const baseH = this.options.resolution * this.common.height * dpr;
-    const isSmallViewport = Math.min(this.common.width, this.common.height) < 768;
-
-    const minDim = this.options.resolutionMinDim || (isSmallViewport ? 256 : 384);
-    const maxDim = this.options.resolutionMaxDim || 2048;
+    const minDim = this.options.resolutionMinDim;
+    const maxDim = this.options.resolutionMaxDim;
     const width = Math.min(maxDim, Math.max(minDim, Math.round(baseW)));
     const height = Math.min(maxDim, Math.max(minDim, Math.round(baseH)));
 
+    // These three are shared Vector2 INSTANCES held by many uniform objects.
+    // Always mutate in place -- reassigning silently detaches every uniform.
     this.cellScale.set(1 / width, 1 / height);
+    this.boundarySpace.copy(this.cellScale);
     this.fboSize.set(width, height);
+    if (this.externalForce) this.externalForce.setCellScale(this.cellScale, this.options.cursorSize);
   }
 
   createAllFBO() {
@@ -857,26 +732,17 @@ class Simulation {
       this.common,
       {
         cellScale: this.cellScale,
-        cursorSize: this.options.cursor_size,
+        cursorSize: this.options.cursorSize,
         dst: this.fbos.vel_1,
       },
       this.mouse
     );
-
-    this.viscous = new Viscous(this.common, {
-      cellScale: this.cellScale,
-      boundarySpace: this.boundarySpace,
-      viscous: this.options.viscous,
-      src: this.fbos.vel_1,
-      dst: this.fbos.vel_viscous1,
-      dstAux: this.fbos.vel_viscous0,
-      dt: this.options.dt,
-    });
+    this.externalForce.setCellScale(this.cellScale, this.options.cursorSize);
 
     this.divergence = new Divergence(this.common, {
       cellScale: this.cellScale,
       boundarySpace: this.boundarySpace,
-      src: this.fbos.vel_viscous0,
+      src: this.fbos.vel_1,
       dst: this.fbos.div,
       dt: this.options.dt,
     });
@@ -893,7 +759,7 @@ class Simulation {
       cellScale: this.cellScale,
       boundarySpace: this.boundarySpace,
       srcPressure: this.fbos.pressure_0,
-      srcVelocity: this.fbos.vel_viscous0,
+      srcVelocity: this.fbos.vel_1,
       dst: this.fbos.vel_0,
       dt: this.options.dt,
     });
@@ -913,28 +779,10 @@ class Simulation {
   }
 
   update() {
-    if (this.options.isBounce) this.boundarySpace.set(0, 0);
-    else this.boundarySpace.copy(this.cellScale);
-
-    this.advection.update({ dt: this.options.dt, isBounce: this.options.isBounce, BFECC: this.options.BFECC });
-    this.externalForce.update({
-      cursorSize: this.options.cursor_size,
-      mouseForce: this.options.mouse_force,
-      cellScale: this.cellScale,
-    });
-
-    let vel = this.fbos.vel_1;
-    if (this.options.isViscous) {
-      vel = this.viscous.update({
-        viscous: this.options.viscous,
-        iterations: this.options.iterations_viscous,
-        dt: this.options.dt,
-      });
-    }
-
-    this.divergence.update({ vel });
-    const pressure = this.poisson.update({ iterations: this.options.iterations_poisson });
-    this.pressure.update({ vel, pressure });
+    this.advection.update({ dt: this.options.dt });
+    this.externalForce.update(this.options.mouseForce);
+    this.divergence.update();
+    this.pressure.update(this.poisson.update(this.options.iterationsPoisson));
   }
 }
 
@@ -942,10 +790,8 @@ class Output {
   constructor(common, mouse, simOptions) {
     this.common = common;
     this.mouse = mouse;
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.Camera();
 
-    this.paletteTexture = null;
+    this.paletteCache = { dark: null, light: null };
     this.bgColorVec = new THREE.Vector4(1, 1, 1, 1);
 
     this.simulation = new Simulation(common, mouse, simOptions);
@@ -963,28 +809,36 @@ class Output {
       },
     });
 
-    this.output = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.material);
-    this.scene.add(this.output);
     this.updateThemePalette();
   }
 
-  updateThemePalette() {
-    const dark = root.classList.contains("dark");
-    const colors = dark
-      ? [
-          cssColorHex("--color-primary-200", [147, 197, 253]),
-          cssColorHex("--color-primary-300", [96, 165, 250]),
-          cssColorHex("--color-primary-400", [59, 130, 246]),
-        ]
-      : [
-          cssColorHex("--color-primary-100", [191, 219, 254]),
-          cssColorHex("--color-primary-100", [147, 197, 253]),
-        ];
-
-    const tex = makePaletteTexture(colors);
-    if (this.paletteTexture) this.paletteTexture.dispose();
-    this.paletteTexture = tex;
-    this.material.uniforms.palette.value = tex;
+  updateThemePalette(dark = root.classList.contains("dark")) {
+    // The scheme defines --color-primary-* on :root with no .dark override, so each
+    // theme's LUT is immutable for the page lifetime: build it once and keep it.
+    // This used to dispose and reallocate a DataTexture on every <html> class
+    // mutation, from an observer that was not filtered to actual theme changes.
+    //
+    // Widths stay distinct (3 stops dark, 2 light): with LinearFilter a 2-texel LUT
+    // is flat below u=0.25 and above u=0.75 while a 3-texel LUT has knots at 1/6,
+    // 1/2 and 5/6, so they cannot be made to sample identically.
+    const key = dark ? "dark" : "light";
+    if (!this.paletteCache[key]) {
+      this.paletteCache[key] = makePaletteTexture(
+        dark
+          ? [
+              cssColorHex("--color-primary-200", [147, 197, 253]),
+              cssColorHex("--color-primary-300", [96, 165, 250]),
+              cssColorHex("--color-primary-400", [59, 130, 246]),
+            ]
+          : [
+              cssColorHex("--color-primary-100", [191, 219, 254]),
+              // Was --color-primary-100 a second time, which made the light gradient
+              // flat. -200 is the intended second stop.
+              cssColorHex("--color-primary-200", [147, 197, 253]),
+            ]
+      );
+    }
+    this.material.uniforms.palette.value = this.paletteCache[key];
 
     if (dark) {
       this.bgColorVec.set(0, 0, 0, 0);
@@ -1000,9 +854,8 @@ class Output {
   }
 
   render() {
-    if (!this.common.renderer) return;
-    this.common.renderer.setRenderTarget(null);
-    this.common.renderer.render(this.scene, this.camera);
+    // null target == the canvas.
+    this.common.stage.draw(this.material, null);
   }
 
   update() {
@@ -1011,7 +864,7 @@ class Output {
   }
 
   dispose() {
-    if (this.paletteTexture) this.paletteTexture.dispose();
+    for (const tex of Object.values(this.paletteCache)) if (tex) tex.dispose();
   }
 }
 
@@ -1022,15 +875,9 @@ class LiquidEtherManager {
     this.output = null;
     this.autoDriver = null;
     this.lastUserInteraction = performance.now();
-    this.running = false;
-    this.frameIntervalMs = options.maxFPS > 0 ? 1000 / options.maxFPS : 0;
-    this.lastFrameTime = 0;
-    this.raf = 0;
+    this.loop = null;
 
     this.onResize = this.resize.bind(this);
-    this.onVisibility = this.handleVisibility.bind(this);
-    this.onInteractionChange = this.handleInteractionChange.bind(this);
-    this.loop = this.loop.bind(this);
 
     this.common.init(container, canvasEl);
     this.mouse.init(container);
@@ -1041,22 +888,12 @@ class LiquidEtherManager {
       if (this.autoDriver) this.autoDriver.forceStop();
     };
 
+    // Evaluated once, deliberately: re-picking the mobile resolution on rotate would
+    // resize every render target mid-session, which is visible.
+    const isMobileViewport = Math.min(window.innerWidth, window.innerHeight) < MOBILE_BREAKPOINT_PX;
     this.output = new Output(this.common, this.mouse, {
-      iterations_poisson: options.iterationsPoisson,
-      iterations_viscous: options.iterationsViscous,
-      mouse_force: options.mouseForce,
-      resolution:
-        Math.min(window.innerWidth, window.innerHeight) < 768 && typeof options.resolutionMobile === "number"
-          ? options.resolutionMobile
-          : options.resolution,
-      resolutionMaxDim: options.resolutionMaxDim,
-      resolutionMinDim: options.resolutionMinDim,
-      cursor_size: options.cursorSize,
-      viscous: options.viscous,
-      isBounce: options.isBounce,
-      dt: options.dt,
-      isViscous: options.isViscous,
-      BFECC: options.BFECC,
+      ...options,
+      resolution: isMobileViewport ? options.resolutionMobile : options.resolution,
     });
 
     this.autoDriver = new AutoDriver(this.mouse, this, {
@@ -1067,8 +904,29 @@ class LiquidEtherManager {
     });
 
     window.addEventListener("resize", this.onResize);
-    document.addEventListener("visibilitychange", this.onVisibility);
-    window.addEventListener("interactive-effects-change", this.onInteractionChange);
+
+    this.loop = createRenderLoop({ render: () => this.render(), fps: options.maxFPS });
+    this.loop.addVisibilityGate();
+
+    onEffectsChange((enabled) => this.handleInteractionChange(enabled));
+
+    // Blowfish's zen mode toggles body.zen-mode-enable and dispatches no event, and
+    // the theme is a submodule so we cannot add one -- observe the class instead,
+    // which is also robust to whatever toggles it (button, a11y panel, future paths).
+    // Gating on the button's presence means nothing is installed on pages where zen
+    // mode cannot be entered, i.e. everything except single article pages.
+    if (document.getElementById("zen-mode-button")) {
+      this.unobserveZen = observeClass(document.body, "zen-mode-enable", (zen) => {
+        this.loop.gate("zen", !zen);
+        if (zen) {
+          // Stop queueing force so exiting zen does not discharge a backlog at once.
+          if (this.autoDriver) this.autoDriver.forceStop();
+          this.mouse.setInteractive(false);
+        } else {
+          this.mouse.setInteractive(effectsStillOn);
+        }
+      });
+    }
   }
 
   resize() {
@@ -1078,73 +936,45 @@ class LiquidEtherManager {
 
     const widthChanged = this.common.width !== previousWidth;
     const pixelRatioChanged = this.common.pixelRatio !== previousPixelRatio;
-    const isMobileViewport = Math.min(window.innerWidth, window.innerHeight) < 768;
+    const isMobileViewport = Math.min(window.innerWidth, window.innerHeight) < MOBILE_BREAKPOINT_PX;
     if (this.output && (!isMobileViewport || widthChanged || pixelRatioChanged)) {
       this.output.resize();
     }
   }
 
-  handleInteractionChange(event) {
-    const enabled = event.detail?.enabled !== false;
+  handleInteractionChange(enabled) {
+    effectsStillOn = enabled;
     this.mouse.setInteractive(enabled);
     if (!enabled) {
       if (this.autoDriver) this.autoDriver.forceStop();
-      this.lastUserInteraction = performance.now() - options.autoResumeDelay;
+      // Effects OFF disables pointer input only. The autopilot deliberately resumes
+      // immediately so the background keeps flowing -- that is the existing
+      // behaviour, and OFF is the first-visit default.
+      this.lastUserInteraction = Number.NEGATIVE_INFINITY;
     }
-  }
-
-  handleVisibility() {
-    if (document.hidden) this.pause();
-    else this.start();
   }
 
   render() {
     if (this.autoDriver) this.autoDriver.update();
     this.mouse.update();
-    this.common.update();
     if (this.output) this.output.update();
   }
 
-  loop() {
-    if (!this.running) return;
-
-    const now = performance.now();
-    if (this.frameIntervalMs > 0 && this.lastFrameTime > 0) {
-      const elapsed = now - this.lastFrameTime;
-      if (elapsed < this.frameIntervalMs) {
-        this.raf = requestAnimationFrame(this.loop);
-        return;
-      }
-    }
-
-    this.lastFrameTime = now;
-    this.render();
-    this.raf = requestAnimationFrame(this.loop);
-  }
-
   start() {
-    if (this.running) return;
-    this.running = true;
-    this.loop();
+    this.loop.gate("started", true);
   }
 
-  pause() {
-    this.running = false;
-    if (this.raf) {
-      cancelAnimationFrame(this.raf);
-      this.raf = 0;
-    }
-  }
-
-  refreshTheme() {
-    if (this.output) this.output.updateThemePalette();
+  refreshTheme(dark) {
+    if (!this.output) return;
+    this.output.updateThemePalette(dark);
+    // Repaint once so a theme switch lands even while frozen (zen mode, hidden tab).
+    if (!this.loop.running) this.loop.renderOnce();
   }
 
   dispose() {
-    this.pause();
+    this.loop.dispose();
+    if (this.unobserveZen) this.unobserveZen();
     window.removeEventListener("resize", this.onResize);
-    document.removeEventListener("visibilitychange", this.onVisibility);
-    window.removeEventListener("interactive-effects-change", this.onInteractionChange);
     this.mouse.dispose();
     if (this.output) this.output.dispose();
     if (this.common.renderer) this.common.renderer.dispose();
@@ -1158,7 +988,5 @@ canvas.style.pointerEvents = "none";
 const manager = new LiquidEtherManager(canvas, canvas);
 manager.start();
 
-const observer = new MutationObserver(() => {
-  manager.refreshTheme();
-});
-observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+// One filtered observer, shared with threejs-hero, instead of two unfiltered ones.
+onThemeChange((dark) => manager.refreshTheme(dark));

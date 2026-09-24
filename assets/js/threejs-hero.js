@@ -1,16 +1,34 @@
-import * as THREE from "three";
+import {
+  ACESFilmicToneMapping,
+  AmbientLight,
+  Box3,
+  BoxGeometry,
+  Color,
+  DirectionalLight,
+  Group,
+  HemisphereLight,
+  Mesh,
+  MeshBasicMaterial,
+  PerspectiveCamera,
+  PointLight,
+  Raycaster,
+  SRGBColorSpace,
+  Scene,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { readScriptConfig } from "./lib/script-config.js";
+import { readTriplet, applyTriplet } from "./lib/css-color.js";
+import { onThemeChange } from "./lib/theme.js";
+import { onEffectsChange } from "./lib/effects.js";
+import { createRenderLoop } from "./lib/render-loop.js";
 
-const currentScript =
-  document.currentScript ||
-  document.querySelector("script[type='module'][data-threejs-hero]");
-if (!currentScript) {
-  throw new Error("threejs-hero.js: script tag not found");
-}
-
-const containerId = currentScript.dataset.containerId || "threejs-canvas";
-const rootId = currentScript.dataset.rootId || "threejs-hero";
-const modelUrl = currentScript.dataset.modelUrl || "/models/avatar2export.glb";
+const dataset = readScriptConfig("data-threejs-hero");
+const containerId = dataset.containerId || "threejs-canvas";
+const rootId = dataset.rootId || "threejs-hero";
+const modelUrl = dataset.modelUrl || "/models/avatar2export.glb";
 
 const container = document.getElementById(containerId);
 const root = document.getElementById(rootId);
@@ -19,13 +37,14 @@ if (!container || !root) {
   throw new Error("threejs-hero.js: required DOM nodes are missing");
 }
 
+let loop = null; // assigned at the bottom, once the frame function exists
 let dragging = false;
 let pointerDown = false;
 let pointerX = 0;
 let pointerY = 0;
 let activePointerId = null;
 let modelHovered = false;
-let interactionEnabled = document.documentElement.dataset.interactiveEffects !== "off";
+let interactionEnabled = true; // set synchronously by onEffectsChange below
 
 const config = {
   scale: 1.5,
@@ -50,11 +69,11 @@ const etherLightConfig = {
   shimmerDepth: 0.32,
 };
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, root.clientWidth / root.clientHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new Scene();
+const camera = new PerspectiveCamera(45, root.clientWidth / root.clientHeight, 0.1, 1000);
+const renderer = new WebGLRenderer({ antialias: true, alpha: true });
+renderer.outputColorSpace = SRGBColorSpace;
+renderer.toneMapping = ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(root.clientWidth, root.clientHeight);
@@ -62,27 +81,26 @@ renderer.domElement.classList.add("threejs-hero-canvas");
 renderer.domElement.classList.toggle("threejs-hero-canvas--disabled", !interactionEnabled);
 container.appendChild(renderer.domElement);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.22);
+const ambientLight = new AmbientLight(0xffffff, 0.22);
 scene.add(ambientLight);
 
-const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x1b2336, 0.3);
-hemisphereLight.position.set(0, 3, 0);
+const hemisphereLight = new HemisphereLight(0xffffff, 0x1b2336, 0.3);
 scene.add(hemisphereLight);
 
-const etherKeyLight = new THREE.DirectionalLight(0xffffff, 1.1);
+const etherKeyLight = new DirectionalLight(0xffffff, 1.1);
 etherKeyLight.position.set(1.8, 2.0, -2.4);
 scene.add(etherKeyLight);
 
-const etherRimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+const etherRimLight = new DirectionalLight(0xffffff, 0.8);
 etherRimLight.position.set(-2.3, 1.1, 1.7);
 scene.add(etherRimLight);
 
-const mainWhitePointLight = new THREE.PointLight(0xffffff, 0.95, 20, 2.0);
+const mainWhitePointLight = new PointLight(0xffffff, 0.95, 20, 2.0);
 mainWhitePointLight.position.set(0.25, 1.85, -2.4);
 scene.add(mainWhitePointLight);
 
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2(2, 2);
+const raycaster = new Raycaster();
+const pointer = new Vector2(2, 2);
 
 let modelGroup = null;
 let colliderMesh = null;
@@ -91,32 +109,16 @@ const baseScale = config.scale;
 let aligning = false;
 let targetYaw = 0;
 let lastAlignedYaw = 0;
-let keyLightTargetPos = new THREE.Vector3(1.8, 2.0, -2.4);
+const keyLightTargetPos = new Vector3(1.8, 2.0, -2.4);
 
-const baseLightIntensity = {
-  ambient: 0.2,
-  hemi: 0.3,
-  key: 1.1,
-  rim: 0.8,
-  whitePoint: 0.95,
-};
+// Only these two are read by the frame loop (the shimmer multiplies them). The
+// other intensities are applied directly in syncAmbient and never read back.
+const baseLightIntensity = { key: 1.1, rim: 0.8 };
 
-const getCssVarTriplet = (name, fallback) => {
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  const parts = raw
-    .split(/[\s,]+/)
-    .map((v) => Number.parseFloat(v.trim()))
-    .filter((n) => Number.isFinite(n));
-  if (parts.length === 3 && parts.every((n) => Number.isFinite(n))) {
-    return parts;
-  }
-  return fallback;
-};
-
-const colorFromCssVar = (name, fallback) => {
-  const [r, g, b] = getCssVarTriplet(name, fallback);
-  return new THREE.Color(r / 255, g / 255, b / 255);
-};
+// Scratch colours reused across theme syncs so a recolour allocates nothing.
+const scratch = { a: new Color(), b: new Color(), c: new Color(), d: new Color(), e: new Color() };
+const readColor = (style, target, name, fallback) =>
+  applyTriplet(target, readTriplet(style, name, fallback));
 
 const normalizeAngle = (a) => {
   let angle = (a + Math.PI) % (Math.PI * 2);
@@ -124,45 +126,41 @@ const normalizeAngle = (a) => {
   return angle - Math.PI;
 };
 
-const colorLerp = (from, to, t) => {
-  const out = from.clone();
-  out.lerp(to, t);
-  return out;
-};
+const mix = (target, from, to, t) => target.copy(from).lerp(to, t);
 
-const syncAmbient = () => {
-  const isDark = document.documentElement.classList.contains("dark");
-  const etherHigh = colorFromCssVar("--color-primary-300", isDark ? [147, 197, 253] : [255, 190, 80]);
-  const etherMid = colorFromCssVar("--color-primary-400", isDark ? [96, 165, 250] : [255, 150, 30]);
-  const etherDeep = colorFromCssVar("--color-primary-500", isDark ? [59, 130, 246] : [255, 110, 20]);
-  const keyColor = isDark ? colorLerp(etherHigh, etherMid, 0.1) : colorLerp(etherHigh, etherMid, 0.24);
-  const rimColor = isDark ? colorLerp(etherHigh, etherMid, 0.06) : colorLerp(etherHigh, etherMid, 0.14);
-  const neutralHigh = colorFromCssVar(isDark ? "--color-neutral-100" : "--color-neutral-200", isDark ? [245, 245, 245] : [250, 240, 230]);
-  const neutralLow = colorFromCssVar(isDark ? "--color-neutral-900" : "--color-neutral-700", isDark ? [23, 23, 23] : [64, 64, 64]);
+const syncAmbient = (isDark) => {
+  // One getComputedStyle for all five variables; this used to be five separate
+  // resolutions, on every unrelated class mutation of <html>.
+  const style = getComputedStyle(document.documentElement);
+  const etherHigh = readColor(style, scratch.a, "--color-primary-300", isDark ? [147, 197, 253] : [255, 190, 80]);
+  const etherMid = readColor(style, scratch.b, "--color-primary-400", isDark ? [96, 165, 250] : [255, 150, 30]);
+  const etherDeep = readColor(style, scratch.c, "--color-primary-500", isDark ? [59, 130, 246] : [255, 110, 20]);
+  const keyColor = mix(new Color(), etherHigh, etherMid, isDark ? 0.1 : 0.24);
+  const rimColor = mix(new Color(), etherHigh, etherMid, isDark ? 0.06 : 0.14);
+  const neutralHigh = readColor(style, scratch.d, isDark ? "--color-neutral-100" : "--color-neutral-200", isDark ? [245, 245, 245] : [250, 240, 230]);
+  const neutralLow = readColor(style, scratch.e, isDark ? "--color-neutral-900" : "--color-neutral-700", isDark ? [23, 23, 23] : [64, 64, 64]);
 
   const ambientNeutralMix = isDark ? 0.24 : 0.28;
   const hemiNeutralMix = isDark ? 0.28 : 0.32;
   const keyNeutralMix = isDark ? 0.16 : 0.2;
   const rimNeutralMix = isDark ? 0.22 : 0.26;
 
-  ambientLight.color.copy(colorLerp(keyColor, neutralHigh, ambientNeutralMix));
-  hemisphereLight.color.copy(colorLerp(keyColor, neutralHigh, hemiNeutralMix));
-  hemisphereLight.groundColor.copy(colorLerp(etherDeep, neutralLow, 0.72));
-  etherKeyLight.color.copy(colorLerp(keyColor, neutralHigh, keyNeutralMix));
-  etherRimLight.color.copy(colorLerp(rimColor, neutralHigh, rimNeutralMix));
+  mix(ambientLight.color, keyColor, neutralHigh, ambientNeutralMix);
+  mix(hemisphereLight.color, keyColor, neutralHigh, hemiNeutralMix);
+  mix(hemisphereLight.groundColor, etherDeep, neutralLow, 0.72);
+  mix(etherKeyLight.color, keyColor, neutralHigh, keyNeutralMix);
+  mix(etherRimLight.color, rimColor, neutralHigh, rimNeutralMix);
   mainWhitePointLight.color.copy(neutralHigh);
 
-  baseLightIntensity.ambient = isDark ? 0.14 : 0.6;
-  baseLightIntensity.hemi = isDark ? 0.2 : 0.18;
+  // key/rim are stored because the frame loop multiplies them by the shimmer.
   baseLightIntensity.key = (isDark ? 1.0 : 0.95) * etherLightConfig.keyBoost;
   baseLightIntensity.rim = (isDark ? 0.82 : 0.7) * etherLightConfig.rimBoost;
-  baseLightIntensity.whitePoint = isDark ? 0.34 : 0.4;
 
-  ambientLight.intensity = baseLightIntensity.ambient;
-  hemisphereLight.intensity = baseLightIntensity.hemi;
+  ambientLight.intensity = isDark ? 0.14 : 0.6;
+  hemisphereLight.intensity = isDark ? 0.2 : 0.18;
   etherKeyLight.intensity = baseLightIntensity.key;
   etherRimLight.intensity = baseLightIntensity.rim;
-  mainWhitePointLight.intensity = baseLightIntensity.whitePoint;
+  mainWhitePointLight.intensity = isDark ? 0.34 : 0.4;
   renderer.toneMappingExposure = isDark ? 1.0 : 1.03;
 };
 
@@ -185,18 +183,22 @@ const updatePointerFromEvent = (event) => {
 
 const raycastModel = () => {
   if (!interactionEnabled || !modelGroup || !colliderMesh) return false;
+  // Parked off-canvas is exactly (2,2); nothing can be hit from there.
+  if (pointer.x > 1 || pointer.x < -1 || pointer.y > 1 || pointer.y < -1) return false;
   raycaster.setFromCamera(pointer, camera);
-  return raycaster.intersectObject(colliderMesh, true).length > 0;
+  // colliderMesh is a childless Box3 proxy, so a recursive walk is wasted.
+  return raycaster.intersectObject(colliderMesh, false).length > 0;
 };
 
-const getModelFacingYaw = () => {
-  if (!modelGroup) return 0;
-  const worldPos = new THREE.Vector3();
+let facingYaw = 0;
+const updateFacingYaw = () => {
+  if (!modelGroup) return;
+  const worldPos = new Vector3();
   modelGroup.getWorldPosition(worldPos);
-  const dx = camera.position.x - worldPos.x;
-  const dz = camera.position.z - worldPos.z;
-  return Math.atan2(dx, dz) + config.facingOffset;
+  facingYaw =
+    Math.atan2(camera.position.x - worldPos.x, camera.position.z - worldPos.z) + config.facingOffset;
 };
+const getModelFacingYaw = () => facingYaw;
 
 const alignModelToCamera = () => {
   if (!modelGroup) return;
@@ -204,9 +206,19 @@ const alignModelToCamera = () => {
   aligning = true;
 };
 
+let lastDragClass = false;
+let lastHoverClass = false;
 const setHovered = (nextHovered) => {
-  document.body.classList.toggle("threejs-hero-dragging", interactionEnabled && dragging);
-  document.body.classList.toggle("threejs-hero-hovering", interactionEnabled && !dragging && nextHovered);
+  const drag = interactionEnabled && dragging;
+  const hover = interactionEnabled && !dragging && nextHovered;
+  if (drag !== lastDragClass) {
+    lastDragClass = drag;
+    document.body.classList.toggle("threejs-hero-dragging", drag);
+  }
+  if (hover !== lastHoverClass) {
+    lastHoverClass = hover;
+    document.body.classList.toggle("threejs-hero-hovering", hover);
+  }
 };
 
 const releaseActivePointer = () => {
@@ -220,6 +232,7 @@ const releaseActivePointer = () => {
 
 const resetInteractionState = () => {
   releaseActivePointer();
+  if (loop && dragging) loop.fps = 45;
   pointerDown = false;
   dragging = false;
   aligning = false;
@@ -227,18 +240,16 @@ const resetInteractionState = () => {
   setHovered(false);
 };
 
-const handleInteractionChange = (event) => {
-  interactionEnabled = event.detail?.enabled !== false;
-  if (!interactionEnabled) {
+onEffectsChange((enabled) => {
+  interactionEnabled = enabled;
+  if (!enabled) {
     pointer.set(2, 2);
     pointerX = 0;
     pointerY = 0;
     resetInteractionState();
   }
-  renderer.domElement.classList.toggle("threejs-hero-canvas--disabled", !interactionEnabled);
-};
-
-window.addEventListener("interactive-effects-change", handleInteractionChange);
+  renderer.domElement.classList.toggle("threejs-hero-canvas--disabled", !enabled);
+});
 
 let loaderOverlay = null;
 
@@ -279,31 +290,25 @@ const loader = new GLTFLoader();
 loader.load(
   modelUrl,
   (gltf) => {
-    modelGroup = new THREE.Group();
+    modelGroup = new Group();
     const model = gltf.scene;
-    model.traverse((obj) => {
-      if (obj.isMesh) {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      }
-    });
-
     modelGroup.add(model);
     modelGroup.scale.set(baseScale, baseScale, baseScale);
     scene.add(modelGroup);
 
-    const box = new THREE.Box3().setFromObject(model);
-    const size = new THREE.Vector3();
-    const center = new THREE.Vector3();
+    const box = new Box3().setFromObject(model);
+    const size = new Vector3();
+    const center = new Vector3();
     box.getSize(size);
     box.getCenter(center);
     size.multiplyScalar(config.colliderMargin);
 
-    const colliderGeom = new THREE.BoxGeometry(size.x, size.y, size.z);
-    const colliderMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false });
-    colliderMesh = new THREE.Mesh(colliderGeom, colliderMat);
+    const colliderGeom = new BoxGeometry(size.x, size.y, size.z);
+    const colliderMat = new MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false });
+    colliderMesh = new Mesh(colliderGeom, colliderMat);
     colliderMesh.position.copy(center);
     modelGroup.add(colliderMesh);
+    updateFacingYaw();
     setLoaderVisible(false);
   },
   undefined,
@@ -324,10 +329,6 @@ renderer.domElement.addEventListener("pointermove", (event) => {
     return;
   }
 
-  modelHovered = raycastModel();
-  if (!pointerDown) {
-    setHovered(modelHovered);
-  }
 });
 
 renderer.domElement.addEventListener("pointerleave", (event) => {
@@ -355,6 +356,7 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
       activePointerId = null;
     }
     event.preventDefault();
+    if (loop) loop.fps = 0;
     alignModelToCamera();
   }
 });
@@ -371,26 +373,20 @@ window.addEventListener("blur", () => {
   resetInteractionState();
 });
 
-const themeObserver = new MutationObserver(() => {
-  syncAmbient();
-});
-themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-syncAmbient();
+// Shimmer baselines: invariant, so they are not recomputed per frame.
+const SHIMMER_KEY_BASE = 1.0 - etherLightConfig.shimmerDepth * 0.5;
+const SHIMMER_RIM_BASE = 1.0 - etherLightConfig.shimmerDepth * 0.55;
 
-const animate = () => {
-  requestAnimationFrame(animate);
-
+const frame = () => {
   // Ether-like shimmer in the colored spill lights.
   const shimmerTime = performance.now() * 0.001;
-  const shimmerA = 1.0 - etherLightConfig.shimmerDepth * 0.5 + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.25);
-  const shimmerC = 1.0 - etherLightConfig.shimmerDepth * 0.55 + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.65 + 0.65);
-  const lightPointerX = pointerX;
-  const lightPointerY = pointerY;
+  const shimmerKey = SHIMMER_KEY_BASE + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.25);
+  const shimmerRim = SHIMMER_RIM_BASE + etherLightConfig.shimmerDepth * Math.sin(shimmerTime * 1.65 + 0.65);
 
   // Slight orbit motion makes the model feel lit by moving ether currents.
   keyLightTargetPos.set(
-    2.0 + lightPointerX * 1.2,
-    1.9 - lightPointerY * 0.4,
+    2.0 + pointerX * 1.2,
+    1.9 - pointerY * 0.4,
     -2.4
   );
   etherKeyLight.position.lerp(keyLightTargetPos, 0.12);
@@ -400,8 +396,8 @@ const animate = () => {
     1.85 + Math.cos(shimmerTime * 0.9 + 2.8) * 0.85
   );
 
-  etherKeyLight.intensity = baseLightIntensity.key * shimmerA;
-  etherRimLight.intensity = baseLightIntensity.rim * shimmerC;
+  etherKeyLight.intensity = baseLightIntensity.key * shimmerKey;
+  etherRimLight.intensity = baseLightIntensity.rim * shimmerRim;
 
   if (modelGroup) {
     modelHovered = interactionEnabled && !dragging && raycastModel();
@@ -451,15 +447,34 @@ const animate = () => {
     modelGroup.scale.set(newScale, newScale, newScale);
   }
 
-  camera.lookAt(0, camera.position.y, 0);
   renderer.render(scene, camera);
 };
 
 camera.position.set(-2, -0.3, -6);
+// The camera never moves again, so its orientation is resolved once rather than
+// recomputed on every frame.
+camera.lookAt(0, camera.position.y, 0);
+updateFacingYaw();
+
 window.addEventListener("resize", () => {
-  renderer.setSize(root.clientWidth, root.clientHeight);
-  camera.aspect = root.clientWidth / root.clientHeight;
+  const w = root.clientWidth;
+  const h = root.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
   camera.updateProjectionMatrix();
 });
 
-animate();
+// Capped to 45fps to match liquid-ether and paused while the tab is hidden. The cap
+// is lifted during a drag so grabbing the model stays as responsive as before.
+//
+// No viewport gate: the homepage is the only page with the hero and it does not
+// scroll (the document is ~892px against an 800px viewport), so the hero is never
+// off screen and an IntersectionObserver would be pure overhead.
+loop = createRenderLoop({ render: frame, fps: 45 });
+loop.addVisibilityGate();
+
+onThemeChange((dark) => {
+  syncAmbient(dark);
+  // Repaint once so a theme switch is not held until the hero scrolls back in.
+  if (!loop.running) loop.renderOnce();
+});
