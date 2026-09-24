@@ -1,5 +1,14 @@
-{{ $interactiveEffects := resources.Get "js/interactive-effects.js" }}
-{{ $interactiveEffects = $interactiveEffects | resources.Minify | resources.Fingerprint (.Params.fingerprintAlgorithm | default "sha512") }}
+{{/* IIFE, not ESM, and NOT deferred: this script writes html[data-interactive-effects]
+     before first paint and custom.css styles the toggle icon off that attribute.
+     Emitting a module would make it deferred and guarantee an icon flash. It is built
+     rather than merely minified so it can import the shared contract from lib/effects.js. */}}
+{{ $ieOpts := dict
+  "targetPath" "js/interactive-effects.js"
+  "format" "iife"
+  "target" "es2020"
+  "minify" true
+}}
+{{ $interactiveEffects := resources.Get "js/interactive-effects.js" | js.Build $ieOpts | resources.Fingerprint (.Params.fingerprintAlgorithm | default "sha512") }}
 <script
     type="text/javascript"
     src="{{ $interactiveEffects.RelPermalink }}"

@@ -4,7 +4,8 @@
 # @file
 # Builds a Hugo site hosted on Vercel.
 #
-# The Vercel build image automatically installs Node.js dependencies.
+# Node.js dependencies are installed explicitly below: this script provisions its
+# own pinned Node toolchain, so it cannot rely on the build image's install step.
 #------------------------------------------------------------------------------
 
 # Exit on error, undefined variables, or pipe failures
@@ -73,6 +74,16 @@ main() {
   echo Go: "$(go version)"
   echo Hugo: "$(hugo version)"
   echo Node.js: "$(node --version)"
+
+  # Install Node.js dependencies. three.js is bundled into the site JS by Hugo's
+  # js.Build (esbuild); nothing in node_modules is served directly.
+  echo "Installing Node.js dependencies..."
+  if [[ ! -f package-lock.json ]]; then
+    echo "ERROR: package-lock.json is missing. Run 'npm install' locally and commit the lockfile." >&2
+    exit 1
+  fi
+  npm ci --omit=dev --no-audit --no-fund
+  echo three.js: "$(node -p "JSON.parse(require('fs').readFileSync('node_modules/three/package.json','utf8')).version")"
 
   # Configure Git
   echo "Configuring Git..."

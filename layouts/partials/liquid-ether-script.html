@@ -1,8 +1,19 @@
 {{/*
   Loads liquid-ether.js bound to a canvas element.
   Usage: partial "liquid-ether-script.html" (dict "context" . "canvasId" "liquid-ether-canvas")
+
+  Built with js.Build (esbuild), which bundles three.js from node_modules so that
+  no third-party script origin is needed and the SRI hash covers every byte the
+  browser executes. Do not add resources.Minify: esbuild already minified.
 */}}
-{{ $liquidEther := resources.Get "js/liquid-ether.js" | resources.Minify | resources.Fingerprint (.context.Site.Params.fingerprintAlgorithm | default "sha512") }}
+{{ $opts := dict
+  "targetPath" "js/liquid-ether.js"
+  "format" "esm"
+  "target" "es2020"
+  "minify" true
+  "sourceMap" (cond hugo.IsServer "inline" "")
+}}
+{{ $liquidEther := resources.Get "js/liquid-ether.js" | js.Build $opts | resources.Fingerprint (.context.Site.Params.fingerprintAlgorithm | default "sha512") }}
 <script
   type="module"
   src="{{ $liquidEther.RelPermalink }}"
