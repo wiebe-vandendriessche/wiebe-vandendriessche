@@ -1,5 +1,5 @@
-const STORAGE_KEY = "interactive-effects";
-const CHANGE_EVENT = "interactive-effects-change";
+import { STORAGE_KEY, CHANGE_EVENT } from "./lib/effects.js";
+
 const root = document.documentElement;
 
 const readPreference = () => {

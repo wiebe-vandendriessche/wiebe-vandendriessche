@@ -1,0 +1,13 @@
+{
+  "name": "wiebe-vandendriessche",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Build-time JavaScript dependencies. Bundled into the site by Hugo's js.Build (esbuild); nothing here is served directly.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "three": "0.186.0"
+  }
+}

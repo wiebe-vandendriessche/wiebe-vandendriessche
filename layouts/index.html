@@ -6,7 +6,18 @@
       </div>
     </div>
   </section>
-  {{ $threejsHero := resources.Get "js/threejs-hero.js" | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+  {{/* js.Build bundles three.js + GLTFLoader from node_modules: one three instance
+       (the old CDN GLTFLoader inlined a second copy), no third-party script origin,
+       and an SRI hash that covers every byte the browser runs. No resources.Minify --
+       esbuild already minified. */}}
+  {{ $heroOpts := dict
+    "targetPath" "js/threejs-hero.js"
+    "format" "esm"
+    "target" "es2020"
+    "minify" true
+    "sourceMap" (cond hugo.IsServer "inline" "")
+  }}
+  {{ $threejsHero := resources.Get "js/threejs-hero.js" | js.Build $heroOpts | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
   <script
     type="module"
     src="{{ $threejsHero.RelPermalink }}"
@@ -14,7 +25,7 @@
     data-threejs-hero
     data-container-id="threejs-canvas"
     data-root-id="threejs-hero"
-    data-model-url="{{ "models/avatar2export.glb" | relURL }}"></script>
+    data-model-url="{{ (resources.Get "models/avatar2export.opt.glb").RelPermalink }}"></script>
 
   {{ $partial := print "home/" .Site.Params.homepage.layout ".html" }}
   {{ if templates.Exists ( printf "partials/%s" $partial ) }}
