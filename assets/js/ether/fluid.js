@@ -18,7 +18,9 @@ import { ETHER_INK } from "./palette.js";
 // Dropped: the viscous and bounce paths (both off by default in reactbits).
 // Changed: /dt in divergence and *dt in pressure are removed. They cancel exactly,
 // and without them the pressure warm-start does not depend on the (now variable) dt.
-const OPTIONS = { mouseForce: 20, cursorSize: 100, iterations: 32, resolution: 0.5 };
+// Added: maxCells caps the grid at what a 1080p screen gets, so 4K+ screens don't
+// quadruple the cost of every pass (the splat, sized in cells, then keeps its share).
+const OPTIONS = { mouseForce: 20, cursorSize: 100, iterations: 32, resolution: 0.5, maxCells: 960 * 540 };
 
 const faceVert = `
 attribute vec3 position;
@@ -219,8 +221,9 @@ export function createFluid(renderer, pointer, shared) {
 
   return {
     resize(width, height) {
-      const w = Math.max(1, Math.round(OPTIONS.resolution * width));
-      const h = Math.max(1, Math.round(OPTIONS.resolution * height));
+      const scale = Math.min(OPTIONS.resolution, Math.sqrt(OPTIONS.maxCells / (width * height)));
+      const w = Math.max(1, Math.round(scale * width));
+      const h = Math.max(1, Math.round(scale * height));
       cell.set(1 / w, 1 / h);
       fboSize.set(w, h);
       for (const t of [vel0, vel1, div, pRead, pWrite]) t.setSize(w, h);

@@ -1,0 +1,17 @@
+{{/* Homepage hint for the interactive-effects wand. Hidden by default; the controller
+     in interactive-effects.js reveals it only while effects are off and it has not
+     been dismissed before. Styled in custom.css after the theme's alert shortcode. */}}
+<aside data-effects-hint class="effects-hint" role="status" aria-live="polite" hidden>
+  <div class="effects-hint-content">
+    <p class="effects-hint-title">{{ i18n "effects_hint.title" }}</p>
+    <p class="effects-hint-body">{{ i18n "effects_hint.body" }}</p>
+  </div>
+  <button
+    type="button"
+    data-effects-hint-dismiss
+    class="effects-hint-dismiss"
+    aria-label="{{ i18n "effects_hint.dismiss" }}"
+    title="{{ i18n "effects_hint.dismiss" }}">
+    {{ partial "icon.html" "xmark" }}
+  </button>
+</aside>

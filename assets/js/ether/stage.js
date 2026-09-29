@@ -12,6 +12,9 @@ import { createPointer } from "./pointer.js";
 const MIN_STEP_S = 0.0095;
 const DT_PER_SECOND = 0.014 * 60;
 const MOBILE_PX = 768;
+// Drawing-buffer budget: a 1080p screen at 2x. Larger canvases lower the pixel ratio
+// instead, so a 4K screen at 100% isn't filling a 7680x4320 buffer every frame.
+const MAX_DRAW_PX = 3840 * 2160;
 
 // Report real transitions of a class only. Blowfish touches <html>'s class list for
 // unrelated reasons, and each unfiltered call would be a full recolour.
@@ -26,7 +29,6 @@ function watchClass(el, name, callback) {
 export function startEther({ canvas, pixelRatio }) {
   const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "high-performance" });
   renderer.autoClear = false;
-  renderer.setPixelRatio(pixelRatio);
 
   const size = { width: 0, height: 0 };
   // Uniforms shared by the fluid composite and anything drawn on top that wants to
@@ -49,6 +51,7 @@ export function startEther({ canvas, pixelRatio }) {
     if (!size.width || w !== size.width || Math.min(w, h) >= MOBILE_PX) fluid.resize(w, h);
     size.width = w;
     size.height = h;
+    renderer.setPixelRatio(Math.min(pixelRatio, Math.sqrt(MAX_DRAW_PX / Math.max(1, w * h))));
     renderer.setSize(w, h, false);
     renderer.getDrawingBufferSize(shared.uDrawSize.value);
   };
