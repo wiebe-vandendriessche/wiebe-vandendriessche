@@ -13,8 +13,10 @@ const readPreference = () => {
 const isEnabled = () => root.dataset.interactiveEffects !== "off";
 
 const updateControls = (enabled) => {
-  const label = enabled ? "Disable interactive effects" : "Enable interactive effects";
   document.querySelectorAll("[data-interactive-effects-toggle]").forEach((button) => {
+    const label = enabled
+      ? button.dataset.labelDisable || "Disable interactive effects"
+      : button.dataset.labelEnable || "Enable interactive effects";
     button.setAttribute("aria-pressed", String(enabled));
     button.setAttribute("aria-label", label);
     button.setAttribute("title", label);

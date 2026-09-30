@@ -1,7 +1,8 @@
 ---
 title: "Education"
 description: "Education and academic background."
-weight: 1
+weight: 2
+aliases: ["/other/education/"]
 showDate: false
 showTableOfContents: false
 showHero: true

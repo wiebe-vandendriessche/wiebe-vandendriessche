@@ -1,10 +1,11 @@
 ---
 title: "AIBoMGen: Generating an AI Bill of Materials for Secure, Transparent, and Compliant Model Training"
 date: 2026-01-09
-description: "Geaccepteerd op ACM/IEEE CAIN 2026. Een framework om ondertekende AI Bills of Materials te genereren met verwaarloosbare overhead."
+description: "Geaccepteerd op ACM/IEEE CAIN 2026. Een framework om ondertekende AI Bills of Materials te genereren met verwaarloosbare trainingsoverhead."
 tags: ["onderzoek", "aibom", "security", "compliance", "mlops"]
 categories: ["publicatie"]
 showTableOfContents: false
+aliases: ["/research/cain-2026/"]
 ---
 Deze paper introduceert **AIBoMGen**, een platform dat ondertekende AI Bills of Materials (AIBOMs) genereert tijdens modeltraining om transparantie, integriteit en regelgevingscompliance te verbeteren.
 

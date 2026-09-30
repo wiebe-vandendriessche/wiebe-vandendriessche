@@ -1,11 +1,11 @@
 const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.624/pdf.worker.min.mjs";
 
-const createFallbackLink = (url) => {
+const createFallbackLink = (url, text) => {
   const link = document.createElement("a");
   link.href = url;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
-  link.textContent = "Open PDF in a new tab";
+  link.textContent = text;
   return link;
 };
 
@@ -16,6 +16,12 @@ const initializeViewer = (root) => {
   const canvas = root.querySelector("[data-role='canvas']");
   const ctx = canvas?.getContext("2d");
   const src = root.dataset.pdfSrc;
+  const t = {
+    page: root.dataset.i18nPage || "Page",
+    openNewTab: root.dataset.i18nOpenNewTab || "Open PDF in a new tab",
+    renderError: root.dataset.i18nRenderError || "Could not render PDF page.",
+    loadError: root.dataset.i18nLoadError || "Could not load PDF.",
+  };
 
   if (!statusEl || !pageEl || !zoomEl || !canvas || !ctx || !src || !window.pdfjsLib) {
     return;
@@ -34,12 +40,12 @@ const initializeViewer = (root) => {
   const showFallback = (message) => {
     statusEl.hidden = false;
     statusEl.textContent = `${message} `;
-    statusEl.appendChild(createFallbackLink(src));
+    statusEl.appendChild(createFallbackLink(src, t.openNewTab));
   };
 
   const clampPage = (page) => Math.min(Math.max(1, page), pageCount);
   const updateMeta = () => {
-    pageEl.textContent = `Page ${pageNum} / ${pageCount}`;
+    pageEl.textContent = `${t.page} ${pageNum} / ${pageCount}`;
     zoomEl.textContent = `${Math.round(zoom * 100)}%`;
   };
 
@@ -91,7 +97,7 @@ const initializeViewer = (root) => {
       await renderTask.promise;
     } catch (error) {
       if (error?.name === "RenderingCancelledException") return;
-      showFallback("Could not render PDF page.");
+      showFallback(t.renderError);
       console.error(error);
     } finally {
       if (currentRenderVersion === renderVersion) activeRenderTask = null;
@@ -132,7 +138,7 @@ const initializeViewer = (root) => {
       return renderPage(pageNum);
     })
     .catch((error) => {
-      showFallback("Could not load PDF.");
+      showFallback(t.loadError);
       console.error(error);
     });
 };

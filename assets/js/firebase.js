@@ -33,7 +33,7 @@ try {
 
   db = getFirestore(app);
   // Use initializeAuth (not getAuth) with no popupRedirectResolver: this site
-  // only ever calls signInAnonymously, so we don't need — and don't want —
+  // only ever calls signInAnonymously, so we don't need (and don't want)
   // Firebase Auth's default popup/redirect event machinery, which eagerly
   // loads https://apis.google.com/js/api.js and trips the CSP's script-src.
   auth = initializeAuth(app, {

@@ -8,4 +8,4 @@ draft: false
 
 {{< github repo="idlab-discover/AIBoMGen-cli" showThumbnail=false >}}
 
-Go-gebaseerde commandline tool die source code en ML-artifacts doorzoekt om [CycloneDX](https://cyclonedx.org/) AI Bills of Materials (AIBOMs) te genereren. Ontwikkeld binnen het [CRACY Project](https://cra-cy.eu/) om kmo’s een eenvoudige manier te geven om uitgebreide [SBOMs](https://www.ntia.gov/sbom) te maken met AI/ML componenten en metadata. Ondersteunt verschillende workflows zoals het scannen van repositories, genereren op basis van model IDs, validatie, enriching en vulnerability scans.
+Commandlinetool in Go die broncode en ML-artefacten scant om [CycloneDX](https://cyclonedx.org/) AI Bills of Materials (AIBOMs) te genereren. Ontwikkeld binnen het [CRACY-project](https://cra-cy.eu/) om kmo's een eenvoudige manier te bieden om uitgebreide [SBOMs](https://www.ntia.gov/sbom) te maken die ook AI/ML-componenten en metadata bevatten. Ondersteunt verschillende workflows, waaronder het scannen van repositories, genereren op basis van model-ID's, validatie, verrijking en kwetsbaarheidsanalyse.

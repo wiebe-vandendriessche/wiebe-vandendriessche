@@ -16,49 +16,46 @@
   weight = 1
 
 [[main]]
+  name = "Loopbaan"
+  pageRef = "career"
+  weight = 2
+
+[[main]]
+  parent = "Loopbaan"
+  name = "Ervaring"
+  pageRef = "career/experience"
+  weight = 3
+
+[[main]]
+  parent = "Loopbaan"
+  name = "Opleiding"
+  pageRef = "career/education"
+  weight = 4
+
+[[main]]
   name = "Blog"
   pageRef = "blog"
-  weight = 2
+  weight = 6
+
+[[main]]
+  name = "Publicaties"
+  pageRef = "publications"
+  weight = 7
 
 [[main]]
   name = "Projecten"
   pageRef = "projects"
-  weight = 3
-
-[[main]]
-  name = "Onderzoek"
-  pageRef = "research"
-  weight = 4
-
-[[main]]
-  name = "Andere"
-  pageRef = "other"
-  weight = 5
-
-[[main]]
-  parent = "Andere"
-  name = "Opleiding"
-  pageRef = "other/education"
-  weight = 6
-
-[[main]]
-  parent = "Andere"
-  name = "Skills"
-  pageRef = "other/skills"
-  weight = 7
-
-[[main]]
-  parent = "Andere"
-  name = "Hobby's"
-  pageRef = "other/hobbies"
   weight = 8
 
 [[main]]
-  parent = "Andere"
-  name = "cv"
-  url = "/files/cv.pdf"
-  pre = "download"
+  name = "Lezingen"
+  pageRef = "talks"
   weight = 9
+
+[[main]]
+  name = "Onderwijs"
+  pageRef = "teaching"
+  weight = 10
 
 
 # -- Footer Menu --

@@ -8,8 +8,8 @@ draft: false
 
 {{< github repo="idlab-discover/AIBoMGen" showThumbnail=false >}}
 
-Proof-of-concept op branch `aibomgen-v2/main` voor de volgende generatie AIBoMGen. Het systeem leest metadata uit een [ML Metadata (MLMD)](https://github.com/google/ml-metadata) store die door [Kubeflow](https://www.kubeflow.org/) wordt gevuld en zet dit om naar [CycloneDX](https://cyclonedx.org/) AI Bills of Materials.
+Proof-of-concept-systeem op de branch `aibomgen-v2/main` voor de volgende generatie van het AIBoMGen-platform. Het integreert met [Kubeflow](https://www.kubeflow.org/) via een [ML Metadata (MLMD)](https://github.com/google/ml-metadata)-store en haalt de volledige lineage van pipelines op om [CycloneDX](https://cyclonedx.org/) AI Bills of Materials (AIBOMs) te genereren.
 
-Het genereert per model en per dataset een BOM, met relaties tussen modellen via BOM-Link URNs en relaties tussen model en dataset via external references. Daarnaast is er een interactieve graph viewer om pipelines, modellen en datasets visueel te verkennen.
+Het systeem genereert BOMs per model en per dataset, met lineage-bewuste relaties via BOM-Link URNs en expliciete afhankelijkheden tussen model en dataset via external references. Daarnaast biedt het een interactieve, graafgebaseerde viewer om pipelines, modellen, datasets en hun onderlinge relaties te verkennen.
 
-De opzet bestaat uit een MLMD simulator, een BOM generator service en een web viewer. Dit werk is onderdeel van PhD onderzoek rond traceerbaarheid en transparantie in de AI lifecycle, uitgevoerd in het kader van het [CRACY Project](https://cra-cy.eu/).
+De architectuur bestaat uit een MLMD-stack in [Kubeflow](https://www.kubeflow.org/)-stijl met een simulator voor pipeline-uitvoering, een service voor BOM-generatie en een webgebaseerde visualisatielaag. Dit werk maakt deel uit van doctoraatsonderzoek naar end-to-end traceerbaarheid van de AI-levenscyclus en transparantie in de supply chain, uitgevoerd in het kader van het [CRACY-project](https://cra-cy.eu/).

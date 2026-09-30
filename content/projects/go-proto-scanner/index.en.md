@@ -1,7 +1,7 @@
 ---
 title: "Go Proto Scanner"
 date: 2025-09-29
-description: "A Go tool for scanning and analyzing Protocol Buffer definitions in Go projects."
+description: "A lightweight vulnerability scanning prototype in Go with an HTTP API and SQLite storage."
 tags: ["go", "protobuf", "tooling"]
 draft: true
 ---

@@ -40,7 +40,7 @@ Deze website gebruikt geen Google Analytics.
 
 Deze website plaatst niet bewust trackingcookies voor analyses.
 
-Essentiele technische cookies kunnen wel gebruikt worden door je browser of infrastructuurdiensten voor basisfunctionaliteit en beveiliging.
+Essenti&euml;le technische cookies kunnen wel gebruikt worden door je browser of infrastructuurdiensten voor basisfunctionaliteit en beveiliging.
 
 ## 5. Doel en rechtsgrond
 

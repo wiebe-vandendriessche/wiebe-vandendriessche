@@ -8,4 +8,4 @@ draft: false
 
 {{< github repo="CRA-tools/AIBoMGen-cli-dashboard" showThumbnail=false >}}
 
-Webgebaseerde demo dashboard bovenop de AIBoMGen CLI, met een Go backend en een [Next.js](https://nextjs.org/) frontend. Biedt een eenvoudige interface om [CycloneDX](https://cyclonedx.org/) AI Bills of Materials te genereren, te bekijken en te valideren. Ontwikkeld als [CRACY Project](https://cra-cy.eu/) demo om AIBOM generatie toegankelijk te maken via een gebruiksvriendelijke UI.
+Webgebaseerd demodashboard bovenop de AIBoMGen CLI, met een Go-backend en een [Next.js](https://nextjs.org/)-frontend. Biedt een interactieve interface om [CycloneDX](https://cyclonedx.org/) AI Bills of Materials te genereren, te valideren en te inspecteren. Ontworpen als showcase van het [CRACY-project](https://cra-cy.eu/) om de generatie van AI/ML-[SBOMs](https://www.ntia.gov/sbom) toegankelijk te maken via een gebruiksvriendelijke UI.

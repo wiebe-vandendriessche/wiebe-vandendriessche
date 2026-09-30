@@ -1,4 +1,24 @@
 effects_hint:
-  title: "Hint"
+  title: "Tip"
   body: "Tik op de toverstaf in het menu om de achtergrond te laten golven en mijn 3D-avatar te laten draaien."
   dismiss: "Sluiten"
+
+effects_toggle:
+  enable: "Interactieve effecten inschakelen"
+  disable: "Interactieve effecten uitschakelen"
+
+publication:
+  metadata: "Publicatiegegevens"
+  venue: "Gepubliceerd in"
+  type: "Type"
+
+pdf_viewer:
+  title: "PDF-viewer"
+  controls: "PDF-bediening"
+  prev: "Vorige"
+  next: "Volgende"
+  page: "Pagina"
+  open: "PDF openen"
+  open_new_tab: "PDF openen in een nieuw tabblad"
+  render_error: "Kon de PDF-pagina niet weergeven."
+  load_error: "Kon de PDF niet laden."

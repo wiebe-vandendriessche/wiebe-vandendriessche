@@ -1,6 +1,6 @@
 ---
-title: "Andere"
-description: "Aanvullende pagina's."
+title: "Career"
+description: "Experience and education."
 cascade:
   showReadingTime: false
   showAuthor: false

@@ -414,3 +414,13 @@ html[data-effects-hint-active]:not([data-interactive-effects="on"]) [data-intera
         animation: none;
     }
 }
+
+/* Collapsed header (set by js/nav-collapse.js when the site title would be
+   truncated): show the burger menu instead of the desktop menu. */
+[data-nav-row][data-nav-collapsed] [data-nav-desktop] {
+  display: none;
+}
+
+[data-nav-row][data-nav-collapsed] [data-nav-mobile] {
+  display: flex;
+}

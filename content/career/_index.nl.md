@@ -1,6 +1,6 @@
 ---
-title: "Other"
-description: "Additional pages."
+title: "Loopbaan"
+description: "Ervaring en opleiding."
 cascade:
   showReadingTime: false
   showAuthor: false
