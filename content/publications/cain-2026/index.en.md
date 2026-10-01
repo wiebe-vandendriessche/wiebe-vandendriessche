@@ -6,6 +6,7 @@ tags: ["research", "aibom", "security", "compliance", "mlops"]
 categories: ["publication"]
 showTableOfContents: false
 aliases: ["/research/cain-2026/"]
+featureimagecredit: "Unsplash"
 ---
 This paper introduces **AIBoMGen**, a platform that generates signed AI Bills of Materials (AIBOMs) during model training to improve transparency, integrity, and regulatory compliance.
 

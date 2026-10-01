@@ -3,6 +3,7 @@ title: "Om AI te vertrouwen moeten we de bouwstenen kennen"
 date: 2026-08-19
 description: "Om AI te vertrouwen moeten we de bouwstenen kennen"
 draft: false
+featureimagecredit: "Unsplash"
 ---
 
 > Dit opiniestuk verscheen op 19 augustus 2026 in **De Tijd**: [Om AI te vertrouwen moeten we de bouwstenen kennen](https://www.tijd.be/opinie/algemeen/om-ai-te-vertrouwen-moeten-we-de-bouwstenen-kennen/10682705.html).

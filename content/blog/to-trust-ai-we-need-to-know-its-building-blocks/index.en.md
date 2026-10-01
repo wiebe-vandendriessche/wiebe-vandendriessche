@@ -3,6 +3,7 @@ title: "To trust AI, we need to know its building blocks"
 date: 2026-08-19
 description: "To trust AI, we need to know its building blocks"
 draft: false
+featureimagecredit: "Unsplash"
 ---
 
 > This opinion piece was originally published (in Dutch) on 19 August 2026 in **De Tijd**: [Om AI te vertrouwen moeten we de bouwstenen kennen](https://www.tijd.be/opinie/algemeen/om-ai-te-vertrouwen-moeten-we-de-bouwstenen-kennen/10682705.html).
