@@ -424,3 +424,21 @@ html[data-effects-hint-active]:not([data-interactive-effects="on"]) [data-intera
 [data-nav-row][data-nav-collapsed] [data-nav-mobile] {
   display: flex;
 }
+
+/* Copyright label on the featured image, set via `featureimagecredit` front matter. */
+.feature-image {
+    position: relative;
+}
+
+.feature-image-credit {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 0.7rem;
+    line-height: 1.2;
+    pointer-events: none;
+}

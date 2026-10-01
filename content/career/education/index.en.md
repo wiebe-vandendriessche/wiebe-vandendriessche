@@ -6,6 +6,7 @@ aliases: ["/other/education/"]
 showDate: false
 showTableOfContents: false
 showHero: true
+featureimagecredit: "UGent"
 ---
 
 {{< timeline >}}
