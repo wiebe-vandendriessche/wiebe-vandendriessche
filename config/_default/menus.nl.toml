@@ -16,70 +16,68 @@
   weight = 1
 
 [[main]]
+  name = "Blog"
+  pageRef = "blog"
+  weight = 2
+
+[[main]]
+  name = "Publicaties"
+  pageRef = "publications"
+  weight = 3
+
+[[main]]
+  name = "Projecten"
+  pageRef = "projects"
+  weight = 4
+
+[[main]]
+  name = "Lezingen"
+  pageRef = "talks"
+  weight = 5
+
+[[main]]
+  name = "Onderwijs"
+  pageRef = "teaching"
+  weight = 6
+
+[[main]]
   name = "Loopbaan"
   pageRef = "career"
-  weight = 2
+  weight = 7
 
 [[main]]
   parent = "Loopbaan"
   name = "Ervaring"
   pageRef = "career/experience"
-  weight = 3
+  weight = 8
 
 [[main]]
   parent = "Loopbaan"
   name = "Opleiding"
   pageRef = "career/education"
-  weight = 4
-
-[[main]]
-  name = "Blog"
-  pageRef = "blog"
-  weight = 6
-
-[[main]]
-  name = "Publicaties"
-  pageRef = "publications"
-  weight = 7
-
-[[main]]
-  name = "Projecten"
-  pageRef = "projects"
-  weight = 8
-
-[[main]]
-  name = "Lezingen"
-  pageRef = "talks"
   weight = 9
-
-[[main]]
-  name = "Onderwijs"
-  pageRef = "teaching"
-  weight = 10
-
 
 # -- Footer Menu --
 # The footer menu is displayed at the bottom of the page, just before
 # the copyright notice. Configure as per the main menu above.
 
-
-# [[footer]]
-#   name = "Tags"
-#   pageRef = "tags"
-#   weight = 10
-
-# [[footer]]
-#   name = "Categories"
-#   pageRef = "categories"
-#   weight = 20
-
 [[footer]]
-  name = "Blog RSS"
-  url = "/blog/index.xml"
+  name = "RSS"
+  url = "/nl/index.xml"
   weight = 20
   pre = "rss"
 
 [[footer]]
+  name = "Tags"
+  pageRef = "tags"
+  weight = 21
+
+[[footer]]
+  name = "Categories"
+  pageRef = "categories"
+  weight = 22
+
+[[footer]]
   name = "Privacybeleid"
   pageRef = "privacy-policy"
-  weight = 30
+  weight = 23

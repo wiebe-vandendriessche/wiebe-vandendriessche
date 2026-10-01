@@ -3,6 +3,7 @@ title: "JobSwiper"
 date: 2024-12-20
 description: "Tinder-style job matching microservices application with an API gateway, JWT auth, ElasticSearch recommendations, and a SAGA pattern for distributed transactions."
 tags: ["python", "javascript", "java", "microservices", "docker", "elasticsearch", "rabbitmq"]
+categories: ["software-project"]
 ---
 
 {{< github repo="wiebe-vandendriessche/jobswiper" showThumbnail=false >}}

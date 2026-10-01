@@ -3,6 +3,7 @@ title: "Schaken"
 date: 2023-05-22
 description: "Browser-based chess game built with HTML, CSS, and JavaScript."
 tags: ["javascript", "html", "css", "chess"]
+categories: ["software-project"]
 ---
 
 {{< github repo="wiebe-vandendriessche/schaken" showThumbnail=false >}}

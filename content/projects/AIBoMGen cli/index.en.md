@@ -3,6 +3,7 @@ title: "AIBoMGen CLI"
 date: 2026-04-21
 description: "A Go CLI tool that scans a repository for Hugging Face model usage and emits CycloneDX AI Bills of Materials (AIBOMs)."
 tags: ["go", "aibom", "cyclonedx", "hugging-face", "sbom", "security", "cli"]
+categories: ["software-project"]
 draft: false
 ---
 

@@ -3,6 +3,7 @@ title: "Cardiovasculaire visualisatie"
 date: 2025-05-03
 description: "Browser-gebaseerde 3D-visualisatie van cardiovasculaire data met VTK.js, inclusief virtuele endoscopie, doorsnede-weergaven en MIP-slicing."
 tags: ["javascript", "vtk", "medical", "visualization", "3d"]
+categories: ["software-project"]
 ---
 
 {{< github repo="wiebe-vandendriessche/cardiovascular-visualization" showThumbnail=false >}}

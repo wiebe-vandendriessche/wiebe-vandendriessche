@@ -94,7 +94,9 @@ def menu(path):
     for block in open(path, encoding="utf-8").read().split("[[")[1:]:
         kind = block.split("]]")[0]
         fields = dict(re.findall(r'^\s*(\w+)\s*=\s*(.+)$', block, re.M))
-        items.append((kind, fields.get("pageRef"), fields.get("url"), fields.get("weight"),
+        # A url may carry the language prefix (/nl/...), since Hugo does not add it to menu urls
+        url = re.sub(r'^"/nl(?=/|")', '"', fields.get("url", "")) or None
+        items.append((kind, fields.get("pageRef"), url, fields.get("weight"),
                       fields.get("pre"), "parent" in fields))
     return items
 

@@ -3,6 +3,7 @@ title: "SBOM Workshop"
 date: 2026-01-27
 description: "Hands-on workshop on Software Bill of Materials: generate, sign, scan, and visualize SBOMs for supply chain security."
 tags: ["go", "sbom", "security", "github-actions", "workshop"]
+categories: ["workshop"]
 ---
 
 {{< github repo="wiebe-vandendriessche/sbom-workshop-short" showThumbnail=false >}}

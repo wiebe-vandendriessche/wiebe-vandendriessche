@@ -3,6 +3,7 @@ title: "AIBoMGen CLI Dashboard"
 date: 2026-04-21
 description: "Een demo-dashboard voor AIBoMGen CLI: een Go REST API die de AIBoMGen-bibliotheek gebruikt en een Next.js-webfrontend voor het genereren, valideren en samenvoegen van AIBOMs."
 tags: ["go", "typescript", "next.js", "aibom", "cyclonedx", "rest-api", "swagger", "docker"]
+categories: ["software-project"]
 draft: false
 ---
 

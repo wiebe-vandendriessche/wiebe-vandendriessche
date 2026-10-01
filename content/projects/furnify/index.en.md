@@ -3,6 +3,7 @@ title: "Furnify"
 date: 2024-05-20
 description: "Interactive 3D room configurator built with React Three Fiber and Vite, allowing users to design and furnish rooms with Furnify modules."
 tags: ["javascript", "typescript", "react", "three.js", "3d"]
+categories: ["software-project"]
 ---
 
 {{< github repo="wiebe-vandendriessche/furnify" showThumbnail=false >}}

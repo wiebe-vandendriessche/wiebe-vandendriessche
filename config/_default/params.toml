@@ -91,6 +91,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   # relatedContentLimit = 3
   showTaxonomies = true # use showTaxonomies OR showCategoryOnly, not both
   showCategoryOnly = false # use showTaxonomies OR showCategoryOnly, not both
+  showCategoriesInSecondaryColor = true
   showAuthorsBadges = false
   showWordCount = false
   # sharingLinks = [ "linkedin", "twitter", "bluesky", "mastodon", "reddit", "pinterest", "facebook", "email", "whatsapp", "telegram", "line"]
@@ -104,7 +105,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   layoutBackgroundHeaderSpace = false
 
   showBreadcrumbs = true
-  showSummary = true
+  showSummary = false
   showViews = false
   showLikes = false
   showTableOfContents = true
