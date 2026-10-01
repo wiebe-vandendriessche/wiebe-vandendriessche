@@ -7,6 +7,8 @@ i18n file it compares:
   - front matter keys, and values that are not translated (dates, weights, flags)
   - shortcodes and their untranslated parameters, links, headings, table rows,
     list items and images
+  - that every tag and category is a slug with a term page in
+    content/<taxonomy>/<slug>/, and every term page is used
 
     python3 scripts/check-lang-sync.py
 """
@@ -16,7 +18,7 @@ root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(root)
 
 # Front matter keys whose values are prose and get translated.
-TRANSLATED_KEYS = {"title", "description", "summary", "tags", "categories", "linkTitle"}
+TRANSLATED_KEYS = {"title", "description", "summary", "linkTitle"}
 # Shortcode parameters whose values are prose and get translated.
 TRANSLATED_PARAMS = {"header", "subheader", "badge", "title", "alt", "caption"}
 
@@ -117,6 +119,38 @@ def keys(path):
 ke, kn = keys("i18n/en.yaml"), keys("i18n/nl.yaml")
 if ke != kn:
     fail("i18n/*.yaml", f"keys differ: only EN {sorted(ke - kn)}, only NL {sorted(kn - ke)}")
+
+# Taxonomy terms: front matter holds slugs, each with a term page in
+# content/<taxonomy>/<slug>/ that sets the (translated) title. Term pages
+# must be used, and are drafts exactly when every page using them is.
+TAXONOMIES = ("tags", "categories")
+used = {tax: {} for tax in TAXONOMIES}  # tax -> slug -> [is_draft per page]
+for path in sorted(glob.glob("content/**/*.en.md", recursive=True)):
+    if path.startswith(tuple(f"content/{tax}/" for tax in TAXONOMIES)):
+        continue
+    fm = front_matter(split_front_matter(open(path, encoding="utf-8").read())[0])
+    for tax in TAXONOMIES:
+        for term in re.findall(r'"([^"]*)"', fm.get(tax, "")):
+            if not re.fullmatch(r"[a-z0-9.]+(-[a-z0-9.]+)*", term):
+                fail(path, f"{tax} value {term!r} is not a slug (lowercase, hyphens), the title belongs in content/{tax}/<slug>/")
+            used[tax].setdefault(term, []).append(fm.get("draft") == "true")
+for tax in TAXONOMIES:
+    folders = {os.path.basename(d) for d in glob.glob(f"content/{tax}/*") if os.path.isdir(d)}
+    for term in sorted(set(used[tax]) - folders):
+        fail(f"content/{tax}/{term}/", "missing term page (_index.en.md and _index.nl.md with a title)")
+    for term in sorted(folders - set(used[tax])):
+        fail(f"content/{tax}/{term}/", "term page not used by any content page")
+    for term in sorted(folders & set(used[tax])):
+        page = f"content/{tax}/{term}/_index.en.md"
+        if not os.path.exists(page):
+            if not os.path.exists(page.replace(".en.md", ".nl.md")):
+                fail(f"content/{tax}/{term}/", "missing term page (_index.en.md and _index.nl.md with a title)")
+            continue  # otherwise reported above as missing English version
+        fm = front_matter(split_front_matter(open(page, encoding="utf-8").read())[0])
+        if not fm.get("title"):
+            fail(page, "term page has no title")
+        if (fm.get("draft") == "true") != all(used[tax][term]):
+            fail(page, "draft must be true exactly when every page using this term is a draft")
 
 if errors:
     print("English and Dutch are out of sync:", file=sys.stderr)
