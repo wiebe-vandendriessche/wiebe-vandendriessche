@@ -2,7 +2,7 @@
 title: "Library Catalog (TypeORM)"
 date: 2023-09-10
 description: "A library catalog web application built with TypeORM, TypeScript, and Express, featuring book, article, and author management."
-tags: ["typescript", "typeorm", "nodejs", "express"]
+tags: ["typescript", "typeorm", "node.js", "express"]
 ---
 
 {{< github repo="wiebe-vandendriessche/typeORM" showThumbnail=false >}}

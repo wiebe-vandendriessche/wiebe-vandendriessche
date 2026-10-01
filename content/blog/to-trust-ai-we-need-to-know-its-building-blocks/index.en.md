@@ -3,6 +3,7 @@ title: "To trust AI, we need to know its building blocks"
 date: 2026-08-19
 description: "To trust AI, we need to know its building blocks"
 draft: false
+featureimagecredit: "Unsplash"
 ---
 
 > This opinion piece was originally published (in Dutch) on 19 August 2026 in **De Tijd**: [Om AI te vertrouwen moeten we de bouwstenen kennen](https://www.tijd.be/opinie/algemeen/om-ai-te-vertrouwen-moeten-we-de-bouwstenen-kennen/10682705.html).
@@ -27,11 +28,11 @@ If a single link in that chain is compromised, it can affect all the application
 
 ## AI Bill of Materials
 
-The software industry has learned hard lessons from this in recent years. Companies are increasingly demanding a "bill of materials" for their software, a Software Bill of Materials, so that, in the event of a breach, they immediately know which components have been affected.
+The software industry has learned hard lessons from this in recent years. Companies are increasingly demanding an "ingredient list" for their software, a Software Bill of Materials, so that, in the event of a breach, they immediately know which components have been affected.
 
 With AI, that transparency is often still lacking. Developers combine open-source models with dozens of software libraries and train them on datasets whose origins are often unclear. While this accelerates innovation, it also makes it difficult to know which components are being used, where they come from, and whether they are still reliable. Many organizations lack sufficient insight into the building blocks behind their AI systems.
 
-That blind trust is irresponsible. Trust in AI begins with transparency across the entire underlying chain. Companies that integrate AI must require their suppliers to provide a comprehensive list of components, an AI equivalent of the Software Bill of Materials.
+That blind trust is irresponsible. Trust in AI begins with transparency across the entire underlying chain. Companies that integrate AI must require their suppliers to provide a comprehensive ingredient list, an AI equivalent of the Software Bill of Materials.
 
 > Developers combine open-source models with dozens of software libraries and train them on datasets whose origins are often unclear.
 
@@ -39,6 +40,6 @@ The European legislature is already taking a first step with the AI Act: as of A
 
 Fortunately, this transparency is already technically feasible. Our own research shows that an AI Bill of Materials can be generated automatically, without noticeably slowing down the development or training of AI systems. Transparency, therefore, does not have to become an additional administrative burden but can be largely built into the development process automatically.
 
-That automatic nature is crucial. Transparency must not depend on what a supplier claims about its AI system. An AI Bill of Materials must be automatically generated and remain verifiable afterward. Cryptographic techniques such as digital signatures can be used to verify that the information is authentic and cannot be altered undetected afterward. Furthermore, these ingredient lists were tested in the study against potential manipulation attempts. Conclusion: they remained reliable, even under the pressure of attacks.
+That automatic nature is crucial. Transparency must not depend on what a supplier claims about its AI system. An AI Bill of Materials must be able to be generated automatically and remain verifiable afterward. Cryptographic techniques such as digital signatures can be used to verify that the information is authentic and cannot be altered undetected afterward. Furthermore, these ingredient lists were tested in the study against potential manipulation attempts. Conclusion: they remained reliable, even under the pressure of attacks.
 
-AI building blocks can indeed be transparent, as my doctoral research demonstrates. There is therefore no reason why that transparency should not become the norm.
+AI building blocks can indeed be transparent, as my doctoral research demonstrates. There is no reason why that transparency should not become the norm.

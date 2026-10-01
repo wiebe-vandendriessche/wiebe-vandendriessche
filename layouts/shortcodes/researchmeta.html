@@ -3,9 +3,9 @@
 {{- $arxiv := .Get "arxiv" -}}
 {{- $doi := .Get "doi" -}}
 
-<div class="research-meta" role="note" aria-label="Research publication metadata">
-  {{- with $venue }}<span><strong>Venue:</strong> {{ . }}</span>{{ end -}}
-  {{- with $ptype }}<span><strong>Type:</strong> {{ . }}</span>{{ end -}}
+<div class="research-meta" role="note" aria-label="{{ i18n "publication.metadata" }}">
+  {{- with $venue }}<span><strong>{{ i18n "publication.venue" }}:</strong> {{ . }}</span>{{ end -}}
+  {{- with $ptype }}<span><strong>{{ i18n "publication.type" }}:</strong> {{ . }}</span>{{ end -}}
   {{- with $arxiv }}<span><strong>arXiv:</strong> <a href="https://arxiv.org/abs/{{ . }}" target="_blank" rel="noopener">{{ . }}</a></span>{{ end -}}
   {{- with $doi }}<span><strong>DOI:</strong> <a href="https://doi.org/{{ . }}" target="_blank" rel="noopener">{{ . }}</a></span>{{ end -}}
 </div>

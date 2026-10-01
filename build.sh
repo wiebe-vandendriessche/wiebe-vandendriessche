@@ -92,6 +92,10 @@ main() {
     git fetch --unshallow
   fi
 
+  # Enforce the ASCII-only and EN/NL sync rules from CLAUDE.md
+  ./scripts/check-ascii.sh
+  python3 ./scripts/check-lang-sync.py
+
   # Build the site
   echo "Building the site..."
 

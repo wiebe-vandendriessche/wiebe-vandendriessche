@@ -2,3 +2,23 @@ effects_hint:
   title: "Hint"
   body: "Tap the magic wand in the menu to stir the background and spin my 3D avatar."
   dismiss: "Dismiss"
+
+effects_toggle:
+  enable: "Enable interactive effects"
+  disable: "Disable interactive effects"
+
+publication:
+  metadata: "Publication metadata"
+  venue: "Venue"
+  type: "Type"
+
+pdf_viewer:
+  title: "PDF viewer"
+  controls: "PDF controls"
+  prev: "Prev"
+  next: "Next"
+  page: "Page"
+  open: "Open PDF"
+  open_new_tab: "Open PDF in a new tab"
+  render_error: "Could not render PDF page."
+  load_error: "Could not load PDF."

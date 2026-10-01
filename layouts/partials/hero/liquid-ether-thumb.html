@@ -63,7 +63,7 @@
 }}
 
 {{ with $featuredURL }}
-  <div class="overflow-hidden rounded-md h-36 md:h-56 lg:h-72 nozoom">
+  <div class="feature-image overflow-hidden rounded-md h-36 md:h-56 lg:h-72 nozoom">
     <img
       src="{{ . }}"
       role="presentation"
@@ -72,6 +72,9 @@
       fetchpriority="high"
       class="w-full h-full nozoom object-cover"
       {{ with $.Params.imagePositionFeature }}style="object-position: {{ . }};"{{ end }}>
+    {{ with $.Params.featureimagecredit }}
+      <span class="feature-image-credit">&copy; {{ . }}</span>
+    {{ end }}
   </div>
 {{ end }}
 

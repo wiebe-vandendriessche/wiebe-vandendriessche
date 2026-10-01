@@ -167,9 +167,11 @@
     <button
       type="button"
       data-interactive-effects-toggle
+      data-label-enable="{{ i18n "effects_toggle.enable" }}"
+      data-label-disable="{{ i18n "effects_toggle.disable" }}"
       aria-pressed="false"
-      aria-label="Enable interactive effects"
-      title="Enable interactive effects"
+      aria-label="{{ i18n "effects_toggle.enable" }}"
+      title="{{ i18n "effects_toggle.enable" }}"
       class="flex items-center justify-center bf-icon-color-hover">
       <span data-interactive-effects-icon="enabled" class="hidden">
         {{ partial "icon.html" "xmark" }}

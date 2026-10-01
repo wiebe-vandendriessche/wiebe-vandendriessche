@@ -8,4 +8,4 @@ draft: false
 
 {{< github repo="CRA-tools/AIBoMGen-cli-action" showThumbnail=false >}}
 
-GitHub Action wrapper rond AIBoMGen CLI voor gebruik in CI/CD pipelines. Laat toe om automatisch [CycloneDX](https://cyclonedx.org/) AIBOMs te genereren, valideren, enrichen en samen te voegen tijdens builds. Ontwikkeld binnen het [CRACY Project](https://cra-cy.eu/) om AI/ML supply chain transparantie toegankelijk te maken zonder manuele tooling.
+GitHub Action-wrapper rond de AIBoMGen CLI voor CI/CD-pipelines. Maakt het mogelijk om [CycloneDX](https://cyclonedx.org/) AIBOMs automatisch te genereren, valideren, verrijken en samen te voegen tijdens builds. Ontwikkeld in het kader van het [CRACY-project](https://cra-cy.eu/) om transparantie in de AI/ML-supply chain toegankelijk te maken voor kmo's, zonder dat daar manuele tooling voor nodig is.

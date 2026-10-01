@@ -32,9 +32,11 @@
     <button
       type="button"
       data-interactive-effects-toggle
+      data-label-enable="{{ i18n "effects_toggle.enable" }}"
+      data-label-disable="{{ i18n "effects_toggle.disable" }}"
       aria-pressed="false"
-      aria-label="Enable interactive effects"
-      title="Enable interactive effects"
+      aria-label="{{ i18n "effects_toggle.enable" }}"
+      title="{{ i18n "effects_toggle.enable" }}"
       class="text-sm bf-icon-color-hover">
       <span data-interactive-effects-icon="enabled" class="hidden">
         {{ partial "icon.html" "xmark" }}
@@ -56,7 +58,7 @@
         id="search-shortcut-hint"
         class="pointer-events-none font-sans text-xs text-neutral-500 dark:text-neutral-400"
         aria-hidden="true">
-        ⌘K
+        &#8984;K
       </kbd>
     </button>
   {{ end }}

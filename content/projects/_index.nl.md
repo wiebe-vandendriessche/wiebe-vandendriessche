@@ -15,4 +15,4 @@ orderByWeight: false
 groupByYear: true
 cardView: false
 ---
-Een verzameling projecten die te veel koffie en te weinig slaap hebben gekost.
+Een verzameling projecten, aangedreven door te veel koffie en te weinig slaap.
