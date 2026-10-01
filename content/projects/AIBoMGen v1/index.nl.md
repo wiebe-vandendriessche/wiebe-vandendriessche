@@ -3,6 +3,7 @@ title: "AIBoMGen v1"
 date: 2025-05-28
 description: "Een proof-of-concept platform dat CycloneDX AIBOMs genereert tijdens gedistribueerde AI-modeltraining, met een Next.js-frontend en een Python-backend."
 tags: ["python", "typescript", "next.js", "aibom", "cyclonedx", "distributed-training", "docker", "masters-thesis"]
+categories: ["software-project"]
 draft: false
 ---
 

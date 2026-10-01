@@ -3,6 +3,7 @@ title: "Go Proto Scanner"
 date: 2025-09-29
 description: "Een lichtgewicht prototype voor kwetsbaarheidsscans in Go met een HTTP API en SQLite-opslag."
 tags: ["go", "protobuf", "tooling"]
+categories: ["software-project"]
 draft: true
 ---
 

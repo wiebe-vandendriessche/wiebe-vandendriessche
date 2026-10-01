@@ -1,0 +1,36 @@
+# -- Hugo Modules --
+# Blowfish is loaded as a git submodule through theme = "blowfish" in hugo.toml,
+# so nothing here is required. Commented lines show Hugo's default or an
+# example value and have no effect until uncommented.
+# Reference: https://gohugo.io/configuration/module/
+
+# auth = "" # auth header for private module proxies
+# noProxy = "none" # glob of module paths that bypass the proxy
+# noVendor = "" # glob of module paths to skip when vendoring
+# private = "*.*" # glob of private module paths (GOPRIVATE)
+# proxy = "direct" # GOPROXY
+# replacements = "" # e.g. "github.com/a/b -> ../local/b"
+# vendorClosest = false
+# workspace = "off" # path to a go.work file, or "off"
+
+# [hugoVersion] # fail the build outside this Hugo version range
+#   extended = false
+#   min = ""
+#   max = ""
+
+# [[imports]] # alternative to the git submodule: hugo mod init, then import the theme
+#   path = "github.com/nunocoracao/blowfish/v2"
+#   disable = false
+#   ignoreConfig = false
+#   ignoreImports = false
+#   noMounts = false
+#   noVendor = false
+#   usePackageJSON = false
+#   version = ""
+
+# [[mounts]] # declaring any mount replaces the default mounts for this project
+#   source = "content"
+#   target = "content"
+#   disableWatch = false
+#   files = [] # glob filter on files (replaces excludeFiles/includeFiles)
+#   # sites = {} # sites matrix filter (replaces lang)

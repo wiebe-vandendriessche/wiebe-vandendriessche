@@ -57,14 +57,18 @@ const initHint = () => {
 
   let timer;
 
-  // On wide screens, hang the card under whichever wand is actually visible (the
-  // desktop header one) with its arrow on the icon. Narrow screens keep the CSS
-  // bottom-sheet placement: there the wand is tucked inside the mobile menu.
+  // With the full navbar, hang the card under the header wand with its arrow on the
+  // icon. With the burger menu, keep the CSS bottom-sheet placement: there the wand
+  // is tucked inside the closed menu. Decided by what is actually visible, not by a
+  // width, so it follows the theme's breakpoint. The closed mobile menu is only
+  // invisible and transparent, not display: none, so getClientRects() is not enough.
+  const isVisible = (el) =>
+    el.checkVisibility
+      ? el.checkVisibility({ visibilityProperty: true, opacityProperty: true })
+      : el.getClientRects().length > 0 && !el.closest("#mobile-menu-dialog");
   const place = () => {
-    const wand = [...document.querySelectorAll("[data-interactive-effects-toggle]")].find(
-      (el) => el.getClientRects().length > 0
-    );
-    const anchored = Boolean(wand) && window.innerWidth >= 768;
+    const wand = [...document.querySelectorAll("[data-interactive-effects-toggle]")].find(isVisible);
+    const anchored = Boolean(wand) && !wand.closest("#mobile-menu-dialog");
     hint.classList.toggle("is-anchored", anchored);
     if (!anchored) {
       hint.style.removeProperty("left");

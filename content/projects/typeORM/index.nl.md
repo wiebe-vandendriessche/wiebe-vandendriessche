@@ -3,6 +3,7 @@ title: "Bibliotheekcatalogus (TypeORM)"
 date: 2023-09-10
 description: "Een webapplicatie voor een bibliotheekcatalogus gebouwd met TypeORM, TypeScript en Express, met beheer van boeken, artikels en auteurs."
 tags: ["typescript", "typeorm", "node.js", "express"]
+categories: ["software-project"]
 ---
 
 {{< github repo="wiebe-vandendriessche/typeORM" showThumbnail=false >}}

@@ -263,7 +263,7 @@ html[data-interactive-effects="on"] [data-interactive-effects-icon="disabled"] {
     }
 }
 /* Homepage hint for the interactive-effects wand (layouts/partials/home/effects-hint.html).
-   Looks like the theme's alert shortcode, floating. Mobile: a bottom card. md+: JS adds
+   Looks like the theme's alert shortcode, floating. Burger menu: a bottom card. Full navbar: JS adds
    .is-anchored and hangs it under the header wand, with the arrow on the icon. */
 .effects-hint {
     position: fixed;
@@ -415,16 +415,6 @@ html[data-effects-hint-active]:not([data-interactive-effects="on"]) [data-intera
     }
 }
 
-/* Collapsed header (set by js/nav-collapse.js when the site title would be
-   truncated): show the burger menu instead of the desktop menu. */
-[data-nav-row][data-nav-collapsed] [data-nav-desktop] {
-  display: none;
-}
-
-[data-nav-row][data-nav-collapsed] [data-nav-mobile] {
-  display: flex;
-}
-
 /* Copyright label on the featured image, set via `featureimagecredit` front matter. */
 .feature-image {
     position: relative;
@@ -441,4 +431,12 @@ html[data-effects-hint-active]:not([data-interactive-effects="on"]) [data-intera
     font-size: 0.7rem;
     line-height: 1.2;
     pointer-events: none;
+}
+
+/* Category badges: indigo instead of the scheme's red secondary color.
+   Scoped to category links so inline code and the hero gradient keep the secondary palette. */
+a[href*="/categories/"] {
+    --color-secondary-400: 129, 140, 248;
+    --color-secondary-600: 79, 70, 229;
+    --color-secondary-700: 67, 56, 202;
 }

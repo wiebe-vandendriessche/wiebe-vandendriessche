@@ -4,6 +4,12 @@
 #
 # Refer to the theme docs for more details about each of these parameters.
 # https://blowfish.page/docs/configuration/#theme-parameters
+#
+# Every Blowfish parameter (v3.8.0) is listed here. Commented lines show the
+# theme default or an example value and have no effect until uncommented.
+# Per-language params (logo, secondaryLogo, description, copyright, author,
+# dateFormat, ...) live in languages.*.toml.
+# Root-level keys must stay above the first [table] header.
 
 colorScheme = "github"
 defaultAppearance = "dark" # valid options: light or dark
@@ -14,11 +20,17 @@ enableSearch = true
 enableCodeCopy = false
 enableStructuredBreadcrumbs = false
 enableStyledScrollbar = true
+# disableImageZoom = false # disable the click-to-zoom on images in articles
 
 replyByEmail = false
 
-# mainSections = ["section1", "section2"]
+mainSections = ["projects", "blog"] # sections listed under "Recent" on the homepage
 robots = "index, follow"
+keywords = ["AI", "machine learning", "AI supply chain", "SBOM", "trustworthy AI", "IDLab", "Ghent University", "imec"]
+# env = "production" # robots.txt allows crawling when Hugo runs in production or env = "production"
+
+# showViews = false # global default, overridden by article.showViews, list.showViews, ...
+# showLikes = false # global default, overridden by article.showLikes, list.showLikes, ...
 
 disableImageOptimization = false
 disableImageOptimizationMD = false
@@ -26,10 +38,15 @@ disableTextInHeader = false
 backgroundImageWidth = 1600
 
 defaultBackgroundImage = "img/background/igent-tower.jpg" # used as default for background images
+# backgroundCanvas = false # render defaultBackgroundImage as a fixed backdrop on every page
 # defaultFeaturedImage = "IMAGE.jpg" # used as default for featured images in all articles
-# defaultSocialImage = "/android-chrome-512x512.png" # used as default for social media sharing (Open Graph and Twitter)
+defaultSocialImage = "img/background/igent-tower.jpg" # used as default for social media sharing (Open Graph and Twitter)
 hotlinkFeatureImage = false
+
+# Thumbnail aspect ratio as a number (e.g., "1.5", "1.0", "1.777")
+# thumbnailAspectRatio = "1.5"
 # imagePosition = "50% 50%"
+# imagePositionFeature = "50% 50%" # object-position for feature images in cards and lists, falls back to imagePosition
 
 highlightCurrentMenuArea = true
 smartTOC = true
@@ -40,8 +57,19 @@ fingerprintAlgorithm = "sha512" # Valid values are "sha512" (default), "sha384",
 giteaDefaultServer = "https://git.fsfe.org"
 forgejoDefaultServer = "https://v11.next.forgejo.org"
 
+# [languageRedirect]
+#   enabled = false # Enable client-side language redirects for multilingual sites.
+#   storageKey = "blowfish_preferred_language" # localStorage key for manual language selections.
+#   fallbackLanguage = "" # Language to use when no browser language matches. Defaults to Hugo's default content language.
+#   browserRedirectHomeOnly = true # Restrict browser-language redirects to home pages.
+#   storedLanguageRedirect = true # Redirect to the stored language when a matching translation exists.
+
+# [seo]
+#   metaDescriptionOrder = ["summary", "description", "site"] # Fallback order for the HTML meta description.
+
 [header]
-  layout = "fixed" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur
+  layout = "fixed" # valid options: basic, fixed, fixed-fill, fixed-gradient, fixed-fill-blur, floating
+  mobileMenuStyle = "fullscreen" # valid options: fullscreen, dropdown
 
 [footer]
   showMenu = true
@@ -51,10 +79,11 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showScrollToTop = true
 
 [homepage]
-  layout = "background" # valid options: page, profile, hero, card, background, custom
+  layout = "background" # valid options: page, profile, hero, card, background, landing, custom
+  # layoutSwitcher = false # opt-in interactive preview of the built-in layouts
   homepageImage = "img/background/igent-tower.jpg"  # used in: hero, and card
-  showRecent = false
-  showRecentItems = 3
+  showRecent = true
+  showRecentItems = 2
   showMoreLink = false
   showMoreLinkDest = "/posts/"
   cardView = false
@@ -74,6 +103,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showHero = true
   heroStyle = "liquid-ether-thumb" # valid options: basic, big, background, thumbAndBackground
   layoutBackgroundBlur = true # only used when heroStyle equals background or thumbAndBackground
+  # layoutBackgroundBlurStyle = "fade" # valid options: fade, classic. Only used when heroStyle equals background
   layoutBackgroundHeaderSpace = false # only used when heroStyle equals background
   
   showBreadcrumbs = true
@@ -86,25 +116,31 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showPagination = true
   invertPagination = false
   showReadingTime = false
+  showReadingProgress = true # reading progress bar at the top of articles
   showTableOfContents = true
   # showRelatedContent = false
   # relatedContentLimit = 3
-  showTaxonomies = true # use showTaxonomies OR showCategoryOnly, not both
-  showCategoryOnly = false # use showTaxonomies OR showCategoryOnly, not both
+  showTaxonomies = true # Enable the display of taxonomies for the related article.
+  showCategories = true # These will show if showTaxonomies is true.
+  showTags = true # These will show if showTaxonomies is true.
+  showCategoriesInSecondaryColor = true
   showAuthorsBadges = false
   showWordCount = false
+  # showComments = false # needs a layouts/partials/comments.html partial
   # sharingLinks = [ "linkedin", "twitter", "bluesky", "mastodon", "reddit", "pinterest", "facebook", "email", "whatsapp", "telegram", "line"]
   showZenMode = true
   externalLinkForceNewTab = true # disable to allow external links in the same tab (defaults to true)
 
 [list]
   showHero = true
+  # featureImageHover = false # subtle zoom on card thumbnails on hover
   heroStyle = "liquid-ether"
   layoutBackgroundBlur = true
+  # layoutBackgroundBlurStyle = "fade" # valid options: fade, classic. Only used when heroStyle equals background
   layoutBackgroundHeaderSpace = false
 
   showBreadcrumbs = true
-  showSummary = true
+  showSummary = false
   showViews = false
   showLikes = false
   showTableOfContents = true
@@ -124,6 +160,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showHero = true
   heroStyle = "liquid-ether" # valid options: basic, big, background, thumbAndBackground
   layoutBackgroundBlur = true
+  # layoutBackgroundBlurStyle = "fade" # valid options: fade, classic. Only used when heroStyle equals background
   layoutBackgroundHeaderSpace = false
   
   showBreadcrumbs = false
@@ -136,6 +173,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   showHero = true
   heroStyle = "liquid-ether" # valid options: basic, big, background, thumbAndBackground
   layoutBackgroundBlur = true
+  # layoutBackgroundBlurStyle = "fade" # valid options: fade, classic. Only used when heroStyle equals background
   layoutBackgroundHeaderSpace = false
   
   showBreadcrumbs = false
@@ -165,6 +203,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   # dataDomains = "yoursite.com,yoursite2.com"
   # scriptName = ""
   # enableTrackEvent = true
+  # doNotTrack = false # respect the browser's Do Not Track setting
 
 [selineAnalytics]
   # token = "XXXXXX"

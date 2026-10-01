@@ -18,5 +18,3 @@
 <script defer src="{{ "/_vercel/insights/script.js" | relURL }}"></script>
 <script defer src="{{ "/_vercel/speed-insights/script.js" | relURL }}"></script>
 {{ end }}
-{{ $navCollapse := resources.Get "js/nav-collapse.js" | resources.Minify | resources.Fingerprint (.Params.fingerprintAlgorithm | default "sha512") }}
-<script defer src="{{ $navCollapse.RelPermalink }}" integrity="{{ $navCollapse.Data.Integrity }}"></script>

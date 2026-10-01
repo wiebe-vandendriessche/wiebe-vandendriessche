@@ -2,6 +2,7 @@
 title: "To trust AI, we need to know its building blocks"
 date: 2026-08-19
 description: "To trust AI, we need to know its building blocks"
+categories: ["blog-post"]
 draft: false
 featureimagecredit: "Unsplash"
 ---

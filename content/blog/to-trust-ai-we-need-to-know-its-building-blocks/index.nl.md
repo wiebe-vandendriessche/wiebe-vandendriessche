@@ -2,6 +2,7 @@
 title: "Om AI te vertrouwen moeten we de bouwstenen kennen"
 date: 2026-08-19
 description: "Om AI te vertrouwen moeten we de bouwstenen kennen"
+categories: ["blog-post"]
 draft: false
 featureimagecredit: "Unsplash"
 ---

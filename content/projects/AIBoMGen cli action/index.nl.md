@@ -3,6 +3,7 @@ title: "AIBoMGen CLI Action"
 date: 2026-04-21
 description: "Een GitHub Action die automatisch een CycloneDX AIBOM genereert voor Hugging Face-modellen in een repository, met behulp van AIBoMGen CLI."
 tags: ["typescript", "github-actions", "aibom", "cyclonedx", "hugging-face", "ci-cd", "security"]
+categories: ["software-project"]
 draft: false
 ---
 

@@ -4,15 +4,31 @@ label = "English"
 weight = 1
 title = "Wiebe Vandendriessche"
 
+# Other Hugo settings that can be set per language (commented = not used).
+# Reference: https://gohugo.io/configuration/languages/
+# Root-level keys must stay above the [params] header.
+# direction = "ltr" # ltr or rtl
+# timeZone = "Europe/Brussels" # used to parse dates without an offset
+# contentDir = "content/en" # only when translating by directory instead of by file name
+# baseURL = "https://en.example.com/" # multihost: if one language sets it, all must
+# copyright = "" # Hugo's .Site.Copyright. Blowfish reads params.copyright instead
+# disabled = true # see the active disabled key above
+#
+# [pagination] # per-language override of the pagination settings in hugo.toml
+#   pagerSize = 100
+#   path = "page"
+
 [params]
   displayName = "EN"
   isoCode = "en"
   rtl = false
   dateFormat = "2 January 2006"
+  # htmlCode = "en" # value of <html lang>, defaults to locale
   # logo = "img/profile/profile-cropped.jpg"
   # secondaryLogo = "img/secondary-logo.png"
-  # description = "My awesome website"
-  # copyright = "&copy; 2026 Wiebe Vandendriessche. All Rights Reserved."
+  description = "Personal website of Wiebe Vandendriessche, PhD researcher at IDLab, Ghent University - imec, working on transparency, accountability, and trust across the AI supply chain."
+  # "{ year }" in copyright is replaced with the current year
+  # copyright = "&copy; { year } Wiebe Vandendriessche. All Rights Reserved."
 
 [params.author]
   name = "Wiebe Vandendriessche"
@@ -27,4 +43,57 @@ title = "Wiebe Vandendriessche"
     { linkedin = "https://linkedin.com/in/wiebe-vandendriessche" },
     { orcid = "https://orcid.org/0009-0001-6499-0205" },
     { researchgate = "https://www.researchgate.net/profile/Wiebe-Vandendriessche" },
+    # Other link icons supported by Blowfish:
+    # { link = "https://link-to-some-website.com/" },
+    # { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
+    # { apple = "https://www.apple.com" },
+    # { blogger = "https://username.blogspot.com/" },
+    # { bluesky = "https://bsky.app/profile/username" },
+    # { chess-com = "https://www.chess.com/member/username" },
+    # { codepen = "https://codepen.io/username" },
+    # { dev = "https://dev.to/username" },
+    # { discord = "https://discord.gg/invitecode" },
+    # { dribbble = "https://dribbble.com/username" },
+    # { facebook = "https://facebook.com/username" },
+    # { flickr = "https://www.flickr.com/photos/username/" },
+    # { foursquare = "https://foursquare.com/username" },
+    # { github_gist = "https://gist.github.com/username" },
+    # { gitlab = "https://gitlab.com/username" },
+    # { google = "https://www.google.com/" },
+    # { hashnode = "https://username.hashnode.dev" },
+    # { instagram = "https://instagram.com/username" },
+    # { itch-io = "https://username.itch.io" },
+    # { keybase = "https://keybase.io/username" },
+    # { keyoxide = "https://keyoxide.org/URI" },
+    # { kickstarter = "https://www.kickstarter.com/profile/username" },
+    # { lastfm = "https://lastfm.com/user/username" },
+    # { lichess = "https://lichess.org/@/username" },
+    # { mastodon = "https://mastodon.instance/@username" },
+    # { matrix = "https://matrix.to/#/URI" },
+    # { medium = "https://medium.com/username" },
+    # { microsoft = "https://www.microsoft.com/" },
+    # { patreon = "https://www.patreon.com/username" },
+    # { pinterest = "https://pinterest.com/username" },
+    # { reddit = "https://reddit.com/user/username" },
+    # { signal = "https://signal.me/#eu/userid" },
+    # { slack = "https://workspace.url/team/userid" },
+    # { snapchat = "https://snapchat.com/add/username" },
+    # { soundcloud = "https://soundcloud.com/username" },
+    # { spotify = "https://open.spotify.com/user/userid" },
+    # { stack-overflow = "https://stackoverflow.com/users/userid/username" },
+    # { steam = "https://steamcommunity.com/profiles/userid" },
+    # { strava = "https://www.strava.com/athletes/username" },
+    # { telegram = "https://t.me/username" },
+    # { threads = "https://www.threads.net/@username" },
+    # { tiktok = "https://tiktok.com/@username" },
+    # { tumblr = "https://username.tumblr.com" },
+    # { twitch = "https://twitch.tv/username" },
+    # { untappd = "https://untappd.com/user/username" },
+    # { twitter = "https://twitter.com/username" },
+    # { x-twitter = "https://twitter.com/username" },
+    # { whatsapp = "https://wa.me/phone-number" },
+    # { youtube = "https://youtube.com/username" },
+    # { ko-fi = "https://ko-fi.com/username" },
+    # { codeberg = "https://codeberg.org/username"},
+    # { printables = "https://www.printables.com/@username"},
   ]
