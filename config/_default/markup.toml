@@ -1,26 +1,123 @@
 # -- Markup --
 # These settings are required for the theme to function.
+#
+# Every Hugo markup setting is listed here. Commented lines show Hugo's
+# default and have no effect until you uncomment them.
+# Reference: https://gohugo.io/configuration/markup/
+
+# defaultMarkdownHandler = "goldmark" # goldmark, asciidocext, org, pandoc or rst
 
 [goldmark]
+  # duplicateResourceFiles = false # copy shared page resources into every language
+
   [goldmark.parser]
     wrapStandAloneImageWithinParagraph = false
+    # autoHeadingID = true
+    # autoIDType = "github" # github, github-ascii or blackfriday
+    # autoDefinitionTermID = false # give definition list terms an id
 
     [goldmark.parser.attribute]
       block = true
+      # title = true # {.class #id} attributes on headings
 
   [goldmark.renderer]
     unsafe = true
+    # hardWraps = false # turn single newlines into <br>
+    # xhtml = false
 
   [goldmark.extensions]
+    # definitionList = true
+    # linkify = true # turn bare URLs into links
+    # linkifyProtocol = "https"
+    # strikethrough = true
+    # table = true
+    # taskList = true
+
     [goldmark.extensions.passthrough]
       enable = true
       [goldmark.extensions.passthrough.delimiters]
         block = [['\[', '\]'], ['$$', '$$']]
         inline = [['\(', '\)']]
 
+    # [goldmark.extensions.footnote]
+    #   enable = true
+    #   enableAutoIDPrefix = false # prefix footnote ids so they stay unique on list pages
+    #   backlinkHTML = "&#x21a9;&#xfe0e;"
+
+    # [goldmark.extensions.extras] # extra inline syntax, all off by default
+    #   [goldmark.extensions.extras.delete]
+    #     enable = false # ~~text~~ -> <del>
+    #   [goldmark.extensions.extras.insert]
+    #     enable = false # ++text++ -> <ins>
+    #   [goldmark.extensions.extras.mark]
+    #     enable = false # ==text== -> <mark>
+    #   [goldmark.extensions.extras.subscript]
+    #     enable = false # H~2~O -> <sub>
+    #   [goldmark.extensions.extras.superscript]
+    #     enable = false # x^2^ -> <sup>
+
+    [goldmark.extensions.typographer] # smart quotes and dashes, written as HTML entities
+      # Disabled: CLAUDE.md requires ASCII-only content with straight quotes
+      # and no em/en dashes or ellipsis characters, and scripts/check-ascii.sh
+      # only scans source files, not this render step. Setting the individual
+      # emDash/enDash replacements to "" would NOT disable them: Goldmark
+      # would still match "--"/"---" and silently delete it (empty substitution
+      # is not the same as no substitution), so the whole extension is off.
+      disable = true
+    #   apostrophe = "&rsquo;"
+    #   ellipsis = "&hellip;"
+    #   emDash = "&mdash;"
+    #   enDash = "&ndash;"
+    #   leftAngleQuote = "&laquo;"
+    #   leftDoubleQuote = "&ldquo;"
+    #   leftSingleQuote = "&lsquo;"
+    #   rightAngleQuote = "&raquo;"
+    #   rightDoubleQuote = "&rdquo;"
+    #   rightSingleQuote = "&rsquo;"
+
+    # [goldmark.extensions.cjk]
+    #   enable = false
+    #   eastAsianLineBreaks = false
+    #   eastAsianLineBreaksStyle = "simple" # simple or css3draft
+    #   escapedSpace = false
+
+  # [goldmark.renderHooks.image]
+  #   useEmbedded = "auto" # auto, never, always or fallback
+  # [goldmark.renderHooks.link]
+  #   useEmbedded = "auto" # auto, never, always or fallback
+
 [highlight]
   noClasses = false
+  # style = "monokai" # only used when noClasses = true
+  # codeFences = true
+  # guessSyntax = false
+  # lineNos = false # true, false, "table" or "inline"
+  # lineNumbersInTable = true
+  # lineNoStart = 1
+  # anchorLineNos = false
+  # lineAnchors = ""
+  # hl_Lines = ""
+  # hl_inline = false
+  # tabWidth = 4
+  # wrapperClass = "highlight"
 
 [tableOfContents]
   startLevel = 2
   endLevel = 4
+  # ordered = false # use <ol> instead of <ul>
+
+# [asciidocExt] # only used for .adoc content, requires asciidoctor
+#   backend = "html5"
+#   extensions = []
+#   failureLevel = "fatal"
+#   noHeaderOrFooter = true
+#   preserveTOC = false
+#   safeMode = "unsafe"
+#   sectionNumbers = false
+#   trace = false
+#   verbose = false
+#   workingFolderCurrent = false
+#   [asciidocExt.attributes]
+
+# [rst] # only used for .rst content, requires rst2html
+#   syntaxHighlight = "long"

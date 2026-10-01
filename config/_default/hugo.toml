@@ -1,6 +1,20 @@
 # -- Site Configuration --
 # Refer to the theme docs for more details about each of these parameters.
 # https://blowfish.page/docs/getting-started/
+#
+# Every Hugo setting is listed in this file (Hugo v0.167 docs). Active lines
+# are in use. Commented lines show Hugo's default (or an example value) and
+# have no effect until you uncomment them.
+# Full reference: https://gohugo.io/configuration/all/
+# Print the effective config, defaults included: hugo config
+#
+# Settings that can differ per language (title, copyright, locale, timeZone,
+# direction, contentDir, baseURL, pagination, ...) live in languages.*.toml.
+# Theme parameters live in params.toml, markup settings in markup.toml,
+# module settings in module.toml and menus in menus.*.toml.
+#
+# Root-level keys must stay above the first [table] header below, otherwise
+# TOML puts them inside that table.
 
 theme = "blowfish" # UNCOMMENT THIS LINE
 baseURL = "https://wiebevandendriessche.tech/"
@@ -15,14 +29,115 @@ buildDrafts = false
 buildFuture = false
 
 enableEmoji = true
+timeZone = "Europe/Brussels"
+disableHugoGeneratorInject = true
 
-# googleAnalytics = "G-XXXXX"
+# Google Analytics: Hugo removed the root-level googleAnalytics key. Blowfish
+# reads the ID from [services.googleAnalytics] id, see the services section below.
+
+# -- Build content --
+# buildExpired = false # include content whose expiryDate has passed
+# timeout = "60s" # timeout for generating page content
+# timeZone = "" # e.g. "Europe/Brussels", used to parse dates without an offset. Can also be set per language
+# hasCJKLanguage = false # auto-detect Chinese/Japanese/Korean for word count, reading time and summaries
+# enableGitInfo = false # expose .GitInfo and use the last Git commit date as .Lastmod
+# mainSections = ["blog"] # Hugo's .Site.MainSections. Blowfish reads its own mainSections from params.toml
+# disableKinds = [] # any of 404, home, page, robotstxt, rss, section, sitemap, taxonomy, term
+# ignoreFiles = [] # regexes matched against absolute paths in content, data and i18n
+# ignoreLogs = [] # warning and error IDs to suppress (see erroridf and warnidf)
+# ignoreCache = false # ignore the configured file caches
+# ignoreVendorPaths = "" # glob of module paths to exclude from _vendor
+# renderSegments = [] # only render these segments, usually set via --renderSegments
+# environment = "production" # usually set via --environment or HUGO_ENVIRONMENT
+
+# -- URLs and paths --
+# canonifyURLs = false # read the Hugo docs on canonical URLs before enabling
+# relativeURLs = false # read the Hugo docs on relative URLs before enabling
+# disablePathToLower = false # keep upper case characters in page URLs
+# removePathAccents = false # strip non-spacing marks from content paths
+# disableAliases = false # do not write HTML redirect files for front matter aliases
+# refLinksErrorLevel = "ERROR" # ERROR or WARNING when ref/relref cannot resolve a page
+# refLinksNotFoundURL = "" # URL returned when ref/relref cannot resolve a page
+# sectionPagesMenu = "" # add every top-level section to the menu with this name, e.g. "main"
+
+# -- Languages, roles and versions --
+# defaultContentLanguageInSubdir = false # publish the default language under /en/ too
+# disableDefaultLanguageRedirect = false # superseded by disableDefaultSiteRedirect
+# disableDefaultSiteRedirect = false # do not generate the redirect between / and the default site subdirectory
+# disableLanguages = [] # e.g. ["nl"], prefer disabled = true in languages.nl.toml
+# enableMissingTranslationPlaceholders = false # show a placeholder for missing i18n strings
+# printI18nWarnings = false # warn for every missing translation
+# defaultContentRole = "guest" # see [roles] below
+# defaultContentRoleInSubdir = false
+# defaultContentVersion = "" # see [versions] below
+# defaultContentVersionInSubdir = false
+
+# -- Titles --
+# capitalizeListTitles = true # capitalize automatic section, taxonomy and term titles
+# titleCaseStyle = "ap" # ap, chicago, go, firstupper or none
+
+# -- Output --
+# defaultOutputFormat = "html"
+# disableHugoGeneratorInject = false # skip the <meta name="generator"> tag on the home page
+# newContentEditor = "" # editor opened by "hugo new", e.g. "code"
+
+# -- Directories --
+# archetypeDir = "archetypes"
+# assetDir = "assets"
+# contentDir = "content"
+# dataDir = "data"
+# i18nDir = "i18n"
+# layoutDir = "layouts"
+# staticDir = "static"
+# publishDir = "public"
+# resourceDir = "resources"
+# themesDir = "themes"
+# cacheDir = "" # defaults to $HOME/.cache/hugo_cache on Linux, or HUGO_CACHEDIR
+# cleanDestinationDir = false # delete files in publishDir that are not in staticDir
+
+# -- Development and debugging --
+# disableLiveReload = false
+# noBuildLock = false # do not create .hugo_build.lock
+# noChmod = false # do not sync file permission modes
+# noTimes = false # do not sync file modification times
+# panicOnWarning = false
+# printPathWarnings = false # warn when two files are published to the same path
+# printUnusedTemplates = false
+# templateMetrics = false
+# templateMetricsHints = false
+
+# -- Config merging --
+# _merge = "none" # none, shallow or deep. How theme/module config merges into this config
 
 [pagination]
   pagerSize = 100
+  # disableAliases = false # do not create an alias for the first pager (/page/1/)
+  # path = "page" # URL segment for pagers, e.g. /blog/page/2/
 
 [imaging]
   anchor = 'Center'
+  # bgColor = "#ffffff" # background used when removing transparency, e.g. PNG to JPEG
+  # resampleFilter = "box" # box, lanczos, catmullRom, mitchellNetravali, linear, nearestNeighbor
+
+  # [imaging.avif]
+  #   compression = "lossy" # lossy or lossless
+  #   encoderSpeed = 10 # 1 (smallest, slowest) to 10 (fastest)
+  #   hint = "photo" # drawing, icon, photo, picture or text
+  #   quality = 60
+
+  # [imaging.jpeg]
+  #   quality = 75
+
+  # [imaging.webp]
+  #   compression = "lossy" # lossy or lossless
+  #   hint = "photo" # drawing, icon, photo, picture or text
+  #   method = 2 # 0 (fastest) to 6 (smallest)
+  #   quality = 75
+  #   useSharpYuv = false
+
+  # [imaging.meta] # used by the .Meta image method
+  #   fields = ['! *{GPS,Exif,Exposure[MPB],Contrast,Resolution,Sharp,JPEG,Metering,Sensing,Saturation,ColorSpace,Flash,WhiteBalance}*']
+  #   sources = ["exif", "iptc"]
 
 [taxonomies]
   tag = "tags"
@@ -34,13 +149,29 @@ enableEmoji = true
   changefreq = 'daily'
   filename = 'sitemap.xml'
   priority = 0.5
+  # disable = false # do not generate sitemap.xml
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+  # page = ["html"]
+  # rss = ["rss"]
+  # section = ["html", "rss"]
+  # taxonomy = ["html", "rss"]
+  # term = ["html", "rss"]
 
 [related]
   threshold = 0
   toLower = false
+  # includeNewer = false # also include pages newer than the current page
+
+  # Extra keys available on each [[related.indices]] entry:
+  #   type = "basic" # basic or fragments
+  #   applyFilter = false # only used by the fragments type
+  #   cardinalityThreshold = 0 # 1-100, drop values that appear in more than this % of pages
+  #   pattern = "" # dates only, e.g. "2006" or "200601"
+  #   toLower = false
+  #   tokenize = false # split string values on whitespace (Hugo >= 0.166)
+  #   minTokenLength = 0 # minimum token length when tokenize = true (Hugo >= 0.166)
 
     [[related.indices]]
         name = "tags"
@@ -67,7 +198,257 @@ enableEmoji = true
       name = 'fragmentrefs'
       type = 'fragments'
       weight = 10
-      
+
 [caches]
   [caches.images]
     dir = ':cacheDir/images'
+    # maxAge = -1 # -1 = never expire, 0 = disable, or a duration such as "720h"
+
+  # [caches.assets]
+  #   dir = ":resourceDir/_gen"
+  #   maxAge = -1
+  # [caches.getresource]
+  #   dir = ":cacheDir/:project"
+  #   maxAge = -1
+  # [caches.misc]
+  #   dir = ":cacheDir/:project"
+  #   maxAge = -1
+  # [caches.modulegitinfo]
+  #   dir = ":cacheDir/modules"
+  #   maxAge = "24h"
+  # [caches.modulequeries]
+  #   dir = ":cacheDir/modules"
+  #   maxAge = "24h"
+  # [caches.modules]
+  #   dir = ":cacheDir/modules"
+  #   maxAge = -1
+
+# -- Services used by Hugo's embedded templates --
+# [services.googleAnalytics]
+#   id = "" # e.g. "G-XXXXXXXXX", Blowfish loads gtag.js when this is set
+# [services.disqus]
+#   shortname = ""
+# [services.rss]
+#   limit = -1 # max items per RSS feed, -1 = no limit
+# [services.x]
+#   disableInlineCSS = false
+
+# -- Privacy settings for Hugo's embedded templates and shortcodes --
+# [privacy.disqus]
+#   disable = false
+# [privacy.googleAnalytics]
+#   disable = false
+#   respectDoNotTrack = true
+# [privacy.instagram]
+#   disable = false
+#   simple = false
+# [privacy.vimeo]
+#   disable = false
+#   enableDNT = false
+#   simple = false
+# [privacy.x]
+#   disable = false
+#   enableDNT = false
+#   simple = false
+# [privacy.youTube]
+#   disable = false
+#   privacyEnhanced = false # use youtube-nocookie.com
+
+# -- Front matter date handling --
+# [frontmatter]
+#   date = ["date", "publishdate", "pubdate", "published", "lastmod", "modified"]
+#   expiryDate = ["expirydate", "unpublishdate"]
+#   lastmod = [":git", "lastmod", "modified", "date", "publishdate", "pubdate", "published"]
+#   publishDate = ["publishdate", "pubdate", "published", "date"]
+#   # Other tokens: ":fileModTime", ":filename" (YYYY-MM-DD-slug), ":default"
+
+# -- Permalinks per section or taxonomy --
+# [permalinks]
+#   [permalinks.page]
+#     blog = "/blog/:year/:month/:slug/"
+#   [permalinks.section]
+#     blog = "/blog/"
+#   [permalinks.term]
+#     tags = "/tags/:slug/"
+#   [permalinks.taxonomy]
+#     tags = "/tags/"
+
+# -- Ugly URLs (/page.html instead of /page/) --
+# uglyURLs can be a bool for all sections, or a table per section:
+# [uglyURLs]
+#   blog = false
+
+# -- Cascade front matter values down to descendant pages --
+# [[cascade]]
+#   [cascade.params]
+#     showReadingTime = true
+#   [cascade.target]
+#     path = "/blog/**"
+#     kind = "page" # also: lang (deprecated, use sites), environment
+
+# -- Build options --
+# [build]
+#   noJSConfigInAssets = false # do not write jsconfig.json into assets
+#   useResourceCacheWhen = "fallback" # never, fallback or always
+#   [build.buildStats] # writes hugo_stats.json, e.g. for Tailwind or PurgeCSS
+#     enable = false
+#     disableClasses = false
+#     disableIDs = false
+#     disableTags = false
+#   [[build.cacheBusters]]
+#     source = '(postcss|tailwind)\.config\.(js|mjs|cjs)'
+#     target = '(css|styles|scss|sass)'
+
+# -- Minification (used by hugo --minify, or minifyOutput = true) --
+# [minify]
+#   minifyOutput = false
+#   disableCSS = false
+#   disableHTML = false
+#   disableJS = false
+#   disableJSON = false
+#   disableSVG = false
+#   disableXML = false
+#   [minify.tdewolff.css]
+#     inline = false
+#     precision = 0
+#     version = 0
+#   [minify.tdewolff.html]
+#     keepComments = false
+#     keepDefaultAttrVals = true
+#     keepDocumentTags = true
+#     keepEndTags = true
+#     keepQuotes = false
+#     keepSpecialComments = true
+#     keepWhitespace = false
+#     templateDelims = ["", ""]
+#   [minify.tdewolff.js]
+#     keepVarNames = false
+#     precision = 0
+#     version = 2022
+#   [minify.tdewolff.json]
+#     keepNumbers = false
+#     precision = 0
+#   [minify.tdewolff.svg]
+#     keepComments = false
+#     keepNamespaces = ["", "x-bind"]
+#     precision = 0
+#   [minify.tdewolff.xml]
+#     keepWhitespace = false
+
+# -- HTTP cache for resources.GetRemote --
+# [HTTPCache]
+#   respectCacheControlNoStoreInRequest = true
+#   respectCacheControlNoStoreInResponse = false
+#   [HTTPCache.cache.for]
+#     excludes = ["**"]
+#     includes = []
+#   [[HTTPCache.polls]]
+#     disable = true
+#     high = "0s"
+#     low = "0s"
+#     [HTTPCache.polls.for]
+#       includes = ["**"]
+#       excludes = []
+
+# -- Security policy --
+# [security]
+#   allowContent = ['! ^text/html$'] # Hugo 0.166+ also denies '! ^text/org$' by default
+#   enableInlineShortcodes = false
+#   [security.exec]
+#     allow = ['^(dart-)?sass$', '^go$', '^git$', '^node$', '^postcss$']
+#     osEnv = ['(?i)^((HTTPS?|NO)_PROXY|PATH(EXT)?|APPDATA|TE?MP|TERM|GO\w+|(XDG_CONFIG_)?HOME|USERPROFILE|SSH_AUTH_SOCK|DISPLAY|LANG|SYSTEMDRIVE|PROGRAMDATA)$']
+#   [security.funcs]
+#     getenv = ['^HUGO_', '^CI$']
+#   [security.http]
+#     methods = ['(?i)GET|POST']
+#     urls = ['(?i)^https?://[a-z0-9]', '! (?i)^https?://\d+\.', '! (?i)localhost', '! (?i)^https?://[^/?#]*@']
+#     mediaTypes = []
+#     proxyFromEnvironment = false # Hugo >= 0.166
+#   [security.node.permissions]
+#     disable = false
+#     allowAddons = ["tailwindcss"]
+#     allowChildProcess = ["tailwindcss"]
+#     allowRead = ["."]
+#     allowWorker = ["tailwindcss"]
+#     allowWrite = []
+
+# -- Development server (hugo server only) --
+# [[server.headers]]
+#   for = "/**"
+#   [server.headers.values]
+#     X-Frame-Options = "DENY"
+# [[server.redirects]]
+#   from = "/**"
+#   fromHeaders = {}
+#   fromRe = ""
+#   to = "/404.html"
+#   status = 404
+#   force = false
+
+# -- Segments (partial builds via --renderSegments) --
+# [segments.core]
+#   [[segments.core.includes]]
+#     path = "{/,/blog,/blog/**}"
+#     # also: kind, output, sites
+#   [[segments.core.excludes]]
+#     kind = "{taxonomy,term}"
+
+# -- Roles and versions (multi-dimensional sites) --
+# [roles.guest]
+#   weight = 0
+# [versions."v1.0.0"]
+#   weight = 0
+
+# -- Content formats (media type -> settings) --
+# [contentTypes]
+#   [contentTypes."text/markdown"]
+#   [contentTypes."text/html"]
+#   [contentTypes."text/asciidoc"]
+#   [contentTypes."text/org"]
+#   [contentTypes."text/pandoc"]
+#   [contentTypes."text/rst"]
+
+# -- Custom media types and output formats --
+# The built-in lists are long; run "hugo config" to see them all.
+# [mediaTypes."text/calendar"]
+#   suffixes = ["ics"]
+# [outputFormats.calendar]
+#   mediaType = "text/calendar"
+#   baseName = "calendar"
+#   isPlainText = true
+#   isHTML = false
+#   noUgly = false
+#   notAlternative = false
+#   path = ""
+#   permalinkable = false
+#   protocol = "webcal://"
+#   rel = "alternate"
+#   root = false
+#   ugly = false
+#   weight = 0
+
+# -- Deployment (hugo deploy) --
+# [deployment]
+#   confirm = false
+#   dryRun = false
+#   force = false
+#   invalidateCDN = true
+#   maxDeletes = 256
+#   workers = 10
+#   order = []
+#   target = ""
+#   [[deployment.targets]]
+#     name = "production"
+#     url = "s3://bucket?region=eu-west-1"
+#     cloudFrontDistributionID = ""
+#     googleCloudCDNOrigin = ""
+#     include = ""
+#     exclude = ""
+#     stripIndexHTML = false
+#   [[deployment.matchers]]
+#     pattern = "^.+\\.(js|css|svg|ttf)$"
+#     cacheControl = "max-age=31536000, no-transform, public"
+#     contentEncoding = ""
+#     contentType = ""
+#     gzip = true
+#     force = false
