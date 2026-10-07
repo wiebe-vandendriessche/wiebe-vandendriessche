@@ -8,17 +8,4 @@ effects_toggle:
   disable: "Interactieve effecten uitschakelen"
 
 publication:
-  metadata: "Publicatiegegevens"
-  venue: "Gepubliceerd in"
-  type: "Type"
-
-pdf_viewer:
-  title: "PDF-viewer"
-  controls: "PDF-bediening"
-  prev: "Vorige"
-  next: "Volgende"
-  page: "Pagina"
-  open: "PDF openen"
-  open_new_tab: "PDF openen in een nieuw tabblad"
-  render_error: "Kon de PDF-pagina niet weergeven."
-  load_error: "Kon de PDF niet laden."
+  unavailable: "De publicatielijst kon niet geladen worden. Bekijk ze in de Academische Bibliografie van de Universiteit Gent."

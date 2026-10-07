@@ -8,7 +8,7 @@ heroStyle: liquid-ether-thumb
 showAuthor: false
 showPagination: false
 ---
-- **AIBoMGen paper presentation**, CAIN 2026 (ICSE 2026), Rio de Janeiro, April 2026. [Paper]({{< relref "publications/cain-2026" >}})
+- **AIBoMGen paper presentation**, CAIN 2026 (ICSE 2026), Rio de Janeiro, April 2026. [Paper](https://biblio.ugent.be/publication/01M2QAZR0BDHGXDRDSQW1YXY01)
 - **SBOM webinars**, CRACY project. [YouTube](https://www.youtube.com/watch?v=WPmMgF0dyeQ)
 - **Live hands-on SBOM demo**, LSEC event "IIoTSBOM goes CRACY"
 - **SBOM workshop**, CRACY project. [Material]({{< relref "projects/sbom-workshop-short" >}})

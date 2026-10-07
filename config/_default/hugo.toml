@@ -207,9 +207,10 @@ disableHugoGeneratorInject = true
   # [caches.assets]
   #   dir = ":resourceDir/_gen"
   #   maxAge = -1
-  # [caches.getresource]
-  #   dir = ":cacheDir/:project"
-  #   maxAge = -1
+  # Remote fetches (e.g. the Biblio publication list): refetch after an hour so new papers show up
+  [caches.getresource]
+    dir = ":cacheDir/:project"
+    maxAge = "1h"
   # [caches.misc]
   #   dir = ":cacheDir/:project"
   #   maxAge = -1

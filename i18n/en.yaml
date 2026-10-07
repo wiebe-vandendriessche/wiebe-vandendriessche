@@ -8,17 +8,4 @@ effects_toggle:
   disable: "Disable interactive effects"
 
 publication:
-  metadata: "Publication metadata"
-  venue: "Venue"
-  type: "Type"
-
-pdf_viewer:
-  title: "PDF viewer"
-  controls: "PDF controls"
-  prev: "Prev"
-  next: "Next"
-  page: "Page"
-  open: "Open PDF"
-  open_new_tab: "Open PDF in a new tab"
-  render_error: "Could not render PDF page."
-  load_error: "Could not load PDF."
+  unavailable: "The publication list could not be loaded. View it on the Ghent University Academic Bibliography."
