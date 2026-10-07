@@ -19,140 +19,121 @@ html {
 }
 
 
-.pdf-viewer {
-    margin-top: 1.5rem;
-    border: 1px solid rgb(var(--color-neutral-300));
-    border-radius: 0.9rem;
-    overflow: hidden;
-    background: rgb(var(--color-neutral-50));
+/* Publications list rendered from UGent Biblio (layouts/shortcodes/biblio.html). Transparent, no cards:
+   year headings like the theme's grouped lists, a hairline between entries and outline pill links. */
+.biblio-year {
+    margin: 3rem 0 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: rgb(var(--color-neutral-700));
 }
 
-.pdf-viewer-toolbar {
+.biblio-year:first-child {
+    margin-top: 2rem;
+}
+
+.biblio-item {
+    padding: 1.25rem 0;
+    border-top: 1px solid rgb(var(--color-neutral-200));
+}
+
+.biblio-year + .biblio-item {
+    border-top: 0;
+}
+
+.biblio-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.biblio-title a {
+    color: rgb(var(--color-neutral-800));
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.biblio-title a:hover {
+    color: rgb(var(--color-primary-600));
+}
+
+.biblio-authors,
+.biblio-venue {
+    margin-top: 0.35rem;
+    font-size: 0.925rem;
+    color: rgb(var(--color-neutral-500));
+}
+
+.biblio-authors strong {
+    font-weight: 600;
+    color: rgb(var(--color-neutral-700));
+}
+
+.biblio-venue {
+    font-style: italic;
+}
+
+.biblio-links {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.8rem;
-    background: rgb(var(--color-neutral-100));
-    border-bottom: 1px solid rgb(var(--color-neutral-300));
+    gap: 0.5rem;
+    margin-top: 0.75rem;
 }
 
-.pdf-viewer-btn,
-.pdf-viewer-link {
+.biblio-links a {
+    padding: 0.15rem 0.7rem;
     border: 1px solid rgb(var(--color-neutral-300));
-    background: rgb(var(--color-neutral-50));
-    color: rgb(var(--color-neutral-700));
-    border-radius: 0.5rem;
-    padding: 0.3rem 0.65rem;
-    font-size: 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgb(var(--color-neutral-600));
     text-decoration: none;
-    cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease;
+    transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.pdf-viewer-btn:hover,
-.pdf-viewer-link:hover {
-    background: rgb(var(--color-primary-100));
-    border-color: rgb(var(--color-primary-400));
-    color: rgb(var(--color-primary-700));
-}
-
-.pdf-viewer-page,
-.pdf-viewer-zoom {
-    color: rgb(var(--color-neutral-700));
-    font-size: 0.85rem;
-    min-width: 5.4rem;
-    text-align: center;
-}
-
-.pdf-viewer-canvas-wrap {
-    height: var(--pdf-viewer-height, 900px);
-    overflow: auto;
-    padding: 1rem;
-    background: rgb(var(--color-neutral-100));
-}
-
-.pdf-viewer-canvas {
-    display: block;
-    margin: 0 auto;
-    box-shadow: 0 12px 28px rgb(var(--color-neutral-500) / 0.28);
-    background: white;
-}
-
-.pdf-viewer-fallback {
-    margin: 0;
-    padding: 0.85rem 1rem;
-    font-size: 0.9rem;
-    color: rgb(var(--color-neutral-700));
-    background: rgb(var(--color-neutral-100));
-    border-top: 1px solid rgb(var(--color-neutral-300));
-}
-
-.research-meta {
-    margin-top: 1rem;
-    margin-bottom: 1.25rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.6rem;
-}
-
-.research-meta span {
-    display: block;
-    border: 1px solid rgb(var(--color-neutral-300));
-    border-radius: 0.55rem;
-    padding: 0.5rem 0.7rem;
-    font-size: 0.9rem;
-    background: rgb(var(--color-neutral-100));
-    color: rgb(var(--color-neutral-700));
-}
-
-html.dark .pdf-viewer {
-    border-color: rgb(var(--color-neutral-700));
-    background: rgb(var(--color-neutral-900));
-}
-
-html.dark .pdf-viewer-toolbar {
-    background: rgb(var(--color-neutral-800));
-    border-bottom-color: rgb(var(--color-neutral-700));
-}
-
-html.dark .pdf-viewer-btn,
-html.dark .pdf-viewer-link {
-    border-color: rgb(var(--color-neutral-600));
-    background: rgb(var(--color-neutral-900));
-    color: rgb(var(--color-neutral-200));
-}
-
-html.dark .pdf-viewer-btn:hover,
-html.dark .pdf-viewer-link:hover {
-    background: rgb(var(--color-primary-900));
+.biblio-links a:hover {
     border-color: rgb(var(--color-primary-500));
-    color: rgb(var(--color-primary-200));
+    color: rgb(var(--color-primary-600));
 }
 
-html.dark .pdf-viewer-page,
-html.dark .pdf-viewer-zoom {
-    color: rgb(var(--color-neutral-200));
+.biblio-empty a {
+    color: rgb(var(--color-primary-600));
 }
 
-html.dark .pdf-viewer-canvas-wrap {
-    background: rgb(var(--color-neutral-800));
+html.dark .biblio-year {
+    color: rgb(var(--color-neutral-300));
 }
 
-html.dark .pdf-viewer-canvas {
-    box-shadow: 0 14px 28px rgb(0 0 0 / 0.45);
-}
-
-html.dark .pdf-viewer-fallback {
-    color: rgb(var(--color-neutral-200));
-    background: rgb(var(--color-neutral-800));
+html.dark .biblio-item {
     border-top-color: rgb(var(--color-neutral-700));
 }
 
-html.dark .research-meta span {
-    border-color: rgb(var(--color-neutral-700));
-    background: rgb(var(--color-neutral-800));
+html.dark .biblio-title a {
+    color: rgb(var(--color-neutral-100));
+}
+
+html.dark .biblio-title a:hover,
+html.dark .biblio-links a:hover,
+html.dark .biblio-empty a {
+    color: rgb(var(--color-primary-400));
+}
+
+html.dark .biblio-authors,
+html.dark .biblio-venue {
+    color: rgb(var(--color-neutral-400));
+}
+
+html.dark .biblio-authors strong {
     color: rgb(var(--color-neutral-200));
+}
+
+html.dark .biblio-links a {
+    border-color: rgb(var(--color-neutral-600));
+    color: rgb(var(--color-neutral-300));
+}
+
+html.dark .biblio-links a:hover {
+    border-color: rgb(var(--color-primary-400));
 }
 
 #threejs-hero {
@@ -251,17 +232,6 @@ html[data-interactive-effects="on"] [data-interactive-effects-icon="disabled"] {
     display: none;
 }
 
-@media (max-width: 768px) {
-    .pdf-viewer-canvas-wrap {
-        height: min(72vh, var(--pdf-viewer-height, 900px));
-        padding: 0.7rem;
-    }
-
-    .pdf-viewer-page,
-    .pdf-viewer-zoom {
-        min-width: auto;
-    }
-}
 /* Homepage hint for the interactive-effects wand (layouts/partials/home/effects-hint.html).
    Looks like the theme's alert shortcode, floating. Burger menu: a bottom card. Full navbar: JS adds
    .is-anchored and hangs it under the header wand, with the arrow on the icon. */

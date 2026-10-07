@@ -1,0 +1,33 @@
+{{/* Publications section: the list comes from the UGent Biblio embed in _index content (shortcode "biblio"),
+   so this is Blowfish's _default/list.html without the article grid and its "no articles" fallback. */}}
+{{ define "main" }}
+  {{ .Scratch.Set "scope" "list" }}
+
+  {{/* Hero */}}
+  {{ if site.Params.list.showHero | default false }}
+    {{ $heroStyle := print "hero/" site.Params.list.heroStyle ".html" }}
+    {{ if templates.Exists ( printf "partials/%s" $heroStyle ) }}
+      {{ partial $heroStyle . }}
+    {{ else }}
+      {{ partial "hero/basic.html" . }}
+    {{ end }}
+  {{ end }}
+
+  {{/* Header */}}
+  <header>
+    {{ if .Params.showBreadcrumbs | default (site.Params.list.showBreadcrumbs | default false) }}
+      {{ partial "breadcrumbs.html" . }}
+    {{ end }}
+      <h1 class="mt-5 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+        {{ .Title | emojify }}
+      </h1>
+      <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
+      {{ partial "article-meta/list.html" (dict "context" . "scope" "single") }}
+    </div>
+  </header>
+
+  {{/* Description (markdown content) */}}
+  <section class="prose max-w-full dark:prose-invert mb-10">
+    {{ .Content }}
+  </section>
+{{ end }}

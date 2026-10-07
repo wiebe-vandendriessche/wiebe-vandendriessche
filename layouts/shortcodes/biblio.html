@@ -1,0 +1,64 @@
+{{/* Publications of one UGent Academic Bibliography (Biblio) person, rendered natively at build time
+   from Biblio's JSON export (JSON Lines, one record per line, already sorted newest first).
+   Usage: {{< biblio person="<biblio person id>" >}}
+   New publications appear on the next build. If Biblio is unreachable the build warns and the page
+   falls back to a link to the Biblio profile. */}}
+{{- $person := .Get "person" -}}
+{{- if not $person -}}
+  {{- errorf "biblio shortcode requires person (UGent Biblio person ID)" -}}
+{{- end -}}
+{{- $profile := printf "https://biblio.ugent.be/person/%s" $person -}}
+{{- $url := printf "https://biblio.ugent.be/publication/export?format=json&sort=year.desc&sort=datecreated.desc&limit=1000&q=%s" (urlquery (printf "author exact %s" $person)) -}}
+
+{{- $pubs := slice -}}
+{{- with try (resources.GetRemote $url) -}}
+  {{- with .Err -}}
+    {{- warnf "biblio: could not fetch publications: %s" . -}}
+  {{- else with .Value -}}
+    {{- range split .Content "\n" -}}
+      {{- with trim . " \r\t" -}}
+        {{- $pubs = $pubs | append (transform.Unmarshal .) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="biblio not-prose">
+{{- if not $pubs }}
+  <p class="biblio-empty"><a href="{{ $profile }}" target="_blank" rel="noopener">{{ i18n "publication.unavailable" }}</a></p>
+{{- end }}
+{{- $year := "" }}
+{{- range $pubs }}
+  {{- if ne .year $year }}
+    {{- $year = .year }}
+  <h2 class="biblio-year">{{ $year }}</h2>
+  {{- end }}
+  {{- $record := printf "https://biblio.ugent.be/publication/%s" .biblio_id }}
+  {{- $venue := "" }}
+  {{- $place := "" }}
+  {{- with .conference }}
+    {{- $venue = .name }}
+    {{- $place = .location }}
+  {{- else }}
+    {{- with .parent }}{{ $venue = .short_title | default .title }}{{ end }}
+  {{- end }}
+  {{- $pdf := "" }}
+  {{- range .file }}
+    {{- if and (not $pdf) (eq .access "open") (eq .kind "fullText") }}{{ $pdf = .url }}{{ end }}
+  {{- end }}
+  <article class="biblio-item">
+    <h3 class="biblio-title"><a href="{{ $record }}" target="_blank" rel="noopener">{{ replace .title " : " ": " }}</a></h3>
+    <p class="biblio-authors">
+      {{- range $i, $a := .author }}{{ if $i }}, {{ end }}{{ if eq $a.biblio_id $person }}<strong>{{ $a.name }}</strong>{{ else }}{{ $a.name }}{{ end }}{{ end -}}
+    </p>
+    {{- with $venue }}
+    <p class="biblio-venue">{{ replace . " : " ": " }}{{ with $place }}, {{ . }}{{ end }}</p>
+    {{- end }}
+    <p class="biblio-links">
+      {{- with .doi }}<a href="https://doi.org/{{ index . 0 }}" target="_blank" rel="noopener">DOI</a>{{ end -}}
+      {{- with $pdf }}<a href="{{ . }}" target="_blank" rel="noopener">PDF</a>{{ end -}}
+      <a href="{{ $record }}" target="_blank" rel="noopener">Biblio</a>
+    </p>
+  </article>
+{{- end }}
+</div>
