@@ -14,6 +14,9 @@
     src="{{ $interactiveEffects.RelPermalink }}"
     integrity="{{ $interactiveEffects.Data.Integrity }}"></script>
 
+{{/* Fetch the body font in parallel with the CSS instead of after it. crossorigin is required for font preloads. */}}
+<link rel="preload" href="{{ "fonts/geist-1.9.2.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+
 {{ if hugo.IsProduction }}
 <script defer src="{{ "/_vercel/insights/script.js" | relURL }}"></script>
 <script defer src="{{ "/_vercel/speed-insights/script.js" | relURL }}"></script>
