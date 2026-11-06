@@ -4,7 +4,7 @@ date: 2025-11-04
 description: "Een proof-of-concept die ML Metadata (MLMD) uit Kubeflow-pipelines extraheert en CycloneDX AIBOMs genereert met volledige lineage en een interactieve BOM-viewer."
 tags: ["python", "kubeflow", "mlmd", "aibom", "cyclonedx", "docker", "react", "vite"]
 categories: ["software-project"]
-draft: false
+draft: true
 ---
 
 {{< github repo="idlab-discover/AIBoMGen" showThumbnail=false >}}

@@ -1,21 +1,33 @@
+/* Geist 1.9.2 (npm "geist", SIL OFL). Versioned filenames because vercel.json caches /fonts/ as immutable:
+   a new font version needs a new filename, and the preload in extend-head.html must follow. */
 @font-face {
-    font-family: Inter;
-    src: url("../fonts/Inter-Variable.ttf") format("truetype-variations");
+    font-family: Geist;
+    src: url("../fonts/geist-1.9.2.woff2") format("woff2");
     font-display: swap;
     font-weight: 100 900;
     font-style: normal;
 }
 
 @font-face {
-    font-family: Inter;
-    src: url("../fonts/Inter-Italic-Variable.ttf") format("truetype-variations");
+    font-family: Geist;
+    src: url("../fonts/geist-1.9.2-italic.woff2") format("woff2");
     font-display: swap;
     font-weight: 100 900;
     font-style: italic;
 }
 
+/* Arial stretched to Geist's metrics (capsize values) so the swap to Geist does not reflow the navbar. */
+@font-face {
+    font-family: "Geist Fallback";
+    src: local("Arial"), local("Arimo"), local("Liberation Sans");
+    size-adjust: 104.76%;
+    ascent-override: 95.94%;
+    descent-override: 28.16%;
+    line-gap-override: 0%;
+}
+
 html {
-    font-family: Inter, sans-serif;
+    font-family: Geist, "Geist Fallback", sans-serif;
 }
 
 
