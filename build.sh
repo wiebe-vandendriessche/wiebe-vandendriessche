@@ -26,8 +26,8 @@ trap cleanup EXIT SIGINT SIGTERM
 main() {
   # Define tool versions
   DART_SASS_VERSION=1.99.0
-  GO_VERSION=1.27.1
-  HUGO_VERSION=0.165.0
+  GO_VERSION=1.27.3
+  HUGO_VERSION=0.167.0
   NODE_VERSION=24.15.0
 
   # Set the build timezone
@@ -110,7 +110,7 @@ main() {
     base_url="https://${VERCEL_URL}"
   fi
 
-  hugo build --gc --minify --baseURL "${base_url}"
+  hugo build --gc --minify --panicOnWarning --baseURL "${base_url}"
 }
 
 main "$@"
