@@ -422,3 +422,10 @@ a[href*="/categories/"] {
     --color-secondary-600: 79, 70, 229;
     --color-secondary-700: 67, 56, 202;
 }
+
+/* Reserve the "Ctrl K" width so search.js swapping the server-rendered Mac hint after first paint does not shift the navbar */
+#search-shortcut-hint {
+    display: inline-block;
+    min-width: 4.5ch;
+    text-align: center;
+}

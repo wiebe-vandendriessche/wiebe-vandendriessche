@@ -5,7 +5,7 @@
 # Refer to the theme docs for more details about each of these parameters.
 # https://blowfish.page/docs/configuration/#theme-parameters
 #
-# Every Blowfish parameter (v3.8.0) is listed here. Commented lines show the
+# Every Blowfish parameter (v3.9.0) is listed here. Commented lines show the
 # theme default or an example value and have no effect until uncommented.
 # Per-language params (logo, secondaryLogo, description, copyright, author,
 # dateFormat, ...) live in languages.*.toml.
@@ -215,6 +215,13 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   # globalWidgetMessage = "Hello"
   # globalWidgetColor = "#FFDD00"
   # globalWidgetPosition = "right"
+
+[kofi]
+  # identifier = ""
+  # globalWidget = true
+  # globalWidgetText = "Support me"
+  # globalWidgetBackgroundColor = "#00B9FE"
+  # globalWidgetTextColor = "#FFFFFF"
 
 [verification]
   # google = ""
