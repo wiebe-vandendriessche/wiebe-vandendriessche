@@ -24,11 +24,11 @@ cleanup() {
 trap cleanup EXIT SIGINT SIGTERM
 
 main() {
-  # Define tool versions
-  DART_SASS_VERSION=1.99.0
-  GO_VERSION=1.27.3
-  HUGO_VERSION=0.167.0
-  NODE_VERSION=24.15.0
+  # Define tool versions (kept up to date by Renovate, see renovate.json)
+  # renovate: datasource=github-releases depName=gohugoio/hugo
+  HUGO_VERSION=0.169.0
+  # renovate: datasource=node-version depName=node
+  NODE_VERSION=24.22.3
 
   # Set the build timezone
   export TZ=Europe/Brussels
@@ -39,18 +39,6 @@ main() {
 
   # Create the local tools directory
   mkdir -p "${HOME}/.local"
-
-  # Install Dart Sass
-  echo "Installing Dart Sass ${DART_SASS_VERSION}..."
-  curl -sLJO "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
-  tar -C "${HOME}/.local" -xf "dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
-  export PATH="${HOME}/.local/dart-sass:${PATH}"
-
-  # Install Go
-  echo "Installing Go ${GO_VERSION}..."
-  curl -sLJO "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz"
-  tar -C "${HOME}/.local" -xf "go${GO_VERSION}.linux-amd64.tar.gz"
-  export PATH="${HOME}/.local/go/bin:${PATH}"
 
   # Install Hugo
   echo "Installing Hugo ${HUGO_VERSION}..."
@@ -70,8 +58,6 @@ main() {
 
   # Verify installations
   echo "Verifying installations..."
-  echo Dart Sass: "$(sass --version)"
-  echo Go: "$(go version)"
   echo Hugo: "$(hugo version)"
   echo Node.js: "$(node --version)"
 
