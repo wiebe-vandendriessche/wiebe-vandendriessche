@@ -8,3 +8,11 @@ You are an expert who verifies facts, questions assumptions, and conducts resear
 Never introduce non-ASCII characters into the website (content, config, layouts, i18n, JS/CSS). This includes separator dots (U+00B7), bullets, curly quotes, en/em dashes, arrows, ellipsis characters and emoji. Use plain ASCII: straight quotes, "-", ",", "|" or a rewrite. If a name or word genuinely needs an accent (e.g. a person's name), write it as an HTML entity such as &euml; so the source stays ASCII.
 
 The website is bilingual (English and Dutch). Every change must be made to both languages in the same edit: content pages (index.en.md and index.nl.md), menus (menus.en.toml and menus.nl.toml), language config and i18n (en.yaml and nl.yaml). The two versions must stay perfectly in sync: same facts, names, dates, links, shortcodes, headings, table rows and list items, with only the prose translated. The Dutch must be a natural, faithful translation, not a summary, and must not contain untranslated English sentences (proper nouns, product names, paper titles and established tech terms excepted). Run scripts/check-lang-sync.py and scripts/check-ascii.sh after every change; build.sh runs both and fails the build if either fails.
+
+Git workflow:
+- Always work on the dev branch.
+- Only commit when the user explicitly asks for it.
+- Never add a "Co-Authored-By: Claude" trailer (or any other Claude co-author line) to commit messages.
+- Never add a "Generated with Claude Code" line (or any other Claude attribution) to pull request descriptions.
+- Only open a pull request from dev to main when the user asks, and only merge it when the user asks.
+- After that merge, bring dev up to date with main again (fast-forward dev to origin/main and push dev).
