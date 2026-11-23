@@ -47,6 +47,10 @@
                 {
                     "key": "Permissions-Policy",
                     "value": "accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(self), display-capture=(), encrypted-media=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), web-share=(), xr-spatial-tracking=()"
+                },
+                {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "https://www.wiebevandendriessche.tech"
                 }
             ]
         }
