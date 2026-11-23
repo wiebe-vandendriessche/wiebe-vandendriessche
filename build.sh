@@ -111,6 +111,9 @@ main() {
   fi
 
   hugo build --gc --minify --panicOnWarning --baseURL "${base_url}"
+
+  # Fail the deploy if an inline script's hash is missing from the CSP (e.g. after a theme upgrade)
+  python3 ./scripts/csp-inline-hashes.py public
 }
 
 main "$@"

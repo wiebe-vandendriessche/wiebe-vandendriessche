@@ -16,8 +16,8 @@ import base64, glob, hashlib, json, os, re, sys
 
 site = sys.argv[1] if len(sys.argv) > 1 else "public"
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-csp = next(h["value"] for h in json.load(open(os.path.join(root, "vercel.json")))
-           ["headers"][0]["headers"] if h["key"] == "Content-Security-Policy")
+csp = next(h["value"] for block in json.load(open(os.path.join(root, "vercel.json")))["headers"]
+           for h in block["headers"] if h["key"] == "Content-Security-Policy")
 allowed = set(re.findall(r"'sha256-[^']+'", csp))
 
 found = {}
