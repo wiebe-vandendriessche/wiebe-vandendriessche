@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "schedule:monthly"],
+  "baseBranchPatterns": ["dev"],
+  "git-submodules": {
+    "enabled": true
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Tool versions pinned in build.sh, marked with a '# renovate:' comment",
+      "managerFilePatterns": ["/^build\\.sh$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+\\w+_VERSION=(?<currentValue>\\S+)"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["gohugoio/hugo"],
+      "extractVersion": "^v(?<version>.+)$"
+    },
+    {
+      "description": "Stay on the Node 24 LTS line; move to a new major by hand",
+      "matchDepNames": ["node"],
+      "allowedVersions": "<25"
+    }
+  ]
+}
